@@ -1,20 +1,30 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
- */
 package org.lpv.system;
 
-/**
- *
- * @author informatica
- */
-public class main {
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
-    /**
-     * @param args the command line arguments
-     */
+public class Main extends Application{
+
+
     public static void main(String[] args) {
-        System.out.println("Hola chanchito");
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage stage) throws Exception {
+
+        VBox raiz = new VBox();
+        
+
+        Scene escena = new Scene(raiz);
+        
+        stage.setTitle("Libreria Pagina Viva");
+        stage.setScene(escena);
+        stage.show();
+        
+
     }
     
 }
