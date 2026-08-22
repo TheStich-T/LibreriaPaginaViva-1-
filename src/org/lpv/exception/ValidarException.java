@@ -1,4 +1,4 @@
-package org.lpv.util;
+package org.lpv.exception;
  
 public class ValidarException extends Exception {
  

@@ -1,4 +1,5 @@
-package org.lpv.util;
+package org.lpv.manager;
+
 import org.lpv.model.Usuario;
  
 public class SessionContext {
