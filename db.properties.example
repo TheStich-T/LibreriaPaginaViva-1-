@@ -1,0 +1,6 @@
+# Configuracion de la base de datos.
+# Copia este archivo como src/db.properties y ajusta los valores a tu entorno.
+# src/db.properties NO se versiona: no subas credenciales reales al repositorio.
+db.url=jdbc:mysql://localhost:3306/TU_BASE_DE_DATOS?serverTimezone=UTC
+db.user=TU_USUARIO
+db.password=TU_CONTRASENA
