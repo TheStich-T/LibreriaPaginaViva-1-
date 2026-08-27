@@ -56,6 +56,24 @@ public class UsuarioDAOImpl implements UsuarioDAO{
     } 
     
     @Override
+    public boolean actualizarPassword(String username, String nuevoPasswordHash) {
+        String sql = "{call sp_actualizar_password(?, ?)}";
+
+        try (Connection conexion = Conexion.getInstancia().conectar(); CallableStatement consulta = conexion.prepareCall(sql)) {
+
+            consulta.setString(1, username);
+            consulta.setString(2, nuevoPasswordHash);
+
+            int filasAfectadas = consulta.executeUpdate();
+            return filasAfectadas > 0;
+
+        } catch (SQLException e) {
+            System.err.println("Error en Actualizar Password: " + e.getMessage());
+            return false;
+        }
+    }
+    
+    @Override
     public boolean insertar(Usuario objeto) {
     return registrarUsuario(objeto.getUsername(), objeto.getPasswordHash(), objeto.getRol());
     }
