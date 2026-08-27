@@ -46,7 +46,7 @@ public class UsuarioDAOImpl implements UsuarioDAO{
              CallableStatement consulta = conexion.prepareCall(sql)) {
             
             consulta.setString(1, username);
-            consulta.setString(2, password); // Asegúrate de enviar el hash si ya viene cifrado
+            consulta.setString(2, password);
             consulta.setString(3, rol);
             
             int filasAfectadas = consulta.executeUpdate();
