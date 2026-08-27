@@ -27,9 +27,6 @@ public class UsuarioDAOImpl implements UsuarioDAO{
                     usuario.setId(tablaResultado.getInt(1)); 
                     usuario.setUsername(tablaResultado.getString(2)); 
                     usuario.setRol(tablaResultado.getString(3));
-                    usuario.setPasswordHash(tablaResultado.getString(4));
-                    usuario.setActivo(tablaResultado.getBoolean(5));
-                    usuario.setFechaCreacion(tablaResultado.getObject(6, LocalDateTime.class));
                 }
             }
         } catch (SQLException e) {
@@ -81,6 +78,31 @@ public class UsuarioDAOImpl implements UsuarioDAO{
     @Override
     public boolean eliminar(Integer id) {
         return false; 
+    }
+
+   @Override
+    public Usuario validarCredenciales(String username, String passwordHash) {
+        Usuario usuario = null;
+        String sql = "{call sp_iniciar_sesion(?, ?)}"; 
+        
+        try (Connection conexion = Conexion.getInstancia().conectar();
+             CallableStatement consultaCall = conexion.prepareCall(sql)) {
+            
+            consultaCall.setString(1, username);
+            consultaCall.setString(2, passwordHash);
+            
+            try (ResultSet tablaResultado = consultaCall.executeQuery()) {
+                if (tablaResultado.next()) {
+                    usuario = new Usuario();
+                    usuario.setId(tablaResultado.getInt(1)); 
+                    usuario.setUsername(tablaResultado.getString(2)); 
+                    usuario.setRol(tablaResultado.getString(3));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al validar credenciales: " + e.getMessage());
+        }
+        return usuario; 
     }
 
 }
