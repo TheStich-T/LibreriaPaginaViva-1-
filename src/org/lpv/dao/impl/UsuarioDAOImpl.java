@@ -53,8 +53,8 @@ public class UsuarioDAOImpl implements UsuarioDAO{
             System.err.println("Error en Registrar Usuario: " + e.getMessage());
             return false;
         }
-    }                             
-
+    } 
+    
     @Override
     public boolean insertar(Usuario objeto) {
     return registrarUsuario(objeto.getUsername(), objeto.getPasswordHash(), objeto.getRol());
