@@ -37,6 +37,19 @@ begin
 end //
 delimiter ;
 
+-- procedimiento para cambiar contraseña
+delimiter //
+create procedure sp_actualizar_password(
+    in _username varchar(50),
+    in _password_hash varchar(255)
+)
+begin
+    update usuarios
+    set password_hash = _password_hash
+    where username = _username;
+end //
+delimiter ;
+
 call sp_registrar_usuario('Raguay',sha2('admin',256), 'admin'); 
 call sp_iniciar_sesion('Raguay',sha2('admin', 256)); 
 
