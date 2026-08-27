@@ -1,6 +1,7 @@
 package org.lpv.model;
 
 public class Usuario {
+    
     private int id;
     private String username;
     private String rol;
