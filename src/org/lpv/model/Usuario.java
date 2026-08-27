@@ -4,14 +4,6 @@ import java.time.LocalDateTime;
 
 public class Usuario {
     
-//create table usuarios (
-//    id int auto_increment primary key,
-//    username varchar(50) not null unique,
-//    password_hash varchar(255) not null,
-//    rol enum('admin', 'empleado', 'cajero') not null,
-//    activo boolean default true,
-//    fecha_creacion timestamp default current_timestamp
-//);    
     private int id;
     private String username;
     private String rol;
