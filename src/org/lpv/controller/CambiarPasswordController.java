@@ -34,7 +34,6 @@ public class CambiarPasswordController implements Initializable {
         lblMensaje.setText("");
     }
 
-    //T1.24 y T1.25 -> validar contraseña actual y actualizar el hash
     @FXML
     public void eventoCambiarPassword(ActionEvent evento) {
         try {
@@ -42,7 +41,6 @@ public class CambiarPasswordController implements Initializable {
             ValidarException.validarNoVacio(txtPasswordNueva.getText(), "contraseña nueva");
             ValidarException.validarNoVacio(txtConfirmarPassword.getText(), "confirmar contraseña");
 
-            //T1.26 -> validar confirmación
             ValidarException.validarCoincidencia(txtPasswordNueva.getText(),
                     txtConfirmarPassword.getText(), "Las contraseñas no coinciden");
             ValidarException.validarLongitudMinima(txtPasswordNueva.getText(), 6,
@@ -51,7 +49,6 @@ public class CambiarPasswordController implements Initializable {
             Usuario usuarioActual = SessionContext.getInstancia().getUsuairoActual();
             ValidarException.validarNulo(usuarioActual, "No hay una sesión activa");
 
-            //T1.24 -> validar contraseña actual contra el DAO real
             String hashActual = SecurityUtil.hashSHA256(txtPasswordActual.getText());
             Usuario validado = usuarioDAO.validarCredenciales(usuarioActual.getUsername(), hashActual);
 
@@ -61,7 +58,6 @@ public class CambiarPasswordController implements Initializable {
                 return;
             }
 
-            //T1.25 -> actualizar el hash con la nueva contraseña
             String hashNuevo = SecurityUtil.hashSHA256(txtPasswordNueva.getText());
             boolean actualizado = usuarioDAO.actualizarPassword(usuarioActual.getUsername(), hashNuevo);
 
@@ -80,7 +76,6 @@ public class CambiarPasswordController implements Initializable {
 
     @FXML
     public void eventoRegresar(ActionEvent evento) {
-        // TODO: conectar con la navegación real cuando el equipo termine T1.21 (rama ft/navegacion-rol)
         limpiarCampos();
     }
 
