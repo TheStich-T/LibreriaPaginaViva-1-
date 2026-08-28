@@ -609,4 +609,3 @@ from compras co
 inner join clientes cl on co.cui_cliente = cl.cui
 inner join detalle_compra dc on co.no_compra = dc.no_compra
 inner join libros l on dc.isbn = l.isbn;
-
