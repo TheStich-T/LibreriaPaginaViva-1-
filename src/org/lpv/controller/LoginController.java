@@ -17,6 +17,9 @@ import org.lpv.exception.ValidarException;
 import org.lpv.manager.SessionContext;
 import org.lpv.model.Usuario;
 import org.lpv.util.SecurityUtil;
+import java.io.IOException;
+import org.lpv.manager.RolPermisos;
+import org.lpv.system.main;
 
 public class LoginController implements Initializable {
 
@@ -52,8 +55,19 @@ public class LoginController implements Initializable {
                 lblMensaje.setText("Usuario inactivo");
             } else {
                 SessionContext.getInstancia().setUsuairoActual(usuarioEncontrado);
-                mostrarAlerta(Alert.AlertType.INFORMATION, "Inicio de sesión correcto");
-                // TODO: redirigir al Dashboard según el rol cuando ft/navegacion-rol esté lista
+
+                String dashboard = RolPermisos.getDashboardPorRol(usuarioEncontrado.getRol());
+                if (dashboard == null) {
+                    mostrarAlerta(Alert.AlertType.ERROR, "Rol no reconocido: " + usuarioEncontrado.getRol());
+                    return;
+                }
+
+                try {
+                    main.cambiarEscena(dashboard);
+                } catch (IOException e) {
+                    mostrarAlerta(Alert.AlertType.ERROR, "No se pudo cargar el dashboard: " + e.getMessage());
+                }
+                
             }
 
         } catch (ValidarException e) {
