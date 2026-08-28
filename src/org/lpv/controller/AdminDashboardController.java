@@ -22,7 +22,6 @@ public class AdminDashboardController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         Usuario actual = SessionContext.getInstancia().getUsuairoActual();
 
-        // T1.22 -> guardia de acceso: si no es admin (o no hay sesión), lo regresamos al login
         if (actual == null || !"admin".equalsIgnoreCase(actual.getRol())) {
             mostrarAlerta(Alert.AlertType.ERROR, "No tenés permiso para acceder a esta pantalla");
             volverAlLogin();

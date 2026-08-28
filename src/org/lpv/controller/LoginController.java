@@ -65,9 +65,10 @@ public class LoginController implements Initializable {
                 try {
                     main.cambiarEscena(dashboard);
                 } catch (IOException e) {
-                    mostrarAlerta(Alert.AlertType.ERROR, "No se pudo cargar el dashboard: " + e.getMessage());
-                }
-                
+                mostrarAlerta(Alert.AlertType.WARNING, e.getMessage());
+            lblMensaje.setText(e.getMessage());
+ 
+        }
             }
 
         } catch (ValidarException e) {
@@ -80,4 +81,17 @@ public class LoginController implements Initializable {
         Alert alerta = new Alert(tipo, mensaje, ButtonType.OK);
         alerta.show();
     }
+    
+    @FXML
+    public void eventoRegistrarse(ActionEvent evento) {
+        try {
+            main.cambiarEscena("/org/lpv/view/GestionUsuariosView.fxml");
+        } catch (Exception e) {
+            System.err.println("Error al abrir el registro: " + e.getMessage());
+            lblMensaje.setText("No fue posible abrir el registro.");
+        }
+    }
+    
 }
+ 
+
