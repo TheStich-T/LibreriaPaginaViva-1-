@@ -2,35 +2,51 @@
 
 <?import java.net.URL?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.MenuButton?>
-<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
 
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" styleClass="mainFxmlClass" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/21.0.1" fx:controller="org.lpv.controller.LoginController">
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lpv.controller.LoginController">
     <stylesheets>
         <URL value="@/org/lpv/view/style/loginview.css" />
     </stylesheets>
    <children>
-      <TextField layoutX="151.0" layoutY="92.0" prefHeight="27.0" prefWidth="305.0" promptText="Usuario" />
-      <Text layoutX="204.0" layoutY="59.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Libreria Pagina Viva">
+      <StackPane layoutX="100.0" layoutY="100.0" prefHeight="200.0" prefWidth="400.0">
+         <children>
+            <GridPane>
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="25.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="133.0" minWidth="10.0" prefWidth="108.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="210.0" minWidth="10.0" prefWidth="192.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="25.0" />
+              </columnConstraints>
+              <rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Label text="Usuario" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Label text="Contraseña" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <TextField fx:id="txtUsuario" prefHeight="30.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                  <PasswordField fx:id="txtPassword" prefHeight="30.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+               </children>
+            </GridPane>
+         </children>
+      </StackPane>
+      <Label layoutX="197.0" layoutY="37.0" text="Libreria Pagina Viva">
          <font>
-            <Font name="Arial Bold" size="20.0" />
+            <Font size="24.0" />
          </font>
-      </Text>
-      <PasswordField layoutX="151.0" layoutY="150.0" prefHeight="27.0" prefWidth="305.0" promptText="Contraseña" />
-      <Button layoutX="151.0" layoutY="265.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="125.0" text="Iniciar Sesión" />
-      <Button layoutX="333.0" layoutY="265.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="125.0" text="Registrarse" />
-      <Button layoutX="255.0" layoutY="317.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="98.0" text="Registrarse" />
-      <MenuButton layoutX="151.0" layoutY="215.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="305.0" text="Seleccionar Rol">
-        <items>
-          <MenuItem mnemonicParsing="false" text="Admin" />
-          <MenuItem mnemonicParsing="false" text="Cajero" />
-            <MenuItem mnemonicParsing="false" text="Empleado" />
-        </items>
-      </MenuButton>
+      </Label>
+      <Button fx:id="btnIniciarSesion" layoutX="197.0" layoutY="334.0" mnemonicParsing="false" onAction="#eventoIniciarSesion" prefHeight="30.0" prefWidth="204.0" text="INICIAR SESIÓN" />
+      <Label fx:id="lblMensaje" layoutX="197.0" layoutY="309.0" text="" textFill="#f83737" />
    </children>
 </AnchorPane>
