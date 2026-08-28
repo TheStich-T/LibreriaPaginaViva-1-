@@ -33,6 +33,49 @@ begin
 end //
 delimiter ;
 
+delimiter //
+create procedure sp_listar_usuarios()
+begin
+    select id, username, rol, activo, fecha_creacion
+    from usuarios
+    order by username;
+end //
+delimiter ;
+
+delimiter //
+create procedure sp_buscar_usuario_por_id(
+    in _id int
+)
+begin
+    select id, username, rol, activo, fecha_creacion
+    from usuarios
+    where id = _id;
+end //
+delimiter ;
+
+delimiter //
+create procedure sp_actualizar_usuario(
+    in _id int,
+    in _rol varchar(20)
+)
+begin
+    update usuarios
+    set rol = _rol
+    where id = _id;
+end //
+delimiter ;
+
+delimiter //
+create procedure sp_desactivar_usuario(
+    in _id int
+)
+begin
+    update usuarios
+    set activo = false
+    where id = _id;
+end //
+delimiter ;
+
 -- usuarios de prueba nuevos, ya con los roles correctos de este proyecto
 call sp_registrar_usuario('admin1', sha2('admin123', 256), 'admin');
 call sp_registrar_usuario('cajero1', sha2('cajero123', 256), 'cajero');

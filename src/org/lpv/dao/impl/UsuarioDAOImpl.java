@@ -9,6 +9,7 @@ import java.util.List;
 import org.lpv.dao.UsuarioDAO;
 import org.lpv.model.Usuario;
 import org.lpv.util.Conexion;
+import java.util.ArrayList; 
 
 
 public class UsuarioDAOImpl implements UsuarioDAO{
@@ -102,27 +103,88 @@ public class UsuarioDAOImpl implements UsuarioDAO{
     public boolean insertar(Usuario objeto) {
     return registrarUsuario(objeto.getUsername(), objeto.getPasswordHash(), objeto.getRol());
     }
-
+   
     @Override
     public List<Usuario> listar() {
-        return null; 
+        List<Usuario> usuarios = new ArrayList<>();
+        String sql = "{call sp_listar_usuarios()}";
+
+        try (Connection conexion = Conexion.getInstancia().conectar(); CallableStatement consulta = conexion.prepareCall(sql); ResultSet tablaResultado = consulta.executeQuery()) {
+
+            while (tablaResultado.next()) {
+                Usuario usuario = new Usuario();
+                usuario.setId(tablaResultado.getInt(1));
+                usuario.setUsername(tablaResultado.getString(2));
+                usuario.setRol(tablaResultado.getString(3));
+                usuario.setActivo(tablaResultado.getBoolean(4));
+                usuarios.add(usuario);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al listar usuarios: " + e.getMessage());
+        }
+        return usuarios;
     }
 
     @Override
     public Usuario buscar(Integer id) {
-        return null; 
+        Usuario usuario = null;
+        String sql = "{call sp_buscar_usuario_por_id(?)}";
+
+        try (Connection conexion = Conexion.getInstancia().conectar(); CallableStatement consulta = conexion.prepareCall(sql)) {
+
+            consulta.setInt(1, id);
+
+            try (ResultSet tablaResultado = consulta.executeQuery()) {
+                if (tablaResultado.next()) {
+                    usuario = new Usuario();
+                    usuario.setId(tablaResultado.getInt(1));
+                    usuario.setUsername(tablaResultado.getString(2));
+                    usuario.setRol(tablaResultado.getString(3));
+                    usuario.setActivo(tablaResultado.getBoolean(4));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al buscar usuario por id: " + e.getMessage());
+        }
+        return usuario;
     }
 
     @Override
     public boolean actualizar(Usuario objeto) {
-        return false; 
+        String sql = "{call sp_actualizar_usuario(?, ?)}";
+
+        try (Connection conexion = Conexion.getInstancia().conectar(); CallableStatement consulta = conexion.prepareCall(sql)) {
+
+            consulta.setInt(1, objeto.getId());
+            consulta.setString(2, objeto.getRol());
+
+            int filasAfectadas = consulta.executeUpdate();
+            return filasAfectadas > 0;
+
+        } catch (SQLException e) {
+            System.err.println("Error al actualizar usuario: " + e.getMessage());
+            return false;
+        }
     }
 
     @Override
     public boolean eliminar(Integer id) {
-        return false; 
-    }
+        // "eliminar" aquí es desactivar (T1.14) — nunca se borra un usuario, solo se marca inactivo
+        String sql = "{call sp_desactivar_usuario(?)}";
 
+        try (Connection conexion = Conexion.getInstancia().conectar(); CallableStatement consulta = conexion.prepareCall(sql)) {
+
+            consulta.setInt(1, id);
+
+            int filasAfectadas = consulta.executeUpdate();
+            return filasAfectadas > 0;
+
+        } catch (SQLException e) {
+            System.err.println("Error al desactivar usuario: " + e.getMessage());
+            return false;
+        }
+    }
+    
    @Override
     public Usuario validarCredenciales(String username, String passwordHash) {
         Usuario usuario = null;
