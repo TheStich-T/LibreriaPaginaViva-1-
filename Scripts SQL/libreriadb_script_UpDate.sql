@@ -1,10 +1,92 @@
 use libreriadb_in4cm;
 
+-- eliminar los usuarios de prueba del proyecto anterior
+delete from usuarios where username in ('Raguay', 'Cajero', 'Empleado');
+
+-- corregir el enum de roles: el backlog define admin, bodega, cajero (no "empleado")
+alter table usuarios
+    modify column rol enum('admin','bodega','cajero') not null;
+
+-- procedimiento para cambiar contraseña 
+delimiter //
+create procedure sp_actualizar_password(
+    in _username varchar(50),
+    in _password_hash varchar(255)
+)
+begin
+    update usuarios
+    set password_hash = _password_hash
+    where username = _username;
+end //
+delimiter ;
+
+--  procedimiento para distinguir usuario inactivo de contraseña incorrecta
+delimiter //
+create procedure sp_buscar_usuario_por_username(
+    in _username varchar(50)
+)
+begin
+    select id, username, password_hash, rol, activo
+    from usuarios
+    where username = _username
+    limit 1;
+end //
+delimiter ;
+
+delimiter //
+create procedure sp_listar_usuarios()
+begin
+    select id, username, rol, activo, fecha_creacion
+    from usuarios
+    order by username;
+end //
+delimiter ;
+
+delimiter //
+create procedure sp_buscar_usuario_por_id(
+    in _id int
+)
+begin
+    select id, username, rol, activo, fecha_creacion
+    from usuarios
+    where id = _id;
+end //
+delimiter ;
+
+delimiter //
+create procedure sp_actualizar_usuario(
+    in _id int,
+    in _rol varchar(20)
+)
+begin
+    update usuarios
+    set rol = _rol
+    where id = _id;
+end //
+delimiter ;
+
+delimiter //
+create procedure sp_desactivar_usuario(
+    in _id int
+)
+begin
+    update usuarios
+    set activo = false
+    where id = _id;
+end //
+delimiter ;
+
+-- usuarios de prueba nuevos, ya con los roles correctos de este proyecto
+call sp_registrar_usuario('admin1', sha2('admin123', 256), 'admin');
+call sp_registrar_usuario('cajero1', sha2('cajero123', 256), 'cajero');
+call sp_registrar_usuario('bodega1', sha2('bodega123', 256), 'bodega');
+
+
 -- editoriales — corregir typo de columna (direccion_editoria -> direccion_editorial)
 alter table editoriales
 	change column direccion_editoria direccion_editorial varchar(100);
 
--- libros — agregar control de inventario 
+-- libros — agregar control de inventario
 alter table libros
 	add column stock_actual int not null default 0 after nit_editorial,
 	add column stock_minimo int not null default 0 after stock_actual,
@@ -28,7 +110,7 @@ alter table ventas
     change column total_compra total decimal(10,2);
 
 -- agregar columnas nuevas de ventas
-alter table ventas -- NO APROBADO 
+alter table ventas
 	add column subtotal decimal(10,2) not null default 0 after id_venta,
 	add column descuento decimal(10,2) not null default 0 after total,
 	add column usuario_autoriza_descuento int null after descuento,
@@ -39,7 +121,7 @@ alter table ventas -- NO APROBADO
     add column usuario_anulacion int null after fecha_anulacion,
     add column motivo_anulacion varchar(255) null after usuario_anulacion;
 
--- renombrar y agregar columnas de detalle_venta 
+-- renombrar y agregar columnas de detalle_venta
 alter table detalle_venta
     change column id_detalle_compra id_detalle int not null auto_increment,
     change column no_compra id_venta int;
@@ -49,7 +131,7 @@ alter table detalle_venta
     add column precio_unitario decimal(10,2) not null default 0 after cantidad,
     add column subtotal decimal(10,2) not null default 0 after precio_unitario;
 
--- 4.4 recrear las llaves foráneas con los nuevos nombres
+-- 2.4 recrear las llaves foráneas con los nuevos nombres
 alter table ventas
     add constraint fk_venta_cliente foreign key (cui_cliente) references clientes(cui) on delete cascade,
     add constraint fk_venta_usuario foreign key (id_usuario) references usuarios(id) on delete set null,
@@ -79,12 +161,12 @@ create table movimientos_inventario (
     observacion varchar(255),
     nit_proveedor varchar(20) null
 );
-alter table movimientos_inventario 
+alter table movimientos_inventario
     add constraint fk_movimiento_libro foreign key (isbn) references libros(isbn) on delete cascade,
     add constraint fk_movimiento_usuario foreign key (id_usuario) references usuarios(id) on delete set null,
     add constraint fk_movimiento_proveedor foreign key (nit_proveedor) references proveedores(nit_proveedor) on delete set null;
 
--- procedimientos almacenados reemplazar los que apuntaban a compras y detalle_compra y agregar los nuevos que necesitan libros/proveedores/movimientos_inventario
+-- procedimientos almacenados: reemplazar los que apuntaban a compras/detalle_compra
 drop procedure if exists sp_insertarcompra;
 drop procedure if exists sp_listarcompras;
 drop procedure if exists sp_buscarcompra;
@@ -97,7 +179,6 @@ drop procedure if exists sp_actualizardetallecompra;
 drop procedure if exists sp_eliminardetallecompra;
 delimiter $$
 
--- crud: ventas
 create procedure sp_insertarventa(
     in _subtotal decimal(10,2),
     in _descuento decimal(10,2),
@@ -147,7 +228,6 @@ begin
     delete from ventas where id_venta = _id_venta;
 end $$
 
--- crud: detalle_venta
 create procedure sp_insertardetalleventa(
     in _id_venta int,
     in _isbn varchar(20),
@@ -175,7 +255,6 @@ begin
     delete from detalle_venta where id_detalle = _id_detalle;
 end $$
 
--- stock de libros
 create procedure sp_actualizarstocklibro(
     in _isbn varchar(20),
     in _stock_actual int,
@@ -195,7 +274,6 @@ begin
     where stock_actual <= stock_minimo and activo = true;
 end $$
 
--- crud: proveedores
 create procedure sp_insertarproveedor(
     in _nit_proveedor varchar(20),
     in _nombre_proveedor varchar(100),
@@ -234,7 +312,6 @@ begin
     delete from proveedores where nit_proveedor = _nit_proveedor;
 end $$
 
--- crud: movimientos_inventario
 create procedure sp_registrarmovimiento(
     in _isbn varchar(20),
     in _tipo_movimiento varchar(20),
@@ -306,7 +383,6 @@ inner join clientes cl on v.cui_cliente = cl.cui
 inner join detalle_venta dv on v.id_venta = dv.id_venta
 inner join libros l on dv.isbn = l.isbn;
 
--- se reemplaza para agregar las columnas de stock a la vista de libros
 create or replace view vw_lista_libros as select
     l.isbn as 'isbn',
     l.titulo as 'título',
@@ -321,7 +397,6 @@ from libros l
 inner join categorias c on l.id_categoria = c.id_categoria
 inner join editoriales e on l.nit_editorial = e.nit;
 
--- se reemplaza para usar el nombre de columna corregido (direccion_editorial)
 create or replace view vw_lista_editoriales as select
     nit as 'nit editorial',
     nombre_editorial as 'editorial',
