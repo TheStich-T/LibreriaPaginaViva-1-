@@ -33,21 +33,20 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label text="Usuario" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <Label text="Contraseña" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <TextField fx:id="txtUsuario" prefHeight="30.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                  <PasswordField fx:id="txtPassword" prefHeight="30.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                  <Label text="Usuario" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="field-label" />
+                  <Label text="Contraseña" GridPane.columnIndex="1" GridPane.rowIndex="2" styleClass="field-label" />
+                  <TextField fx:id="txtUsuario" prefHeight="30.0" GridPane.columnIndex="2" GridPane.rowIndex="1" styleClass="text-input" />
+                  <PasswordField fx:id="txtPassword" prefHeight="30.0" GridPane.columnIndex="2" GridPane.rowIndex="2" styleClass="text-input" />
                </children>
             </GridPane>
          </children>
       </StackPane>
-      <Label layoutX="197.0" layoutY="37.0" text="Libreria Pagina Viva">
+      <Label layoutX="197.0" layoutY="37.0" text="Libreria Pagina Viva" styleClass="page-title">
          <font>
             <Font size="24.0" />
          </font>
       </Label>
-      <Button fx:id="btnIniciarSesion" layoutX="109.0" layoutY="311.0" mnemonicParsing="false" onAction="#eventoIniciarSesion" prefHeight="30.0" prefWidth="204.0" text="INICIAR SESIÓN" />
-      <Label fx:id="lblMensaje" layoutX="197.0" layoutY="309.0" text="" textFill="#f83737" />
-      <Button fx:id="btnregistrar" layoutX="328.0" layoutY="309.0" mnemonicParsing="false" onAction="#eventoRegistrarse" prefHeight="30.0" prefWidth="160.0" text="Registrar" />
+      <Button fx:id="btnIniciarSesion" layoutX="187.0" layoutY="303.0" mnemonicParsing="false" onAction="#eventoIniciarSesion" prefHeight="30.0" prefWidth="204.0" text="INICIAR SESIÓN" styleClass="primary-button" />
+      <Label fx:id="lblMensaje" layoutX="197.0" layoutY="309.0" text="" textFill="#b5453f" />
    </children>
 </AnchorPane>

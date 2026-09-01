@@ -81,17 +81,5 @@ public class LoginController implements Initializable {
         Alert alerta = new Alert(tipo, mensaje, ButtonType.OK);
         alerta.show();
     }
-    
-    @FXML
-    public void eventoRegistrarse(ActionEvent evento) {
-        try {
-            main.cambiarEscena("/org/lpv/view/GestionUsuariosView.fxml");
-        } catch (Exception e) {
-            System.err.println("Error al abrir el registro: " + e.getMessage());
-            lblMensaje.setText("No fue posible abrir el registro.");
-        }
-    }
-    
-}
- 
 
+}

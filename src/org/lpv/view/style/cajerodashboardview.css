@@ -1,163 +1,91 @@
-/*
- * Empty Stylesheet file.
- */
-
 .mainFxmlClass {
-    -fx-background-color: #f1f4f7;
+    -fx-background-color: #eef1f5;
     -fx-font-family: "Segoe UI", Arial, sans-serif;
-}
-
-/* BARRA SUPERIOR */
-
-.top-bar {
-    -fx-background-color: linear-gradient(to right, #3867d6, #315bd3);
-    -fx-padding: 0 18px;
-}
-
-.logo-circle {
-    -fx-fill: #6d8ee5;
-    -fx-stroke: #a9bdf3;
-    -fx-stroke-width: 1;
-}
-
-.user-name {
-    -fx-text-fill: white;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-}
-
-.user-role {
-    -fx-text-fill: #dce5ff;
-    -fx-font-size: 10px;
-}
-
-.logout-button {
-    -fx-background-color: rgba(255,255,255,0.12);
-    -fx-border-color: rgba(255,255,255,0.5);
-    -fx-border-radius: 5;
-    -fx-background-radius: 5;
-    -fx-text-fill: white;
-    -fx-font-size: 12px;
-    -fx-padding: 7px 15px;
-}
-
-.logout-button:hover {
-    -fx-background-color: rgba(255,255,255,0.25);
 }
 
 /* SIDEBAR */
 
 .sidebar {
-    -fx-background-color: #171a2b;
-    -fx-padding: 15px 12px 10px 12px;
+    -fx-background-color: #10141d;
+    -fx-padding: 20px 15px;
+}
+
+.sidebar-heading {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
 }
 
 .sidebar-section {
-    -fx-text-fill: #858ba0;
+    -fx-text-fill: #6d7280;
     -fx-font-size: 10px;
     -fx-font-weight: bold;
-    -fx-padding: 10px 5px 5px 5px;
 }
 
 .sidebar-item {
-    -fx-background-color: transparent;
-    -fx-text-fill: #d5d8e4;
-    -fx-font-size: 12px;
-    -fx-alignment: CENTER_LEFT;
-    -fx-padding: 8px 10px;
-    -fx-pref-width: 145px;
-    -fx-cursor: hand;
+    -fx-text-fill: #c6cbd6;
+    -fx-font-size: 12.5px;
 }
 
 .sidebar-item:hover {
-    -fx-background-color: #282c42;
-    -fx-text-fill: white;
+    -fx-text-fill: #ffffff;
 }
 
-.sidebar-footer {
-    -fx-text-fill: #777c91;
-    -fx-font-size: 9px;
+.sidebar-user {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
 }
 
-/* CONTENIDO */
+.logout-button {
+    -fx-text-fill: #9aa1b0;
+    -fx-font-size: 12px;
+    -fx-cursor: hand;
+}
 
-.content {
-    -fx-background-color: #f1f4f7;
-    -fx-padding: 20px 25px;
+.logout-button:hover {
+    -fx-text-fill: #ffffff;
+}
+
+/* TÍTULO Y ENCABEZADO */
+
+.brand-title {
+    -fx-text-fill: #202632;
+    -fx-font-weight: bold;
 }
 
 .page-title {
-    -fx-text-fill: #242b36;
-    -fx-font-size: 20px;
-    -fx-font-weight: bold;
+    -fx-text-fill: #202632;
 }
 
 .page-subtitle {
-    -fx-text-fill: #9ba1aa;
+    -fx-text-fill: #767c88;
     -fx-font-size: 11px;
 }
 
-/* TARJETAS */
+/* TARJETAS DEL MENÚ */
 
 .dashboard-card {
-    -fx-background-color: white;
+    -fx-background-color: #ffffff;
     -fx-background-radius: 7px;
     -fx-border-radius: 7px;
     -fx-border-width: 4px 0 0 0;
-
-    -fx-pref-width: 150px;
-    -fx-pref-height: 105px;
-
-    -fx-text-fill: #303642;
+    -fx-text-fill: #202632;
     -fx-font-size: 12px;
     -fx-font-weight: bold;
-
     -fx-cursor: hand;
-
-    -fx-effect: dropshadow(
-        gaussian,
-        rgba(0,0,0,0.10),
-        8,
-        0.15,
-        0,
-        3
-    );
+    -fx-effect: dropshadow(gaussian, rgba(20,25,35,0.10), 8, 0.12, 0, 3);
 }
 
 .dashboard-card:hover {
-    -fx-background-color: #fafbfc;
-    -fx-translate-y: -2px;
-
-    -fx-effect: dropshadow(
-        gaussian,
-        rgba(0,0,0,0.18),
-        12,
-        0.2,
-        0,
-        4
-    );
+    -fx-background-color: #f7f9fb;
+    -fx-translate-y: -1px;
+    -fx-effect: dropshadow(gaussian, rgba(20,25,35,0.18), 10, 0.16, 0, 4);
 }
 
-.card-green {
-    -fx-border-color: #32c48d transparent transparent transparent;
-}
-
-.card-cyan {
-    -fx-border-color: #35b8c5 transparent transparent transparent;
-}
-
-.card-blue {
-    -fx-border-color: #527bd9 transparent transparent transparent;
-}
-
-.card-yellow {
-    -fx-border-color: #f3c83b transparent transparent transparent;
-}
-
-.card-purple {
-    -fx-border-color: #8d6ed8 transparent transparent transparent;
-}
-
-.card-red {
-    -fx-border-color: #e56b6f transparent transparent transparent;
-}
+.card-1 { -fx-border-color: #24344a transparent transparent transparent; }
+.card-2 { -fx-border-color: #33506f transparent transparent transparent; }
+.card-3 { -fx-border-color: #46617d transparent transparent transparent; }
+.card-4 { -fx-border-color: #5a6b7a transparent transparent transparent; }
+.card-5 { -fx-border-color: #2e3b4d transparent transparent transparent; }
+.card-6 { -fx-border-color: #1c2735 transparent transparent transparent; }
