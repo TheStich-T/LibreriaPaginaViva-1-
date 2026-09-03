@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" prefHeight="550.0" prefWidth="650.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lpv.controller.BuscarLibrosController">
+    <stylesheets>
+        <URL value="@/org/lpv/view/style/buscarlibrosview.css" />
+    </stylesheets>
+   <children>
+      <Label layoutX="220.0" layoutY="15.0" text="Buscar Libros" styleClass="page-title">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </Label>
+
+      <ComboBox fx:id="cmbCriterio" layoutX="30.0" layoutY="60.0" prefWidth="120.0" styleClass="text-input" />
+      <TextField fx:id="txtBuscar" layoutX="160.0" layoutY="60.0" prefWidth="330.0" styleClass="text-input" />
+      <Button fx:id="btnBuscar" layoutX="500.0" layoutY="60.0" mnemonicParsing="false" onAction="#eventoBuscar" prefHeight="30.0" prefWidth="120.0" text="BUSCAR" styleClass="primary-button" />
+
+      <TableView fx:id="tblLibros" layoutX="30.0" layoutY="110.0" prefHeight="380.0" prefWidth="590.0" styleClass="table-view">
+        <columns>
+          <TableColumn fx:id="colIsbn" prefWidth="140.0" text="ISBN">
+             <cellValueFactory><PropertyValueFactory property="isbn" /></cellValueFactory>
+          </TableColumn>
+          <TableColumn fx:id="colTitulo" prefWidth="250.0" text="Título">
+             <cellValueFactory><PropertyValueFactory property="titulo" /></cellValueFactory>
+          </TableColumn>
+          <TableColumn fx:id="colPrecio" prefWidth="100.0" text="Precio">
+             <cellValueFactory><PropertyValueFactory property="precio" /></cellValueFactory>
+          </TableColumn>
+          <TableColumn fx:id="colStock" prefWidth="100.0" text="Stock">
+             <cellValueFactory><PropertyValueFactory property="stockActual" /></cellValueFactory>
+          </TableColumn>
+        </columns>
+      </TableView>
+
+      <Label fx:id="lblMensaje" layoutX="30.0" layoutY="500.0" text="" textFill="#b5453f" />
+   </children>
+</AnchorPane>
