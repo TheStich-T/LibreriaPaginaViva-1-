@@ -71,6 +71,6 @@
       <Button fx:id="btnActualizar" layoutX="180.0" layoutY="460.0" mnemonicParsing="false" onAction="#eventoActualizar" prefHeight="30.0" prefWidth="130.0" styleClass="primary-button" text="ACTUALIZAR" />
       <Button fx:id="btnDesactivar" layoutX="331.0" layoutY="460.0" mnemonicParsing="false" onAction="#eventoDesactivar" prefHeight="30.0" prefWidth="130.0" styleClass="secondary-button" text="DESACTIVAR" />
       <Label fx:id="lblMensaje" layoutX="30.0" layoutY="500.0" text="" textFill="#b5453f" />
-      <Button layoutX="472.0" layoutY="460.0" mnemonicParsing="false" onAction="#eventoActivar" prefHeight="30.0" prefWidth="130.0" text="ACTIVAR" />
+      <Button fx:id="btnActivar" layoutX="472.0" layoutY="460.0" mnemonicParsing="false" onAction="#eventoActivar" prefHeight="30.0" prefWidth="130.0" styleClass="secondary-button" text="ACTIVAR" />
    </children>
 </AnchorPane>
