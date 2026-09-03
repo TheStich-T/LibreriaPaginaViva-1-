@@ -8,6 +8,8 @@ public interface UsuarioDAO extends CRUD<Usuario,Integer> {
     Usuario validarCredenciales(String username, String passwordHash);
     boolean actualizarPassword(String username, String nuevoPasswordHash);
     Usuario buscarPorUsername(String username);
+
+    public boolean activar(int id);
 }
    
 

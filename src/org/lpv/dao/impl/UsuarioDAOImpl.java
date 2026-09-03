@@ -10,6 +10,7 @@ import org.lpv.dao.UsuarioDAO;
 import org.lpv.model.Usuario;
 import org.lpv.util.Conexion;
 import java.util.ArrayList; 
+import java.util.logging.Logger;
 
 
 public class UsuarioDAOImpl implements UsuarioDAO{
@@ -184,7 +185,7 @@ public class UsuarioDAOImpl implements UsuarioDAO{
             return false;
         }
     }
-    
+     
    @Override
     public Usuario validarCredenciales(String username, String passwordHash) {
         Usuario usuario = null;
@@ -208,6 +209,23 @@ public class UsuarioDAOImpl implements UsuarioDAO{
             System.err.println("Error al validar credenciales: " + e.getMessage());
         }
         return usuario; 
+    }
+
+    @Override
+    public boolean activar(int id) {
+          String sql = "{call sp_activar_usuario(?)}";
+
+        try (Connection conexion = Conexion.getInstancia().conectar(); CallableStatement consulta = conexion.prepareCall(sql)) {
+
+            consulta.setInt(1, id);
+
+            int filasAfectadas = consulta.executeUpdate();
+            return filasAfectadas > 0;
+
+        } catch (SQLException e) {
+            System.err.println("Error al activar usuario: " + e.getMessage());
+            return false;
+        }
     }
 
 }
