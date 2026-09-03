@@ -138,6 +138,31 @@ public class GestionUsuariosController implements Initializable {
             lblMensaje.setText(e.getMessage());
         }
     }
+    
+    @FXML
+        public void eventoActivar(ActionEvent evento) {
+          String sql = "{call sp_activar_usuario(?)}";
+                   
+        try {
+            Usuario seleccionado = tblUsuarios.getSelectionModel().getSelectedItem();
+            ValidarException.validarNulo(seleccionado, "Selecciona un usuario de la tabla");
+
+            boolean activado = usuarioDAO.activar(seleccionado.getId());
+
+            if (activado) {
+                mostrarAlerta(Alert.AlertType.INFORMATION, "Usuario activado con éxito");
+                limpiarCampos();
+                cargarUsuarios();
+            } else {
+                mostrarAlerta(Alert.AlertType.ERROR, "No se pudo activar el usuario");
+            }
+
+        } catch (ValidarException e) {
+            mostrarAlerta(Alert.AlertType.WARNING, e.getMessage());
+            lblMensaje.setText(e.getMessage());
+        }
+    }
+    
 
     private void limpiarCampos() {
         txtUsername.clear();

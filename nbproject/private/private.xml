@@ -3,7 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/diego%20raguay/LibreriaPaginaViva/LibreriaPaginaViva-1-/src/org/lpv/controller/LoginController.java</file>
+            <file>file:/C:/Levi_Salazar/B_4/LibreriaPaginaViva-1-/src/org/lpv/controller/AdminDashboardController.java</file>
+            <file>file:/C:/Levi_Salazar/B_4/LibreriaPaginaViva-1-/src/org/lpv/dao/impl/UsuarioDAOImpl.java</file>
+            <file>file:/C:/Levi_Salazar/B_4/LibreriaPaginaViva-1-/src/org/lpv/controller/GestionUsuariosController.java</file>
+            <file>file:/C:/Levi_Salazar/B_4/LibreriaPaginaViva-1-/src/org/lpv/dao/UsuarioDAO.java</file>
+            <file>file:/C:/Levi_Salazar/B_4/LibreriaPaginaViva-1-/src/org/lpv/system/main.java</file>
+            <file>file:/C:/Levi_Salazar/B_4/LibreriaPaginaViva-1-/src/org/lpv/view/GestionUsuariosView.fxml</file>
+            <file>file:/C:/Levi_Salazar/B_4/LibreriaPaginaViva-1-/src/org/lpv/view/style/gestionusuariosview.css</file>
+            <file>file:/C:/Levi_Salazar/B_4/LibreriaPaginaViva-1-/src/org/lpv/controller/CambiarPasswordController.java</file>
         </group>
     </open-files>
 </project-private>

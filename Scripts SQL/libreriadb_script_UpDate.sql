@@ -76,6 +76,18 @@ begin
 end //
 delimiter ;
 
+delimiter //
+create procedure sp_activar_usuario(
+    in _id int
+)
+begin
+    update usuarios
+    set activo = true
+    where id = _id;
+end //
+delimiter ;
+
+
 -- usuarios de prueba nuevos, ya con los roles correctos de este proyecto
 call sp_registrar_usuario('admin1', sha2('admin123', 256), 'admin');
 call sp_registrar_usuario('cajero1', sha2('cajero123', 256), 'cajero');
@@ -333,6 +345,54 @@ begin
     from movimientos_inventario
     where isbn = _isbn
     order by fecha_movimiento desc;
+end $$
+
+-- =============================================================================
+-- NUEVO — Sprint 2: búsqueda de libros (US-2.1) y ventas del día (US-2.6)
+-- =============================================================================
+
+create procedure sp_buscarlibroporisbn(
+    in _isbn varchar(20)
+)
+begin
+    select isbn, titulo, fecha_publicacion, precio, id_categoria, nit_editorial,
+           stock_actual, stock_minimo, activo
+    from libros
+    where isbn = _isbn;
+end $$
+
+create procedure sp_buscarlibropotitulo(
+    in _titulo varchar(150)
+)
+begin
+    select isbn, titulo, fecha_publicacion, precio, id_categoria, nit_editorial,
+           stock_actual, stock_minimo, activo
+    from libros
+    where titulo like concat('%', _titulo, '%')
+      and activo = true;
+end $$
+
+create procedure sp_buscarlibrosporautor(
+    in _autor varchar(150)
+)
+begin
+    select l.isbn, l.titulo, l.precio, l.stock_actual, a.nombre_autor
+    from libros l
+    inner join autores_libro al on l.isbn = al.isbn
+    inner join autores a on al.id_autor = a.id_autor
+    where a.nombre_autor like concat('%', _autor, '%')
+      and l.activo = true;
+end $$
+
+create procedure sp_ventasdeldiaporusuario(
+    in _id_usuario int
+)
+begin
+    select id_venta, fecha_venta, subtotal, descuento, total, estado
+    from ventas
+    where id_usuario = _id_usuario
+      and date(fecha_venta) = curdate()
+    order by fecha_venta desc;
 end $$
 
 delimiter ;
