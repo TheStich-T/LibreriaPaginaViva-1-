@@ -12,22 +12,20 @@ import org.lpv.dao.ClienteDAO;
 import org.lpv.model.Clientes;
 import org.lpv.util.Conexion;
 
-
 public class ClientesDAOImpl implements ClienteDAO {
 
     private static final Logger log = Logger.getLogger(ClientesDAOImpl.class.getName());
 
     @Override
     public List<Clientes> listar() {
+        log.info("Listando clientes");
         List<Clientes> clientes = new ArrayList<>();
         String sql = "{call sp_listarclientes()}";
-
         try (Connection conexion = Conexion.getInstancia().conectar();
              CallableStatement consulta = conexion.prepareCall(sql);
              ResultSet tablaResultado = consulta.executeQuery()) {
-
             while (tablaResultado.next()) {
-                clientes.add(mapearCliente(tablaResultado));
+             clientes.add(mapearCliente(tablaResultado));
             }
         } catch (SQLException e) {
             log.log(Level.SEVERE, "Error al listar clientes", e);
@@ -37,14 +35,12 @@ public class ClientesDAOImpl implements ClienteDAO {
 
     @Override
     public Clientes buscar(Long cui) {
+        log.info("Buscando cliente: CUI " + cui);
         Clientes cliente = null;
         String sql = "{call sp_buscarcliente(?)}";
-
         try (Connection conexion = Conexion.getInstancia().conectar();
-             CallableStatement consulta = conexion.prepareCall(sql)) {
-
+            CallableStatement consulta = conexion.prepareCall(sql)) {
             consulta.setLong(1, cui);
-
             try (ResultSet tablaResultado = consulta.executeQuery()) {
                 if (tablaResultado.next()) {
                     cliente = mapearCliente(tablaResultado);
@@ -58,23 +54,20 @@ public class ClientesDAOImpl implements ClienteDAO {
 
     @Override
     public boolean insertar(Clientes objeto) {
+        log.info("Registrando cliente: CUI " + objeto.getCui());
         String sql = "{call sp_insertarcliente(?, ?, ?, ?)}";
-
         try (Connection conexion = Conexion.getInstancia().conectar();
              CallableStatement consulta = conexion.prepareCall(sql)) {
-
             consulta.setLong(1, objeto.getCui());
             consulta.setString(2, objeto.getNombreCliente());
             consulta.setString(3, objeto.getApellidoCliente());
             consulta.setString(4, objeto.getCorreoElectronico());
-
             int filasAfectadas = consulta.executeUpdate();
             boolean creado = filasAfectadas > 0;
             if (creado) {
                 log.info("Cliente registrado: CUI " + objeto.getCui());
             }
             return creado;
-
         } catch (SQLException e) {
             log.log(Level.SEVERE, "Error al insertar cliente: CUI " + objeto.getCui(), e);
             return false;
@@ -83,23 +76,20 @@ public class ClientesDAOImpl implements ClienteDAO {
 
     @Override
     public boolean actualizar(Clientes objeto) {
+        log.info("Actualizando cliente: CUI " + objeto.getCui());
         String sql = "{call sp_actualizarcliente(?, ?, ?, ?)}";
-
         try (Connection conexion = Conexion.getInstancia().conectar();
              CallableStatement consulta = conexion.prepareCall(sql)) {
-
             consulta.setLong(1, objeto.getCui());
             consulta.setString(2, objeto.getNombreCliente());
             consulta.setString(3, objeto.getApellidoCliente());
             consulta.setString(4, objeto.getCorreoElectronico());
-
             int filasAfectadas = consulta.executeUpdate();
             boolean actualizado = filasAfectadas > 0;
             if (actualizado) {
-                log.info("Cliente actualizado: CUI " + objeto.getCui());
+                log.info("Cliente actualizado: CUI "  + objeto.getCui());
             }
             return actualizado;
-
         } catch (SQLException e) {
             log.log(Level.SEVERE, "Error al actualizar cliente: CUI " + objeto.getCui(), e);
             return false;
@@ -108,16 +98,17 @@ public class ClientesDAOImpl implements ClienteDAO {
 
     @Override
     public boolean eliminar(Long cui) {
+        log.info("Eliminando cliente: CUI " + cui);
         String sql = "{call sp_eliminarcliente(?)}";
-
         try (Connection conexion = Conexion.getInstancia().conectar();
              CallableStatement consulta = conexion.prepareCall(sql)) {
-
             consulta.setLong(1, cui);
-
             int filasAfectadas = consulta.executeUpdate();
-            return filasAfectadas > 0;
-
+            boolean eliminado = filasAfectadas > 0;
+            if (eliminado) {
+               log.info("Cliente eliminado: CUI " + cui);
+            }
+            return eliminado;
         } catch (SQLException e) {
             log.log(Level.SEVERE, "Error al eliminar cliente: CUI " + cui, e);
             return false;
