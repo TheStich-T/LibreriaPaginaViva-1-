@@ -16,7 +16,7 @@
         <URL value="@/org/lpv/view/style/buscarlibrosview.css" />
     </stylesheets>
    <children>
-      <Label layoutX="220.0" layoutY="15.0" text="Buscar Libros" styleClass="page-title">
+      <Label layoutX="220.0" layoutY="15.0" styleClass="page-title" text="Buscar Libros">
          <font>
             <Font size="22.0" />
          </font>
@@ -24,7 +24,7 @@
 
       <ComboBox fx:id="cmbCriterio" layoutX="30.0" layoutY="60.0" prefWidth="120.0" styleClass="text-input" />
       <TextField fx:id="txtBuscar" layoutX="160.0" layoutY="60.0" prefWidth="330.0" styleClass="text-input" />
-      <Button fx:id="btnBuscar" layoutX="500.0" layoutY="60.0" mnemonicParsing="false" onAction="#eventoBuscar" prefHeight="30.0" prefWidth="120.0" text="BUSCAR" styleClass="primary-button" />
+      <Button fx:id="btnBuscar" layoutX="500.0" layoutY="60.0" mnemonicParsing="false" onAction="#eventoBuscar" prefHeight="30.0" prefWidth="120.0" styleClass="primary-button" text="BUSCAR" />
 
       <TableView fx:id="tblLibros" layoutX="30.0" layoutY="110.0" prefHeight="380.0" prefWidth="590.0" styleClass="table-view">
         <columns>
@@ -44,5 +44,6 @@
       </TableView>
 
       <Label fx:id="lblMensaje" layoutX="30.0" layoutY="500.0" text="" textFill="#b5453f" />
+      <Button layoutX="502.0" layoutY="500.0" mnemonicParsing="false" onAction="#eventoVolver" prefHeight="33.0" prefWidth="103.0" text="Regresar" />
    </children>
 </AnchorPane>

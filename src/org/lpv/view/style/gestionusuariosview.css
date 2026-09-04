@@ -47,6 +47,17 @@
     -fx-background-color: #4a515a;
 }
 
+.secondary-button {
+    -fx-background-color: #3a4048;
+    -fx-text-fill: #ffffff;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #4a515a;
+}
+
 .table-view {
     -fx-background-color: #ffffff;
     -fx-border-color: #dfe3e9;
