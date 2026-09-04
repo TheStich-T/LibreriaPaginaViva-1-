@@ -1,14 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import java.net.URL?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<?import java.lang.*?>
-<?import java.net.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" styleClass="mainFxmlClass" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lpv.controller.DetalleVentaController">
-    <stylesheets>
-        <URL value="@/org/lpv/view/style/detalleventaview.css"/>
-    </stylesheets>
+<AnchorPane prefHeight="550.0" prefWidth="780.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lpv.controller.DetalleVentaController">
+    <stylesheets><URL value="@/org/lpv/view/style/detalleventaview.css" /></stylesheets>
+    <children>
+        <Label layoutX="30.0" layoutY="20.0" text="Detalle de Venta" styleClass="page-title"><font><Font size="24.0" /></font></Label>
+        <TextField fx:id="txtIdVenta" layoutX="30.0" layoutY="70.0" prefWidth="220.0" promptText="Número de venta" styleClass="text-input" />
+        <Button layoutX="265.0" layoutY="70.0" prefWidth="110.0" text="BUSCAR" onAction="#eventoBuscar" styleClass="primary-button" />
+        <Label fx:id="lblVenta" layoutX="410.0" layoutY="75.0" text="" styleClass="section-title" />
+        <Label layoutX="30.0" layoutY="120.0" text="Productos" styleClass="section-title" />
+        <TableView fx:id="tblDetalles" layoutX="30.0" layoutY="150.0" prefHeight="300.0" prefWidth="720.0" styleClass="table-view">
+            <columns>
+                <TableColumn fx:id="colIsbn" prefWidth="190.0" text="ISBN"><cellValueFactory><PropertyValueFactory property="isbn" /></cellValueFactory></TableColumn>
+                <TableColumn fx:id="colCantidad" prefWidth="120.0" text="Cantidad"><cellValueFactory><PropertyValueFactory property="cantidad" /></cellValueFactory></TableColumn>
+                <TableColumn fx:id="colPrecio" prefWidth="180.0" text="Precio unitario"><cellValueFactory><PropertyValueFactory property="precioUnitario" /></cellValueFactory></TableColumn>
+                <TableColumn fx:id="colSubtotal" prefWidth="230.0" text="Subtotal"><cellValueFactory><PropertyValueFactory property="subtotal" /></cellValueFactory></TableColumn>
+            </columns>
+        </TableView>
+        <Label layoutX="530.0" layoutY="470.0" text="Total:" styleClass="section-title" />
+        <Label fx:id="lblTotal" layoutX="600.0" layoutY="470.0" text="Q 0.00" styleClass="total-label" />
+        <Button layoutX="620.0" layoutY="505.0" prefWidth="130.0" text="VOLVER" onAction="#eventoVolver" styleClass="secondary-button" />
+    </children>
 </AnchorPane>
