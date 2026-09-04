@@ -1,5 +1,6 @@
 package org.lpv.model;
 
+
 public class detalleVenta {
     private int idDetalle;
     private int idVenta;
@@ -7,6 +8,7 @@ public class detalleVenta {
     private int cantidad;
     private double precioUnitario;
     private double subtotal;
+    
 
 
 public detalleVenta() {
@@ -67,7 +69,8 @@ public detalleVenta() {
 
     public void setSubtotal(double subtotal) {
         this.subtotal = subtotal;
-    }
+    }    
+   
 }
 
 
