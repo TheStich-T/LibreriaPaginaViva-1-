@@ -7,6 +7,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.lpv.manager.RolPermisos;
+import org.lpv.manager.SessionContext;
+import org.lpv.model.Usuario;
 
 public class main extends Application {
 
@@ -19,6 +22,14 @@ public class main extends Application {
         escenarioPrincipal.sizeToScene();
         escenarioPrincipal.centerOnScreen();
         escenarioPrincipal.show();
+    }
+
+    public static void volverAlDashboard() throws IOException {
+        Usuario actual = SessionContext.getInstancia().getUsuairoActual();
+        String rol = (actual != null) ? actual.getRol() : null;
+        String dashboard = RolPermisos.getDashboardPorRol(rol);
+
+        cambiarEscena(dashboard != null ? dashboard : "/org/lpv/view/LoginView.fxml");
     }
 
     @Override
