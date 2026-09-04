@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import java.net.URL?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -8,7 +7,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="950.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lpv.controller.CajeroDashboardController">
+<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="950.0" styleClass="mainFxmlClass"
+            xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.lpv.controller.CajeroDashboardController">
     <stylesheets>
         <URL value="@/org/lpv/view/style/cajerodashboardview.css" />
     </stylesheets>
@@ -21,30 +22,55 @@
                 <Label text="Stock" styleClass="sidebar-item" />
             </children>
         </VBox>
-
         <Label fx:id="lblUsuarioActual" layoutX="20.0" layoutY="525.0" text="Cajero" styleClass="sidebar-user" />
-        <Button fx:id="btnCerrarSesion" mnemonicParsing="false" onAction="#eventoCerrarSesion" text="Cerrar sesión" style="-fx-background-color: transparent;" styleClass="logout-button" layoutX="20.0" layoutY="555.0" />
-
+        <Button fx:id="btnCerrarSesion" layoutX="20.0" layoutY="555.0" mnemonicParsing="false"
+                onAction="#eventoCerrarSesion" text="Cerrar sesión" style="-fx-background-color: transparent;" styleClass="logout-button" />
+        
         <Label layoutX="700.0" layoutY="15.0" text="LibreriaPaginaViva" styleClass="brand-title">
             <font>
                 <Font size="20.0" />
             </font>
         </Label>
-
-        <Label layoutX="200.0" layoutY="60.0" text="Bienvenido Cajero!" styleClass="page-title">
+        <Label layoutX="200.0" layoutY="45.0" text="Bienvenido Cajero!" styleClass="page-title">
             <font>
                 <Font size="22.0" />
             </font>
         </Label>
-
-        <GridPane layoutX="200.0" layoutY="120.0" hgap="20.0" vgap="20.0">
+        <Label layoutX="200.0" layoutY="78.0" text="Resumen de ventas del día" styleClass="page-subtitle" />
+        
+        <GridPane layoutX="200.0" layoutY="110.0" hgap="20.0" vgap="20.0">
             <children>
-                <Button text="Nueva Venta" prefWidth="190.0" prefHeight="65.0" wrapText="true" onAction="#eventoNuevaVenta" styleClass="dashboard-card, card-1" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                <Button text="Detalle de Ventas" prefWidth="190.0" prefHeight="65.0" wrapText="true" onAction="#eventoDetalleVentas" styleClass="dashboard-card, card-2" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                <Button text="Lista de Ventas" prefWidth="190.0" prefHeight="65.0" wrapText="true" onAction="#eventoListaVentas" styleClass="dashboard-card, card-3" GridPane.columnIndex="2" GridPane.rowIndex="0" />
-
-                <Button text="Consultar Stock Actual" prefWidth="190.0" prefHeight="65.0" wrapText="true" onAction="#eventoConsultarStock" styleClass="dashboard-card, card-4" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                <Button text="Productos con Stock Bajo" prefWidth="190.0" prefHeight="65.0" wrapText="true" onAction="#eventoModuloEnDesarrollo" styleClass="dashboard-card, card-5" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <VBox prefWidth="190.0" prefHeight="85.0" styleClass="summary-card" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                    <children>
+                        <Label text="VENTAS DEL DÍA" styleClass="summary-title" />
+                        <Label fx:id="lblCantidadVentas" text="0" styleClass="summary-value" />
+                    </children>
+                </VBox>
+                <VBox prefWidth="190.0" prefHeight="85.0" styleClass="summary-card" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                    <children>
+                        <Label text="TOTAL VENDIDO" styleClass="summary-title" />
+                        <Label fx:id="lblTotalVendido" text="Q 0.00" styleClass="summary-value" />
+                    </children>
+                </VBox>
+                <VBox prefWidth="190.0" prefHeight="85.0" styleClass="summary-card" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                    <children>
+                        <Label text="DESCUENTOS" styleClass="summary-title" />
+                        <Label fx:id="lblTotalDescuentos" text="Q 0.00" styleClass="summary-value" />
+                    </children>
+                </VBox>
+                
+                <Button text="Nueva Venta" prefWidth="190.0" prefHeight="65.0" wrapText="true"
+                        onAction="#eventoNuevaVenta" styleClass="dashboard-card, card-1" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <Button text="Detalle de Ventas" prefWidth="190.0" prefHeight="65.0" wrapText="true"
+                        onAction="#eventoDetalleVentas" styleClass="dashboard-card, card-2" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <Button text="Lista de Ventas" prefWidth="190.0" prefHeight="65.0" wrapText="true"
+                        onAction="#eventoListaVentas" styleClass="dashboard-card, card-3" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                <Button text="Consultar Stock Actual" prefWidth="190.0" prefHeight="65.0" wrapText="true"
+                        onAction="#eventoConsultarStock" styleClass="dashboard-card, card-4" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                <Button text="Productos con Stock Bajo" prefWidth="190.0" prefHeight="65.0" wrapText="true"
+                        onAction="#eventoModuloEnDesarrollo" styleClass="dashboard-card, card-5" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                <Button text="ACTUALIZAR RESUMEN" prefWidth="190.0" prefHeight="65.0" wrapText="true"
+                        onAction="#eventoActualizarResumen" styleClass="dashboard-card, card-6" GridPane.columnIndex="2" GridPane.rowIndex="2" />
             </children>
         </GridPane>
     </children>
