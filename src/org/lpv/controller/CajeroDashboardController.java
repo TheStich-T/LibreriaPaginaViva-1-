@@ -2,6 +2,7 @@ package org.lpv.controller;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -10,13 +11,21 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import org.lpv.dao.VentaDAO;
+import org.lpv.dao.impl.VentaDAOImpl;
 import org.lpv.manager.SessionContext;
 import org.lpv.model.Usuario;
+import org.lpv.model.Venta;
 import org.lpv.system.main;
 
 public class CajeroDashboardController implements Initializable {
 
     @FXML private Label lblUsuarioActual;
+    @FXML private Label lblCantidadVentas;
+    @FXML private Label lblTotalVendido;
+    @FXML private Label lblTotalDescuentos;
+
+    private VentaDAO ventaDAO;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -29,6 +38,8 @@ public class CajeroDashboardController implements Initializable {
         }
 
         lblUsuarioActual.setText(actual.getUsername() + " (Cajero)");
+        ventaDAO = new VentaDAOImpl();
+        actualizarResumen();
     }
 
     @FXML
@@ -58,9 +69,34 @@ public class CajeroDashboardController implements Initializable {
     }
 
     @FXML
+    public void eventoActualizarResumen(ActionEvent evento) {
+        actualizarResumen();
+    }
+
+    @FXML
     public void eventoModuloEnDesarrollo(ActionEvent evento) {
         String nombreModulo = ((Button) evento.getSource()).getText();
         mostrarAlerta(Alert.AlertType.INFORMATION, "\"" + nombreModulo + "\" todavía no está implementado. Corresponde a una épica futura del proyecto.");
+    }
+
+    private void actualizarResumen() {
+        Usuario actual = SessionContext.getInstancia().getUsuairoActual();
+        if (actual == null) {
+            return;
+        }
+        List<Venta> ventasDelDia = ventaDAO.listarVentasDelDiaPorUsuario(actual.getId());
+
+        int cantidadVentas = ventasDelDia.size();
+        double totalVendido = 0;
+        double totalDescuentos = 0;
+        for (Venta venta : ventasDelDia) {
+            totalVendido += venta.getTotal();
+            totalDescuentos += venta.getDescuento();
+        }
+
+        lblCantidadVentas.setText(String.valueOf(cantidadVentas));
+        lblTotalVendido.setText(String.format("Q %.2f", totalVendido));
+        lblTotalDescuentos.setText(String.format("Q %.2f", totalDescuentos));
     }
 
     private void cambiarEscena(String rutaFXML) {
