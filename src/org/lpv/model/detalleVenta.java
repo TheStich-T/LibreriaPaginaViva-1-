@@ -5,6 +5,7 @@ public class detalleVenta {
     private int idDetalle;
     private int idVenta;
     private String isbn;
+    private String titulo;
     private int cantidad;
     private double precioUnitario;
     private double subtotal;
@@ -47,6 +48,14 @@ public detalleVenta() {
         this.isbn = isbn;
     }
 
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
     public int getCantidad() {
         return cantidad;
     }
@@ -72,6 +81,3 @@ public detalleVenta() {
     }    
    
 }
-
-
-

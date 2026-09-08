@@ -3,12 +3,17 @@ package org.lpv.controller;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
@@ -17,6 +22,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.lpv.dao.ClienteDAO;
 import org.lpv.dao.LibrosDAO;
 import org.lpv.dao.VentaDAO;
@@ -100,6 +107,7 @@ public class VentaController implements Initializable {
             if (existente == null) {
                 detalleVenta detalle = new detalleVenta();
                 detalle.setIsbn(libro.getIsbn());
+                detalle.setTitulo(libro.getTitulo());
                 detalle.setCantidad(cantidad);
                 detalle.setPrecioUnitario(libro.getPrecio());
                 detalle.setSubtotal(cantidad * libro.getPrecio());
@@ -179,16 +187,22 @@ public class VentaController implements Initializable {
             venta.setCuiCliente(cui);
             venta.setIdUsuario(actual.getId());
 
-            boolean registrada = ventaDAO.registrarVenta(venta, new ArrayList<>(carrito));
+            List<detalleVenta> detallesFactura = new ArrayList<>(carrito);
+            boolean registrada = ventaDAO.registrarVenta(venta, detallesFactura);
             if (!registrada) {
                 mostrarAlerta(Alert.AlertType.ERROR, "No se pudo registrar la venta. No se realizaron cambios en la base de datos.");
                 return;
             }
 
-            mostrarAlerta(Alert.AlertType.INFORMATION,
-                    "Venta registrada correctamente. Número de venta: " + venta.getIdVenta());
+            mostrarAlerta(Alert.AlertType.INFORMATION,"Venta registrada correctamente. Número de venta: " + venta.getIdVenta());
+
+            Clientes cliente = clienteDAO.buscar(cui);
+            Venta ventaRegistrada = ventaDAO.buscar(venta.getIdVenta());
+            abrirFactura(evento, ventaRegistrada != null ? ventaRegistrada : venta, cliente, detallesFactura);
+
             carrito.clear();
             txtCuiCliente.clear();
+            cmbCliente.getSelectionModel().clearSelection();
             limpiarEntrada();
             actualizarTotales();
             lblMensaje.setText("");
@@ -213,6 +227,26 @@ public class VentaController implements Initializable {
     @FXML
     public void eventoVolver(ActionEvent evento) {
         volverAlDashboard();
+    }
+
+    private void abrirFactura(ActionEvent evento, Venta venta, Clientes cliente, List<detalleVenta> detalles) {
+        try {
+            FXMLLoader loader = new FXMLLoader(main.class.getResource("/org/lpv/view/FacturaView.fxml"));
+            Parent raiz = loader.load();
+            FacturaController controller = loader.getController();
+            controller.cargarDatosFactura(venta, cliente, FXCollections.observableArrayList(detalles));
+
+            Stage ventanaFactura = new Stage();
+            ventanaFactura.setTitle("Factura - Venta #" + venta.getIdVenta());
+            ventanaFactura.setScene(new Scene(raiz));
+
+            Stage ventanaVenta = (Stage) ((Node) evento.getSource()).getScene().getWindow();
+            ventanaFactura.initOwner(ventanaVenta);
+            ventanaFactura.initModality(Modality.WINDOW_MODAL);
+            ventanaFactura.showAndWait();
+        } catch (IOException e) {
+            mostrarAlerta(Alert.AlertType.ERROR, "No se pudo abrir la factura: " + e.getMessage());
+        }
     }
 
     private int leerCantidad() throws ValidarException {
