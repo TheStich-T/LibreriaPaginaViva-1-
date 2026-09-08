@@ -42,19 +42,19 @@
 
         <GridPane layoutX="200.0" layoutY="120.0" hgap="20.0" vgap="20.0">
             <children>
-                <Button text="Nueva Venta" prefWidth="180.0" prefHeight="65.0" wrapText="true" onAction="#eventoModuloEnDesarrollo" styleClass="dashboard-card, card-1" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                <Button text="Detalle de Ventas" prefWidth="180.0" prefHeight="65.0" wrapText="true" onAction="#eventoModuloEnDesarrollo" styleClass="dashboard-card, card-2" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                <Button text="Lista de Ventas" prefWidth="180.0" prefHeight="65.0" wrapText="true" onAction="#eventoModuloEnDesarrollo" styleClass="dashboard-card, card-3" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                <Button text="Nueva Venta" prefWidth="180.0" prefHeight="65.0" wrapText="true" onAction="#eventoNuevaVenta" styleClass="dashboard-card, card-1" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <Button text="Detalle de Ventas" prefWidth="180.0" prefHeight="65.0" wrapText="true" onAction="#eventoDetalleVentas" styleClass="dashboard-card, card-2" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                <Button text="Lista de Ventas" prefWidth="180.0" prefHeight="65.0" wrapText="true" onAction="#eventoListaVentas" styleClass="dashboard-card, card-3" GridPane.columnIndex="2" GridPane.rowIndex="0" />
                 <Button text="Administrar Usuarios" prefWidth="180.0" prefHeight="65.0" wrapText="true" onAction="#eventoAdministrarUsuarios" styleClass="dashboard-card, card-4" GridPane.columnIndex="3" GridPane.rowIndex="0" />
 
                 <Button text="Nueva Compra" prefWidth="180.0" prefHeight="65.0" wrapText="true" onAction="#eventoModuloEnDesarrollo" styleClass="dashboard-card, card-5" GridPane.columnIndex="0" GridPane.rowIndex="1" />
                 <Button text="Detalle de Compras" prefWidth="180.0" prefHeight="65.0" wrapText="true" onAction="#eventoModuloEnDesarrollo" styleClass="dashboard-card, card-6" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                 <Button text="Lista de Compras" prefWidth="180.0" prefHeight="65.0" wrapText="true" onAction="#eventoModuloEnDesarrollo" styleClass="dashboard-card, card-1" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                <Button text="Consultar Libros" prefWidth="180.0" prefHeight="65.0" wrapText="true" onAction="#eventoModuloEnDesarrollo" styleClass="dashboard-card, card-2" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                <Button text="Consultar Libros" prefWidth="180.0" prefHeight="65.0" wrapText="true" onAction="#eventoConsultarStock" styleClass="dashboard-card, card-2" GridPane.columnIndex="3" GridPane.rowIndex="1" />
 
                 <Button text="Crear/Modificar Libros" prefWidth="180.0" prefHeight="65.0" wrapText="true" onAction="#eventoModuloEnDesarrollo" styleClass="dashboard-card, card-3" GridPane.columnIndex="0" GridPane.rowIndex="2" />
                 <Button text="Consultar Stock Actual" prefWidth="180.0" prefHeight="65.0" wrapText="true" onAction="#eventoModuloEnDesarrollo" styleClass="dashboard-card, card-4" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                <Button text="Productos con Stock Bajo" prefWidth="180.0" prefHeight="65.0" wrapText="true" onAction="#eventoModuloEnDesarrollo" styleClass="dashboard-card, card-5" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                <Button text="Consultar Stock Bajo" prefWidth="180.0" prefHeight="65.0" wrapText="true" onAction="#eventoModuloEnDesarrollo" styleClass="dashboard-card, card-5" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                 <Button text="Registrar Ingresos" prefWidth="180.0" prefHeight="65.0" wrapText="true" onAction="#eventoModuloEnDesarrollo" styleClass="dashboard-card, card-6" GridPane.columnIndex="3" GridPane.rowIndex="2" />
 
                 <Button text="Registrar Salidas" prefWidth="180.0" prefHeight="65.0" wrapText="true" onAction="#eventoModuloEnDesarrollo" styleClass="dashboard-card, card-1" GridPane.columnIndex="0" GridPane.rowIndex="3" />

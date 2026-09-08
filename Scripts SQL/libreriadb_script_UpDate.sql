@@ -347,9 +347,7 @@ begin
     order by fecha_movimiento desc;
 end $$
 
--- =============================================================================
--- NUEVO — Sprint 2: búsqueda de libros (US-2.1) y ventas del día (US-2.6)
--- =============================================================================
+-- búsqueda de libros y ventas del día 
 
 create procedure sp_buscarlibroporisbn(
     in _isbn varchar(20)
@@ -491,3 +489,25 @@ create or replace view vw_lista_movimientos_inventario as select
     m.observacion as 'observación'
 from movimientos_inventario m
 inner join libros l on m.isbn = l.isbn;
+
+-- Stock de prueba para poder registrar ventas
+CALL sp_actualizarstocklibro('978-0-135', 50, 5);
+CALL sp_actualizarstocklibro('978-0-136', 50, 5);
+CALL sp_actualizarstocklibro('978-0-137', 50, 5);
+CALL sp_actualizarstocklibro('978-0-138', 50, 5);
+CALL sp_actualizarstocklibro('978-0-139', 50, 5);
+CALL sp_actualizarstocklibro('978-0-140', 50, 5);
+CALL sp_actualizarstocklibro('978-0-141', 50, 5);
+CALL sp_actualizarstocklibro('978-0-142', 50, 5);
+CALL sp_actualizarstocklibro('978-0-143', 50, 5);
+CALL sp_actualizarstocklibro('978-0-144', 50, 5);
+CALL sp_actualizarstocklibro('978-0-145', 50, 5);
+CALL sp_actualizarstocklibro('978-0-146', 50, 5);
+CALL sp_actualizarstocklibro('978-0-147', 50, 5);
+CALL sp_actualizarstocklibro('978-0-148', 50, 5);
+CALL sp_actualizarstocklibro('978-0-149', 50, 5);
+CALL sp_actualizarstocklibro('978-0-150', 50, 5);
+CALL sp_actualizarstocklibro('978-0-151', 50, 5);
+CALL sp_actualizarstocklibro('978-0-152', 50, 5);
+CALL sp_actualizarstocklibro('978-0-153', 50, 5);
+CALL sp_actualizarstocklibro('978-0-154', 50, 5);

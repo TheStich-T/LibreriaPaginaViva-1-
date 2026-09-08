@@ -34,11 +34,27 @@ public class AdminDashboardController implements Initializable {
 
     @FXML
     public void eventoAdministrarUsuarios(ActionEvent evento) {
-        try {
-            main.cambiarEscena("/org/lpv/view/GestionUsuariosView.fxml");
-        } catch (IOException e) {
-            mostrarAlerta(Alert.AlertType.ERROR, "No se pudo abrir Gestión de Usuarios: " + e.getMessage());
-        }
+        cambiarEscena("/org/lpv/view/GestionUsuariosView.fxml");
+    }
+
+    @FXML
+    public void eventoNuevaVenta(ActionEvent evento) {
+        cambiarEscena("/org/lpv/view/VentaView.fxml");
+    }
+
+    @FXML
+    public void eventoDetalleVentas(ActionEvent evento) {
+        cambiarEscena("/org/lpv/view/DetalleVentaView.fxml");
+    }
+
+    @FXML
+    public void eventoListaVentas(ActionEvent evento) {
+        cambiarEscena("/org/lpv/view/ListaVentasView.fxml");
+    }
+
+    @FXML
+    public void eventoConsultarStock(ActionEvent evento) {
+        cambiarEscena("/org/lpv/view/BuscarLibrosView.fxml");
     }
 
     @FXML
@@ -51,6 +67,14 @@ public class AdminDashboardController implements Initializable {
     public void eventoModuloEnDesarrollo(ActionEvent evento) {
         String nombreModulo = ((Button) evento.getSource()).getText();
         mostrarAlerta(Alert.AlertType.INFORMATION, "\"" + nombreModulo + "\" todavía no está implementado. Corresponde a una épica futura del proyecto.");
+    }
+
+    private void cambiarEscena(String rutaFXML) {
+        try {
+            main.cambiarEscena(rutaFXML);
+        } catch (IOException e) {
+            mostrarAlerta(Alert.AlertType.ERROR, "No se pudo abrir el módulo: " + e.getMessage());
+        }
     }
 
     private void volverAlLogin() {
