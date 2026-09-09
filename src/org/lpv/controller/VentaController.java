@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -45,6 +46,7 @@ public class VentaController implements Initializable {
     @FXML private TextField txtIsbn;
     @FXML private TextField txtCantidad;
     @FXML private TextField txtCuiCliente;
+    @FXML private TextField txtFiltroCliente;
     @FXML private ComboBox<Clientes> cmbCliente;
     @FXML private TableView<detalleVenta> tblCarrito;
     @FXML private TableColumn<detalleVenta, String> colIsbn;
@@ -56,6 +58,8 @@ public class VentaController implements Initializable {
     @FXML private Label lblMensaje;
 
     private final ObservableList<detalleVenta> carrito = FXCollections.observableArrayList();
+    private final ObservableList<Clientes> clientesData = FXCollections.observableArrayList();
+    private FilteredList<Clientes> clientesFiltrados;
     private LibrosDAO librosDAO;
     private VentaDAO ventaDAO;
     private ClienteDAO clienteDAO;
@@ -81,6 +85,7 @@ public class VentaController implements Initializable {
         colSubtotal.setCellValueFactory(new PropertyValueFactory<>("subtotal"));
         actualizarTotales();
         cargarClientes();
+        txtFiltroCliente.textProperty().addListener((obs, textoAnterior, textoNuevo) -> filtrarClientes(textoNuevo));
         cmbCliente.setOnAction(e -> seleccionarCliente());
         lblMensaje.setText("");
     }
@@ -194,7 +199,8 @@ public class VentaController implements Initializable {
                 return;
             }
 
-            mostrarAlerta(Alert.AlertType.INFORMATION,"Venta registrada correctamente. Número de venta: " + venta.getIdVenta());
+            mostrarAlerta(Alert.AlertType.INFORMATION,
+                    "Venta registrada correctamente. Número de venta: " + venta.getIdVenta());
 
             Clientes cliente = clienteDAO.buscar(cui);
             Venta ventaRegistrada = ventaDAO.buscar(venta.getIdVenta());
@@ -202,6 +208,7 @@ public class VentaController implements Initializable {
 
             carrito.clear();
             txtCuiCliente.clear();
+            txtFiltroCliente.clear();
             cmbCliente.getSelectionModel().clearSelection();
             limpiarEntrada();
             actualizarTotales();
@@ -218,6 +225,7 @@ public class VentaController implements Initializable {
     public void eventoLimpiar(ActionEvent evento) {
         carrito.clear();
         txtCuiCliente.clear();
+        txtFiltroCliente.clear();
         cmbCliente.getSelectionModel().clearSelection();
         limpiarEntrada();
         actualizarTotales();
@@ -294,10 +302,27 @@ public class VentaController implements Initializable {
     }
 
     private void cargarClientes() {
-        cmbCliente.setItems(FXCollections.observableArrayList(clienteDAO.listar()));
-        if (cmbCliente.getItems().isEmpty()) {
+        clientesData.setAll(clienteDAO.listar());
+        if (clientesData.isEmpty()) {
             mostrarAlerta(Alert.AlertType.ERROR, "No se pudieron cargar los clientes.");
         }
+        clientesFiltrados = new FilteredList<>(clientesData, cliente -> true);
+        cmbCliente.setItems(clientesFiltrados);
+    }
+
+    private void filtrarClientes(String texto) {
+        if (clientesFiltrados == null) {
+            return;
+        }
+        if (texto == null || texto.isBlank()) {
+            clientesFiltrados.setPredicate(cliente -> true);
+            return;
+        }
+        String textoBusqueda = texto.trim().toLowerCase();
+        clientesFiltrados.setPredicate(cliente ->
+                String.valueOf(cliente.getCui()).contains(textoBusqueda)
+                || cliente.getNombreCliente().toLowerCase().contains(textoBusqueda)
+                || cliente.getApellidoCliente().toLowerCase().contains(textoBusqueda));
     }
 
     private void seleccionarCliente() {
