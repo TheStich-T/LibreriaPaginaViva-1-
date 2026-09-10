@@ -102,25 +102,154 @@ public class LibrosDAOImpl implements LibrosDAO {
 
     @Override
     public boolean insertar(Libros objeto) {
-        log.warning("Intento de insertar libro: " + "operación aún no implementada");
-        throw new UnsupportedOperationException("Se implementa en Sprint 3 (US-3.4)");
+
+        log.info("Insertando libro: " + objeto.getIsbn());
+
+        String sql = "{call sp_insertarlibro(?, ?, ?, ?, ?, ?, ?, ?)}";
+
+        try (Connection conexion = Conexion.getInstancia().conectar();
+            CallableStatement consulta = conexion.prepareCall(sql)) {
+
+            consulta.setString(1, objeto.getIsbn());
+            consulta.setString(2, objeto.getTitulo());
+            if (objeto.getFechaPublicacion() != null) {
+                consulta.setDate(3, java.sql.Date.valueOf(objeto.getFechaPublicacion()));
+            } else {
+                consulta.setNull(3, java.sql.Types.DATE);
+            }
+            consulta.setDouble(4, objeto.getPrecio());
+            consulta.setInt(5, objeto.getIdCategoria());
+            consulta.setString(6, objeto.getNitEditorial());
+            consulta.setInt(7, objeto.getStockActual());
+            consulta.setInt(8, objeto.getStockMinimo());
+
+            int filasAfectadas = consulta.executeUpdate();
+            boolean creado = filasAfectadas > 0;
+
+            if (creado) {
+                log.info("Libro insertado: " + objeto.getIsbn());
+            }
+
+            return creado;
+
+        } catch (SQLException e) {
+            log.log(Level.SEVERE, "Error al insertar libro: " + objeto.getIsbn(), e);
+            return false;
+        }
     }
 
     @Override
     public List<Libros> listar() {
-        log.warning("Intento de listar libros: " + "operación aún no implementada");
-        throw new UnsupportedOperationException("Se implementa en Sprint 3 (US-3.4)");
+
+        log.info("Listando libros");
+
+        List<Libros> libros = new ArrayList<>();
+        String sql = "{call sp_listarlibros()}";
+
+        try (Connection conexion = Conexion.getInstancia().conectar();
+            CallableStatement consulta = conexion.prepareCall(sql);
+            ResultSet tablaResultado = consulta.executeQuery()) {
+
+            while (tablaResultado.next()) {
+                libros.add(mapearLibro(tablaResultado));
+            }
+
+            log.info("Libros listados correctamente: " + libros.size());
+
+        } catch (SQLException e) {
+            log.log(Level.SEVERE, "Error al listar libros", e);
+        }
+        return libros;
     }
 
     @Override
     public boolean actualizar(Libros objeto) {
-        log.warning("Intento de actualizar libro: " + "operación aún no implementada");
-        throw new UnsupportedOperationException("Se implementa en Sprint 3 (US-3.4)");
+
+        log.info("Actualizando libro: " + objeto.getIsbn());
+
+        String sql = "{call sp_actualizarlibro(?, ?, ?, ?, ?, ?, ?)}";
+
+        try (Connection conexion = Conexion.getInstancia().conectar();
+            CallableStatement consulta = conexion.prepareCall(sql)) {
+
+            consulta.setString(1, objeto.getIsbn());
+            consulta.setString(2, objeto.getTitulo());
+            if (objeto.getFechaPublicacion() != null) {
+                consulta.setDate(3, java.sql.Date.valueOf(objeto.getFechaPublicacion()));
+            } else {
+                consulta.setNull(3, java.sql.Types.DATE);
+            }
+            consulta.setDouble(4, objeto.getPrecio());
+            consulta.setInt(5, objeto.getIdCategoria());
+            consulta.setString(6, objeto.getNitEditorial());
+            consulta.setInt(7, objeto.getStockMinimo());
+
+            int filasAfectadas = consulta.executeUpdate();
+            boolean actualizado = filasAfectadas > 0;
+
+            if (actualizado) {
+                log.info("Libro actualizado: " + objeto.getIsbn());
+            }
+
+            return actualizado;
+
+        } catch (SQLException e) {
+            log.log(Level.SEVERE, "Error al actualizar libro: " + objeto.getIsbn(), e);
+            return false;
+        }
     }
 
     @Override
     public boolean eliminar(String isbn) {
-        log.warning("Intento de eliminar libro: " + "operación aún no implementada");
-        throw new UnsupportedOperationException("Se implementa en Sprint 3 (US-3.4)");
+
+        log.info("Desactivando libro: " + isbn);
+
+        String sql = "{call sp_desactivarlibro(?)}";
+
+        try (Connection conexion = Conexion.getInstancia().conectar();
+            CallableStatement consulta = conexion.prepareCall(sql)) {
+
+            consulta.setString(1, isbn);
+
+            int filasAfectadas = consulta.executeUpdate();
+            boolean desactivado = filasAfectadas > 0;
+
+            if (desactivado) {
+                log.info("Libro desactivado: " + isbn);
+            }
+
+            return desactivado;
+
+        } catch (SQLException e) {
+            log.log(Level.SEVERE, "Error al desactivar libro: " + isbn, e);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean activar(String isbn) {
+
+        log.info("Activando libro: " + isbn);
+
+        String sql = "{call sp_activarlibro(?)}";
+
+        try (Connection conexion = Conexion.getInstancia().conectar();
+            CallableStatement consulta = conexion.prepareCall(sql)) {
+
+            consulta.setString(1, isbn);
+
+            int filasAfectadas = consulta.executeUpdate();
+            boolean activado = filasAfectadas > 0;
+
+            if (activado) {
+                log.info("Libro activado: " + isbn);
+            }
+
+            return activado;
+
+        } catch (SQLException e) {
+            log.log(Level.SEVERE, "Error al activar libro: " + isbn, e);
+            return false;
+        }
     }
 }

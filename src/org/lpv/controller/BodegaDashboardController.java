@@ -38,9 +38,32 @@ public class BodegaDashboardController implements Initializable {
     }
 
     @FXML
+    public void eventoConsultarLibros(ActionEvent evento) {
+        cambiarEscena("/org/lpv/view/BuscarLibrosView.fxml");
+    }
+
+    @FXML
+    public void eventoGestionarLibros(ActionEvent evento) {
+        cambiarEscena("/org/lpv/view/LibroFormView.fxml");
+    }
+
+    @FXML
+    public void eventoRegistrarIngreso(ActionEvent evento) {
+        cambiarEscena("/org/lpv/view/IngresoInventarioView.fxml");
+    }
+
+    @FXML
     public void eventoModuloEnDesarrollo(ActionEvent evento) {
         String nombreModulo = ((Button) evento.getSource()).getText();
         mostrarAlerta(Alert.AlertType.INFORMATION, "\"" + nombreModulo + "\" todavía no está implementado. Corresponde a una épica futura del proyecto.");
+    }
+    
+    private void cambiarEscena(String rutaFXML) {
+        try {
+            main.cambiarEscena(rutaFXML);
+        } catch (IOException e) {
+            mostrarAlerta(Alert.AlertType.ERROR, "No se pudo abrir el módulo: " + e.getMessage());
+        }
     }
 
     private void volverAlLogin() {
