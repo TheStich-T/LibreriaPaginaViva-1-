@@ -44,7 +44,7 @@ public class BodegaDashboardController implements Initializable {
 
     @FXML
     public void eventoGestionarLibros(ActionEvent evento) {
-        cambiarEscena("/org/lpv/view/LibroFormView.fxml");
+        cambiarEscena("/org/lpv/view/LibrosFormView.fxml");
     }
 
     @FXML
@@ -57,7 +57,7 @@ public class BodegaDashboardController implements Initializable {
         String nombreModulo = ((Button) evento.getSource()).getText();
         mostrarAlerta(Alert.AlertType.INFORMATION, "\"" + nombreModulo + "\" todavía no está implementado. Corresponde a una épica futura del proyecto.");
     }
-    
+
     private void cambiarEscena(String rutaFXML) {
         try {
             main.cambiarEscena(rutaFXML);

@@ -7,4 +7,6 @@ public interface LibrosDAO extends CRUD<Libros, String> {
     List<Libros> buscarPorTitulo(String titulo);
     List<Libros> buscarPorAutor(String autor);
     boolean activar(String isbn);
+    List<Libros> listarStockCritico();
+    boolean actualizarPrecio(String isbn, double precio);
 }

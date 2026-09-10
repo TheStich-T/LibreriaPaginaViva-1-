@@ -10,8 +10,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -34,7 +36,7 @@ public class LibrosFormController implements Initializable {
 
     @FXML private TextField txtIsbn;
     @FXML private TextField txtTitulo;
-    @FXML private DatePicker dpFechaPublicacion;
+    @FXML private TextField txtFechaPublicacion;
     @FXML private TextField txtPrecio;
     @FXML private TextField txtIdCategoria;
     @FXML private TextField txtNitEditorial;
@@ -60,7 +62,9 @@ public class LibrosFormController implements Initializable {
                 txtIsbn.setText(seleccionado.getIsbn());
                 txtIsbn.setDisable(true); // el ISBN no se edita una vez creado
                 txtTitulo.setText(seleccionado.getTitulo());
-                dpFechaPublicacion.setValue(seleccionado.getFechaPublicacion());
+                 txtFechaPublicacion.setText(seleccionado.getFechaPublicacion() != null
+                        ? seleccionado.getFechaPublicacion().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                        : "");
                 txtPrecio.setText(String.valueOf(seleccionado.getPrecio()));
                 txtIdCategoria.setText(String.valueOf(seleccionado.getIdCategoria()));
                 txtNitEditorial.setText(seleccionado.getNitEditorial());
@@ -179,7 +183,7 @@ public class LibrosFormController implements Initializable {
             ValidarException.validarNoVacio(txtIsbn.getText(), "ISBN");
         }
         ValidarException.validarNoVacio(txtTitulo.getText(), "título");
-        ValidarException.validarNulo(dpFechaPublicacion.getValue(), "Debe seleccionar la fecha de publicación");
+        ValidarException.validarNoVacio(txtFechaPublicacion.getText(), "fecha de publicación");
         ValidarException.validarNoVacio(txtPrecio.getText(), "precio");
         ValidarException.validarNoVacio(txtIdCategoria.getText(), "categoría");
         ValidarException.validarNoVacio(txtNitEditorial.getText(), "editorial");
@@ -188,6 +192,7 @@ public class LibrosFormController implements Initializable {
         double precio;
         int idCategoria;
         int stockMinimo;
+        LocalDate fechaPublicacion;
 
         try {
             precio = Double.parseDouble(txtPrecio.getText().trim());
@@ -205,6 +210,12 @@ public class LibrosFormController implements Initializable {
         }
 
         try {
+            fechaPublicacion = LocalDate.parse(txtFechaPublicacion.getText().trim(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        } catch (DateTimeParseException e) {
+            throw new ValidarException("La fecha de publicación debe tener el formato dd/MM/yyyy");
+        }
+
+        try {
             stockMinimo = Integer.parseInt(txtStockMinimo.getText().trim());
         } catch (NumberFormatException e) {
             throw new ValidarException("El stock mínimo debe ser un número válido");
@@ -218,7 +229,7 @@ public class LibrosFormController implements Initializable {
             libro.setIsbn(txtIsbn.getText().trim());
         }
         libro.setTitulo(txtTitulo.getText().trim());
-        libro.setFechaPublicacion(dpFechaPublicacion.getValue());
+        libro.setFechaPublicacion(fechaPublicacion);
         libro.setPrecio(precio);
         libro.setIdCategoria(idCategoria);
         libro.setNitEditorial(txtNitEditorial.getText().trim());
@@ -232,7 +243,7 @@ public class LibrosFormController implements Initializable {
         txtIsbn.clear();
         txtIsbn.setDisable(false);
         txtTitulo.clear();
-        dpFechaPublicacion.setValue(null);
+        txtFechaPublicacion.clear();
         txtPrecio.clear();
         txtIdCategoria.clear();
         txtNitEditorial.clear();
