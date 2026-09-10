@@ -186,4 +186,102 @@ public class MovimientoInventarioDAOImpl implements MovimientoInventarioDAO {
         log.warning("operación no permitida");
         throw new UnsupportedOperationException("Los movimientos de inventario no se eliminan");
     }
+
+    @Override
+    public boolean registrarSalida(MovimientoInventario movimiento) {
+
+        if (movimiento == null || movimiento.getIsbn() == null) {
+            log.warning("No se puede registrar una salida sin datos.");
+            return false;
+        }
+        if (movimiento.getCantidad() <= 0) {
+            log.warning("Cantidad inválida para la salida: " + movimiento.getCantidad());
+            return false;
+        }
+
+        log.info("Registrando salida de inventario para el libro: " + movimiento.getIsbn());
+        String sqlStock = "select stock_actual, stock_minimo, activo "
+                + "from libros where isbn = ? for update";
+        String sqlMovimiento = "{call sp_registrarmovimiento(?, ?, ?, ?, ?, ?)}";
+        String sqlActualizarStock = "{call sp_actualizarstocklibro(?, ?, ?)}";
+
+        try (Connection conexion = Conexion.getInstancia().conectar()) {
+            conexion.setAutoCommit(false);
+
+            try {
+                int stockActual;
+                int stockMinimo;
+                boolean activo;
+
+                try (PreparedStatement consultaStock = conexion.prepareStatement(sqlStock)) {
+                    consultaStock.setString(1, movimiento.getIsbn());
+                    try (ResultSet resultadoStock = consultaStock.executeQuery()) {
+                        if (!resultadoStock.next()) {
+                            throw new SQLException("El libro " + movimiento.getIsbn() + " no existe.");
+                        }
+                        stockActual = resultadoStock.getInt("stock_actual");
+                        stockMinimo = resultadoStock.getInt("stock_minimo");
+                        activo = resultadoStock.getBoolean("activo");
+                    }
+                }
+
+                if (!activo) {
+                    throw new SQLException("El libro " + movimiento.getIsbn() + " está inactivo.");
+                }
+                if (movimiento.getCantidad() > stockActual) {
+                    throw new SQLException("La cantidad de salida supera el stock actual ("
+                            + stockActual + ") del libro " + movimiento.getIsbn() + ".");
+                }
+                try (CallableStatement consultaMovimiento = conexion.prepareCall(sqlMovimiento)) {
+                    consultaMovimiento.setString(1, movimiento.getIsbn());
+                    consultaMovimiento.setString(2, movimiento.getTipoMovimiento());
+                    consultaMovimiento.setInt(3, movimiento.getCantidad());
+                    if (movimiento.getIdUsuario() > 0) {
+                        consultaMovimiento.setInt(4, movimiento.getIdUsuario());
+                    } else {
+                        consultaMovimiento.setNull(4, Types.INTEGER);
+                    }
+                    consultaMovimiento.setString(5, movimiento.getObservacion());
+                    if (movimiento.getNitProveedor() != null && !movimiento.getNitProveedor().isBlank()) {
+                        consultaMovimiento.setString(6, movimiento.getNitProveedor());
+                    } else {
+                        consultaMovimiento.setNull(6, Types.VARCHAR);
+                    }
+                    consultaMovimiento.executeUpdate();
+                }
+
+                int nuevoStock = stockActual - movimiento.getCantidad();
+                try (CallableStatement consultaActualizar = conexion.prepareCall(sqlActualizarStock)) {
+                    consultaActualizar.setString(1, movimiento.getIsbn());
+                    consultaActualizar.setInt(2, nuevoStock);
+                    consultaActualizar.setInt(3, stockMinimo);
+                    consultaActualizar.executeUpdate();
+                }
+
+                conexion.commit();
+                log.info("Salida registrada correctamente para el libro: " + movimiento.getIsbn()
+                        + ". Nuevo stock: " + nuevoStock);
+                return true;
+            } catch (SQLException e) {
+                try {
+                    conexion.rollback();
+                } catch (SQLException rollbackError) {
+                    log.log(Level.SEVERE, "Error al hacer rollback de la salida", rollbackError);
+                }
+                log.log(Level.SEVERE, "Error al registrar salida de inventario", e);
+                return false;
+
+            } finally {
+                try {
+                    conexion.setAutoCommit(true);
+                } catch (SQLException e) {
+                    log.log(Level.SEVERE, "Error al restaurar autoCommit", e);
+                }
+            }
+
+        } catch (SQLException e) {
+            log.log(Level.SEVERE, "Error de conexión al registrar salida de inventario", e);
+            return false;
+        }
+    }
 }
