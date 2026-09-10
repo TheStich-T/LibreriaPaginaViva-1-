@@ -3,7 +3,6 @@ package org.lpv.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-
 public class Libros {
 
     private String isbn;
@@ -20,7 +19,9 @@ public class Libros {
     public Libros() {
     }
 
-    public Libros(String isbn, String titulo, LocalDate fechaPublicacion, double precio, int idCategoria, String nitEditorial, int stockActual, int stockMinimo, boolean activo, LocalDateTime fechaActualizacion) {
+    public Libros(String isbn, String titulo, LocalDate fechaPublicacion, double precio,
+                  int idCategoria, String nitEditorial, int stockActual, int stockMinimo,
+                  boolean activo, LocalDateTime fechaActualizacion) {
         this.isbn = isbn;
         this.titulo = titulo;
         this.fechaPublicacion = fechaPublicacion;
@@ -33,83 +34,79 @@ public class Libros {
         this.fechaActualizacion = fechaActualizacion;
     }
 
-    public String getIsbn() {
-        return isbn;
+    public String getIsbn() { 
+        return isbn; 
+    }
+    
+    public void setIsbn(String isbn) { 
+        this.isbn = isbn; 
     }
 
-    public void setIsbn(String isbn) {
-        this.isbn = isbn;
+    public String getTitulo() { 
+        return titulo; 
+    }
+    
+    public void setTitulo(String titulo) { 
+        this.titulo = titulo; 
     }
 
-    public String getTitulo() {
-        return titulo;
+    public LocalDate getFechaPublicacion() { 
+        return fechaPublicacion; 
+    }
+    
+    public void setFechaPublicacion(LocalDate fechaPublicacion)  { 
+        this.fechaPublicacion = fechaPublicacion; 
     }
 
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
+    public double getPrecio() { 
+        return precio; 
+    }
+    
+    public void setPrecio(double precio) { 
+        this.precio = precio; 
     }
 
-    public LocalDate getFechaPublicacion() {
-        return fechaPublicacion;
+    public int getIdCategoria() { 
+        return idCategoria; 
+    }
+    
+    public void setIdCategoria(int idCategoria) { 
+        this.idCategoria = idCategoria; 
     }
 
-    public void setFechaPublicacion(LocalDate fechaPublicacion) {
-        this.fechaPublicacion = fechaPublicacion;
+    public String getNitEditorial() { return nitEditorial; }
+    
+    public void setNitEditorial(String nitEditorial) { 
+        this.nitEditorial = nitEditorial; 
     }
 
-    public double getPrecio() {
-        return precio;
+    public int getStockActual() { 
+        return stockActual; 
+    }
+    
+    public void setStockActual(int stockActual) { 
+        this.stockActual = stockActual; }
+
+    public int getStockMinimo() { 
+        return stockMinimo; 
+    }
+    
+    public void setStockMinimo(int stockMinimo) { 
+        this.stockMinimo = stockMinimo; }
+
+    public boolean isActivo() { 
+        return activo; 
+    }
+    
+    public void setActivo(boolean activo) { 
+        this.activo = activo; 
     }
 
-    public void setPrecio(double precio) {
-        this.precio = precio;
+    public LocalDateTime getFechaActualizacion() { 
+        return fechaActualizacion; 
     }
-
-    public int getIdCategoria() {
-        return idCategoria;
-    }
-
-    public void setIdCategoria(int idCategoria) {
-        this.idCategoria = idCategoria;
-    }
-
-    public String getNitEditorial() {
-        return nitEditorial;
-    }
-
-    public void setNitEditorial(String nitEditorial) {
-        this.nitEditorial = nitEditorial;
-    }
-
-    public int getStockActual() {
-        return stockActual;
-    }
-
-    public void setStockActual(int stockActual) {
-        this.stockActual = stockActual;
-    }
-
-    public int getStockMinimo() {
-        return stockMinimo;
-    }
-
-    public void setStockMinimo(int stockMinimo) {
-        this.stockMinimo = stockMinimo;
-    }
-
-    public boolean isActivo() {
-        return activo;
-    }
-
-    public void setActivo(boolean activo) {
-        this.activo = activo;
-    }
-
-    public LocalDateTime getFechaActualizacion() {
-        return fechaActualizacion;
-    }
-
-    public void setFechaActualizacion(LocalDateTime fechaActualizacion) {
-        this.fechaActualizacion = fechaActualizacion;
+    
+    public void setFechaActualizacion(LocalDateTime fechaActualizacion) { 
+        this.fechaActualizacion = fechaActualizacion; 
     }
 }

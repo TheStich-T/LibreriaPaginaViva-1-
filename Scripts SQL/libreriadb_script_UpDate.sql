@@ -511,3 +511,90 @@ CALL sp_actualizarstocklibro('978-0-151', 50, 5);
 CALL sp_actualizarstocklibro('978-0-152', 50, 5);
 CALL sp_actualizarstocklibro('978-0-153', 50, 5);
 CALL sp_actualizarstocklibro('978-0-154', 50, 5);
+
+-- =============================================================================
+-- corrección US-3.4: sincronizar procedimientos de libros con stock_actual,
+-- stock_minimo, activo, y con lo que realmente llama LibrosDAOImpl
+-- =============================================================================
+drop procedure if exists sp_listarlibros;
+drop procedure if exists sp_insertarlibro;
+drop procedure if exists sp_actualizarlibro;
+drop procedure if exists sp_buscarlibropotitulo;
+drop procedure if exists sp_desactivarlibro;
+drop procedure if exists sp_activarlibro;
+delimiter $$
+
+create procedure sp_listarlibros()
+begin
+    select isbn, titulo, fecha_publicacion, precio, id_categoria, nit_editorial,
+           stock_actual, stock_minimo, activo
+    from libros;
+end $$
+
+create procedure sp_insertarlibro(
+    in _isbn varchar(20),
+    in _titulo varchar(100),
+    in _fecha_publicacion date,
+    in _precio decimal(8,2),
+    in _id_categoria int,
+    in _nit_editorial varchar(20),
+    in _stock_actual int,
+    in _stock_minimo int
+)
+begin
+    insert into libros(isbn, titulo, fecha_publicacion, precio, id_categoria, nit_editorial,
+                        stock_actual, stock_minimo)
+    values (_isbn, _titulo, _fecha_publicacion, _precio, _id_categoria, _nit_editorial,
+            _stock_actual, _stock_minimo);
+end $$
+
+create procedure sp_actualizarlibro(
+    in _isbn varchar(20),
+    in _titulo varchar(100),
+    in _fecha_publicacion date,
+    in _precio decimal(8,2),
+    in _id_categoria int,
+    in _nit_editorial varchar(20),
+    in _stock_minimo int
+)
+begin
+    update libros
+    set titulo = _titulo,
+        fecha_publicacion = _fecha_publicacion,
+        precio = _precio,
+        id_categoria = _id_categoria,
+        nit_editorial = _nit_editorial,
+        stock_minimo = _stock_minimo
+    where isbn = _isbn;
+end $$
+
+create procedure sp_buscarlibroportitulo(
+    in _titulo varchar(150)
+)
+begin
+    select isbn, titulo, fecha_publicacion, precio, id_categoria, nit_editorial,
+           stock_actual, stock_minimo, activo
+    from libros
+    where titulo like concat('%', _titulo, '%')
+      and activo = true;
+end $$
+
+create procedure sp_desactivarlibro(
+    in _isbn varchar(20)
+)
+begin
+    update libros
+    set activo = false
+    where isbn = _isbn;
+end $$
+
+create procedure sp_activarlibro(
+    in _isbn varchar(20)
+)
+begin
+    update libros
+    set activo = true
+    where isbn = _isbn;
+end $$
+
+delimiter ;
