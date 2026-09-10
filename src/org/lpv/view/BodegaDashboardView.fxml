@@ -45,8 +45,8 @@
                 <Button text="Crear/Modificar Libros" prefWidth="190.0" prefHeight="65.0" wrapText="true" onAction="#eventoGestionarLibros" styleClass="dashboard-card, card-2" GridPane.columnIndex="1" GridPane.rowIndex="0" />
                 <Button text="Registrar Salidas" prefWidth="190.0" prefHeight="65.0" wrapText="true" onAction="#eventoModuloEnDesarrollo" styleClass="dashboard-card, card-3" GridPane.columnIndex="2" GridPane.rowIndex="0" />
 
-                <Button text="Consultar Stock Actual" prefWidth="190.0" prefHeight="65.0" wrapText="true" onAction="#eventoModuloEnDesarrollo" styleClass="dashboard-card, card-4" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                <Button text="Consultar Stock Bajo" prefWidth="190.0" prefHeight="65.0" wrapText="true" onAction="#eventoModuloEnDesarrollo" styleClass="dashboard-card, card-5" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <Button text="Consultar Stock Actual" prefWidth="190.0" prefHeight="65.0" wrapText="true" onAction="#eventoConsultarStockActual" styleClass="dashboard-card, card-4" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <Button text="Consultar Stock Bajo" prefWidth="190.0" prefHeight="65.0" wrapText="true" onAction="#eventoConsultarStockBajo" styleClass="dashboard-card, card-5" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                 <Button text="Registrar Ingresos" prefWidth="190.0" prefHeight="65.0" wrapText="true" onAction="#eventoRegistrarIngreso" styleClass="dashboard-card, card-6" GridPane.columnIndex="2" GridPane.rowIndex="1" />
             </children>
         </GridPane>
