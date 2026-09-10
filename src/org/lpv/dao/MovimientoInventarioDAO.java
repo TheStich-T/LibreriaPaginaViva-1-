@@ -8,4 +8,6 @@ public interface MovimientoInventarioDAO extends CRUD<MovimientoInventario, Inte
     List<MovimientoInventario> listarPorIsbn(String isbn);
 
     boolean registrarIngreso(MovimientoInventario movimiento);
+    
+    boolean registrarSalida(MovimientoInventario movimiento);
 }
