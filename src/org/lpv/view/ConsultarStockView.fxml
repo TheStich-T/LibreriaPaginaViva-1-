@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<?import java.net.URL?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+ 
+<AnchorPane id="AnchorPane" prefHeight="550.0" prefWidth="650.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lpv.controller.ConsultarStockController">
+<stylesheets>
+<URL value="@/org/lpv/view/style/consultarstockview.css" />
+</stylesheets>
+<children>
+<Label layoutX="210.0" layoutY="15.0" styleClass="page-title" text="Stock Actual">
+<font>
+<Font size="22.0" />
+</font>
+</Label>
+ 
+        <Button fx:id="btnActualizar" layoutX="500.0" layoutY="55.0" mnemonicParsing="false" onAction="#eventoActualizar" prefHeight="30.0" prefWidth="120.0" styleClass="primary-button" text="ACTUALIZAR" />
+ 
+        <TableView fx:id="tblStock" layoutX="30.0" layoutY="100.0" prefHeight="380.0" prefWidth="590.0" styleClass="table-view">
+<columns>
+<TableColumn fx:id="colIsbn" prefWidth="120.0" text="ISBN">
+<cellValueFactory><PropertyValueFactory property="isbn" /></cellValueFactory>
+</TableColumn>
+<TableColumn fx:id="colTitulo" prefWidth="200.0" text="Título">
+<cellValueFactory><PropertyValueFactory property="titulo" /></cellValueFactory>
+</TableColumn>
+<TableColumn fx:id="colStockActual" prefWidth="90.0" text="Stock Actual">
+<cellValueFactory><PropertyValueFactory property="stockActual" /></cellValueFactory>
+</TableColumn>
+<TableColumn fx:id="colStockMinimo" prefWidth="90.0" text="Stock Mínimo">
+<cellValueFactory><PropertyValueFactory property="stockMinimo" /></cellValueFactory>
+</TableColumn>
+<TableColumn fx:id="colEstado" prefWidth="85.0" text="Estado" />
+</columns>
+</TableView>
+ 
+        <Label fx:id="lblMensaje" layoutX="30.0" layoutY="500.0" text="" textFill="#b5453f" />
+<Button layoutX="502.0" layoutY="500.0" mnemonicParsing="false" onAction="#eventoVolver" prefHeight="33.0" prefWidth="103.0" text="Regresar" />
+</children>
+</AnchorPane>

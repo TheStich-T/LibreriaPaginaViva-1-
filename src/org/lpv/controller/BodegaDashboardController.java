@@ -51,6 +51,16 @@ public class BodegaDashboardController implements Initializable {
     public void eventoRegistrarIngreso(ActionEvent evento) {
         cambiarEscena("/org/lpv/view/IngresoInventarioView.fxml");
     }
+    
+    @FXML
+    public void eventoConsultarStockActual(ActionEvent evento) {
+        cambiarEscena("/org/lpv/view/ConsultarStockView.fxml");
+    }
+    
+    @FXML
+    public void eventoConsultarStockBajo(ActionEvent evento) {
+        cambiarEscena("/org/lpv/view/StockCriticoView.fxml");
+    }
 
     @FXML
     public void eventoModuloEnDesarrollo(ActionEvent evento) {
