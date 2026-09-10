@@ -25,6 +25,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import org.lpv.dao.ClienteDAO;
 import org.lpv.dao.LibrosDAO;
 import org.lpv.dao.VentaDAO;
@@ -43,6 +44,8 @@ import org.lpv.system.main;
 
 public class VentaController implements Initializable {
 
+    @FXML private TextField txtFiltroLibro;
+    @FXML private ComboBox<Libros> cmbLibro;
     @FXML private TextField txtIsbn;
     @FXML private TextField txtCantidad;
     @FXML private TextField txtCuiCliente;
@@ -59,7 +62,9 @@ public class VentaController implements Initializable {
 
     private final ObservableList<detalleVenta> carrito = FXCollections.observableArrayList();
     private final ObservableList<Clientes> clientesData = FXCollections.observableArrayList();
+    private final ObservableList<Libros> librosData = FXCollections.observableArrayList();
     private FilteredList<Clientes> clientesFiltrados;
+    private FilteredList<Libros> librosFiltrados;
     private LibrosDAO librosDAO;
     private VentaDAO ventaDAO;
     private ClienteDAO clienteDAO;
@@ -85,8 +90,22 @@ public class VentaController implements Initializable {
         colSubtotal.setCellValueFactory(new PropertyValueFactory<>("subtotal"));
         actualizarTotales();
         cargarClientes();
+        cargarLibros();
         txtFiltroCliente.textProperty().addListener((obs, textoAnterior, textoNuevo) -> filtrarClientes(textoNuevo));
+        txtFiltroLibro.textProperty().addListener((obs, textoAnterior, textoNuevo) -> filtrarLibros(textoNuevo));
         cmbCliente.setOnAction(e -> seleccionarCliente());
+        cmbLibro.setOnAction(e -> seleccionarLibro());
+        cmbLibro.setConverter(new StringConverter<Libros>() {
+            @Override
+            public String toString(Libros libro) {
+                return libro == null ? "" : libro.getIsbn() + " - " + libro.getTitulo();
+            }
+
+            @Override
+            public Libros fromString(String string) {
+                return cmbLibro.getValue();
+            }
+        });
         lblMensaje.setText("");
     }
 
@@ -211,6 +230,7 @@ public class VentaController implements Initializable {
             txtFiltroCliente.clear();
             cmbCliente.getSelectionModel().clearSelection();
             limpiarEntrada();
+            cargarLibros();
             actualizarTotales();
             lblMensaje.setText("");
 
@@ -323,6 +343,39 @@ public class VentaController implements Initializable {
                 String.valueOf(cliente.getCui()).contains(textoBusqueda)
                 || cliente.getNombreCliente().toLowerCase().contains(textoBusqueda)
                 || cliente.getApellidoCliente().toLowerCase().contains(textoBusqueda));
+    }
+
+    private void cargarLibros() {
+        // solo libros activos se pueden vender
+        librosData.setAll(librosDAO.listar().stream().filter(Libros::isActivo).toList());
+        if (librosFiltrados == null) {
+            librosFiltrados = new FilteredList<>(librosData, libro -> true);
+            cmbLibro.setItems(librosFiltrados);
+        }
+    }
+
+    private void filtrarLibros(String texto) {
+        if (librosFiltrados == null) {
+            return;
+        }
+        if (texto == null || texto.isBlank()) {
+            librosFiltrados.setPredicate(libro -> true);
+            return;
+        }
+        String textoBusqueda = texto.trim().toLowerCase();
+        librosFiltrados.setPredicate(libro ->
+                libro.getTitulo().toLowerCase().contains(textoBusqueda)
+                || libro.getIsbn().toLowerCase().contains(textoBusqueda));
+    }
+
+    private void seleccionarLibro() {
+        Libros seleccionado = cmbLibro.getValue();
+        if (seleccionado == null) {
+            return;
+        }
+        txtIsbn.setText(seleccionado.getIsbn());
+        txtCantidad.requestFocus();
+        txtCantidad.selectAll();
     }
 
     private void seleccionarCliente() {

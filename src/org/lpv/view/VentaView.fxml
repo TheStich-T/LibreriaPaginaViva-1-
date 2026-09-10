@@ -16,14 +16,19 @@
     </stylesheets>
     <children>
         <Label layoutX="30.0" layoutY="20.0" text="Nueva Venta" styleClass="page-title"><font><Font size="24.0" /></font></Label>
-        <Label layoutX="30.0" layoutY="65.0" text="ISBN" styleClass="field-label" />
-        <TextField fx:id="txtIsbn" layoutX="30.0" layoutY="85.0" prefWidth="220.0" styleClass="text-input" />
-        <Label layoutX="270.0" layoutY="65.0" text="Cantidad" styleClass="field-label" />
-        <TextField fx:id="txtCantidad" layoutX="270.0" layoutY="85.0" prefWidth="100.0" styleClass="text-input" />
-        <Button layoutX="390.0" layoutY="85.0" prefWidth="110.0" text="AGREGAR" onAction="#eventoAgregar" styleClass="primary-button" />
-        <Button layoutX="510.0" layoutY="85.0" prefWidth="150.0" text="ACTUALIZAR CANT." onAction="#eventoCambiarCantidad" styleClass="secondary-button" />
 
-        <TableView fx:id="tblCarrito" layoutX="30.0" layoutY="135.0" prefHeight="285.0" prefWidth="630.0" styleClass="table-view">
+        <Label layoutX="30.0" layoutY="60.0" text="Buscar libro (nombre o ISBN)" styleClass="field-label" />
+        <TextField fx:id="txtFiltroLibro" layoutX="30.0" layoutY="80.0" prefWidth="320.0" promptText="Escribí para filtrar..." styleClass="text-input" />
+        <ComboBox fx:id="cmbLibro" layoutX="360.0" layoutY="80.0" prefWidth="260.0" promptText="Seleccionar libro" />
+
+        <Label layoutX="30.0" layoutY="125.0" text="ISBN" styleClass="field-label" />
+        <TextField fx:id="txtIsbn" layoutX="30.0" layoutY="145.0" prefWidth="220.0" styleClass="text-input" />
+        <Label layoutX="270.0" layoutY="125.0" text="Cantidad" styleClass="field-label" />
+        <TextField fx:id="txtCantidad" layoutX="270.0" layoutY="145.0" prefWidth="100.0" styleClass="text-input" />
+        <Button layoutX="390.0" layoutY="145.0" prefWidth="110.0" text="AGREGAR" onAction="#eventoAgregar" styleClass="primary-button" />
+        <Button layoutX="510.0" layoutY="145.0" prefWidth="150.0" text="ACTUALIZAR CANT." onAction="#eventoCambiarCantidad" styleClass="secondary-button" />
+
+        <TableView fx:id="tblCarrito" layoutX="30.0" layoutY="195.0" prefHeight="225.0" prefWidth="630.0" styleClass="table-view">
             <columns>
                 <TableColumn fx:id="colIsbn" prefWidth="190.0" text="ISBN"><cellValueFactory><PropertyValueFactory property="isbn" /></cellValueFactory></TableColumn>
                 <TableColumn fx:id="colCantidad" prefWidth="110.0" text="Cantidad"><cellValueFactory><PropertyValueFactory property="cantidad" /></cellValueFactory></TableColumn>
@@ -51,4 +56,4 @@
         <Button layoutX="810.0" layoutY="540.0" prefWidth="100.0" text="VOLVER" onAction="#eventoVolver" styleClass="secondary-button" />
         <Label fx:id="lblMensaje" layoutX="30.0" layoutY="565.0" text="" styleClass="message-label" />
     </children>
-</AnchorPane>
+</AnchorPane>   
