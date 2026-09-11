@@ -27,14 +27,14 @@
          </font>
       </Label>
 
-      <TableView layoutX="30.0" layoutY="100.0" prefHeight="350.0" prefWidth="550.0">
-        <columns>
-          <TableColumn prefWidth="200.0" text="Libros" />
-          <TableColumn prefWidth="130.0" text="Tipo de salida" />
-            <TableColumn prefWidth="110.0" text="Cantidad" />
-            <TableColumn prefWidth="108.0" text="NIT" />
-        </columns>
-      </TableView>
+      <TableView fx:id="tblSalidas" layoutX="30.0" layoutY="100.0" prefHeight="350.0" prefWidth="550.0">
+    <columns>
+        <TableColumn fx:id="colLibro" prefWidth="200.0" text="Libros" />
+        <TableColumn fx:id="colTipoSalida" prefWidth="130.0" text="Tipo de salida" />
+        <TableColumn fx:id="colCantidad" prefWidth="110.0" text="Cantidad" />
+        <TableColumn fx:id="colNit" prefWidth="108.0" text="NIT" />
+      </columns>
+    </TableView>
 
       <GridPane layoutX="620.0" layoutY="100.0" prefHeight="350.0" prefWidth="330.0">
         <columnConstraints>

@@ -13,6 +13,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.util.StringConverter;
@@ -36,6 +38,10 @@ public class IngresoInventarioController implements Initializable {
     @FXML private Label lblStockActual;
     @FXML private Label lblMensaje;
     @FXML private Button btnRegistrar;
+    @FXML private TableView<MovimientoInventario> tblIngresos;
+    @FXML private TableColumn<MovimientoInventario, String> colLibro;
+    @FXML private TableColumn<MovimientoInventario, Integer> colCantidad;
+    @FXML private TableColumn<MovimientoInventario, String> colNit;
 
     private LibrosDAO librosDAO;
     private MovimientoInventarioDAO movimientoDAO;
@@ -48,6 +54,8 @@ public class IngresoInventarioController implements Initializable {
         lblStockActual.setText("");
 
         cargarLibrosDisponibles();
+        configurarTabla();
+        tblIngresos.setItems(FXCollections.observableArrayList());
 
         cmbLibro.setConverter(new StringConverter<Libros>() {
             @Override
@@ -66,7 +74,7 @@ public class IngresoInventarioController implements Initializable {
                 lblStockActual.setText("Stock actual: " + seleccionado.getStockActual()
                         + " (mínimo: " + seleccionado.getStockMinimo() + ")");
             } else {
-                lblStockActual.setText("");
+                lblStockActual.setText("");        
             }
         });
     }
@@ -99,6 +107,7 @@ public class IngresoInventarioController implements Initializable {
 
             MovimientoInventario movimiento = new MovimientoInventario();
             movimiento.setIsbn(libroSeleccionado.getIsbn());
+            movimiento.setTipoMovimiento("INGRESO");
             movimiento.setCantidad(cantidad);
             movimiento.setIdUsuario(usuarioActual != null ? usuarioActual.getId() : 0);
             movimiento.setObservacion(txtObservacion.getText() != null ? txtObservacion.getText().trim() : "");
@@ -110,6 +119,7 @@ public class IngresoInventarioController implements Initializable {
                 mostrarAlerta(Alert.AlertType.INFORMATION,
                         "Ingreso registrado con éxito. Nuevo stock: "
                         + (libroSeleccionado.getStockActual() + cantidad));
+                tblIngresos.getItems().add(movimiento);
                 limpiarCampos();
                 cargarLibrosDisponibles();
             } else {
@@ -143,5 +153,11 @@ public class IngresoInventarioController implements Initializable {
     private void mostrarAlerta(Alert.AlertType tipo, String mensaje) {
         Alert alerta = new Alert(tipo, mensaje, ButtonType.OK);
         alerta.show();
+    }
+
+    private void configurarTabla() {
+        colLibro.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getIsbn()));
+        colCantidad.setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getCantidad()));
+        colNit.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getNitProveedor()));
     }
 }
