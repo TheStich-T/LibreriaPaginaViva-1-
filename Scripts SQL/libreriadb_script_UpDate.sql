@@ -598,3 +598,21 @@ begin
 end $$
 
 delimiter ;
+
+-- =============================================================================
+-- datos de ejemplo: proveedores (necesarios para probar Salida de Inventario,
+-- ya que el CRUD de proveedores es nuevo y la tabla estaba vacía)
+-- =============================================================================
+CALL sp_insertarproveedor('P001-A', 'Distribuidora Central', '22551001', 'Zona 4, Ciudad');
+CALL sp_insertarproveedor('P002-B', 'Suministros del Libro S.A.', '22551002', 'Zona 9, Ciudad');
+CALL sp_insertarproveedor('P003-C', 'Importadora Literaria', '22551003', 'Zona 1, Ciudad');
+delimiter $$
+create procedure sp_listarsalidas()
+begin
+    select id_movimiento, isbn, tipo_movimiento, cantidad, fecha_movimiento,
+           id_usuario, observacion, nit_proveedor
+    from movimientos_inventario
+    where tipo_movimiento in ('MERMA','TRASLADO','DEVOLUCION')
+    order by fecha_movimiento desc;
+end $$
+delimiter ;
