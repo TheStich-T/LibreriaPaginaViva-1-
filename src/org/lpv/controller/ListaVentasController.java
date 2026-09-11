@@ -48,14 +48,9 @@ public class ListaVentasController implements Initializable {
     }
 
     private void cargarVentas() {
-        Usuario actual = SessionContext.getInstancia().getUsuairoActual();
-        if (actual == null) {
-            return;
-        }
-
-        List<Venta> ventas = ventaDAO.listarVentasDelDiaPorUsuario(actual.getId());
-        tblVentas.setItems(FXCollections.observableArrayList(ventas));
-    }
+    List<Venta> ventas = ventaDAO.listar();
+    tblVentas.setItems(FXCollections.observableArrayList(ventas));
+}
 
     @FXML
     public void eventoActualizar(ActionEvent evento) {
