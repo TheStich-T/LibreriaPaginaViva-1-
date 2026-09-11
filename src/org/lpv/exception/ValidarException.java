@@ -20,7 +20,7 @@ public class ValidarException extends Exception {
                     nombreCampo);
 
             throw new ValidarException(
-                    "El campo " + nombreCampo + "no puede estar vacio");
+                    "El campo " + nombreCampo + " no puede estar vacio");
         }
     }
 
