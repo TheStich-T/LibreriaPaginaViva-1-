@@ -29,7 +29,7 @@ public class ProveedorDAOImpl implements ProveedorDAO {
             int filasAfectadas = consulta.executeUpdate();
             boolean creado = filasAfectadas > 0;
             if (creado) log.info("Proveedor insertado: " + objeto.getNitProveedor());
-            return creado; 
+            return creado;
         } catch (SQLException e) {
             log.log(Level.SEVERE, "Error al insertar proveedor: " + objeto.getNitProveedor(), e);
             return false;
@@ -53,9 +53,6 @@ public class ProveedorDAOImpl implements ProveedorDAO {
         }
         return proveedores;
     }
-
-    // no existe un sp_buscarproveedor individual, así que se filtra
-    // en memoria sobre el listado (mismo patrón que usa la búsqueda de libros)
     @Override
     public Proveedor buscar(String nitProveedor) {
         return listar().stream()
