@@ -30,6 +30,9 @@ import org.lpv.system.main;
 
 public class LibrosFormController implements Initializable {
 
+    // T3.5.6 — ISBN que otra pantalla (ej. Dashboard Bodega) pide abrir directo al cargar este formulario
+    public static String isbnAAbrir = null;
+
     @FXML private TableView<Libros> tblLibros;
     @FXML private TableColumn<Libros, String> colIsbn;
     @FXML private TableColumn<Libros, String> colTitulo;
@@ -78,6 +81,18 @@ public class LibrosFormController implements Initializable {
                 txtStockMinimo.setText(String.valueOf(seleccionado.getStockMinimo()));
             }
         });
+
+        // T3.5.6 — si venimos del Dashboard de Bodega con un ISBN pedido, seleccionarlo ya cargado
+        if (isbnAAbrir != null) {
+            for (Libros libro : tblLibros.getItems()) {
+                if (libro.getIsbn().equals(isbnAAbrir)) {
+                    tblLibros.getSelectionModel().select(libro);
+                    tblLibros.scrollTo(libro);
+                    break;
+                }
+            }
+            isbnAAbrir = null;
+        }
     }
 
     // ComboBox<Categoria> ligado a la FK id_categoria (patrón ComboBox_con_FK.pdf)
