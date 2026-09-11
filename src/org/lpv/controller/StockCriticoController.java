@@ -53,8 +53,6 @@ public class StockCriticoController implements Initializable {
     private void cargarStockCritico() {
         ObservableList<Libros> libros = FXCollections.observableArrayList(librosDAO.listarStockCritico());
         tblStockCritico.setItems(libros);
-
-        // T3.3.5 — mostrar cantidad de libros críticos
         lblContador.setText(libros.size() + " libro(s) con stock igual o por debajo del mínimo");
         lblMensaje.setText(libros.isEmpty() ? "No hay libros con stock crítico en este momento." : "");
     }

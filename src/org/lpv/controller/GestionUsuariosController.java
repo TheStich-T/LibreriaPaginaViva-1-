@@ -1,5 +1,6 @@
 package org.lpv.controller;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
@@ -20,6 +21,7 @@ import org.lpv.dao.UsuarioDAO;
 import org.lpv.dao.impl.UsuarioDAOImpl;
 import org.lpv.exception.ValidarException;
 import org.lpv.model.Usuario;
+import org.lpv.system.main;
 import org.lpv.util.SecurityUtil;
 
 public class GestionUsuariosController implements Initializable {
@@ -175,5 +177,14 @@ public class GestionUsuariosController implements Initializable {
     private void mostrarAlerta(Alert.AlertType tipo, String mensaje) {
         Alert alerta = new Alert(tipo, mensaje, ButtonType.OK);
         alerta.show();
+    }
+    
+    @FXML
+    public void eventoVolver(ActionEvent evento) {
+        try {
+            main.volverAlDashboard();
+        } catch (IOException e) {
+            System.err.println("Error al volver al dashboard: " + e.getMessage());
+        }
     }
 }

@@ -119,4 +119,14 @@ public class CajeroDashboardController implements Initializable {
         Alert alerta = new Alert(tipo, mensaje, ButtonType.OK);
         alerta.show();
     }
+    
+    @FXML
+    public void eventoConsultarStockActual(ActionEvent evento) {
+        cambiarEscena("/org/lpv/view/ConsultarStockView.fxml");
+    }
+    
+    @FXML
+    public void eventoConsultarStockBajo(ActionEvent evento) {
+        cambiarEscena("/org/lpv/view/StockCriticoView.fxml");
+    }
 }

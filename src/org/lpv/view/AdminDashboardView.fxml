@@ -4,7 +4,9 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -15,50 +17,62 @@
     <children>
         <VBox layoutX="0.0" layoutY="0.0" prefHeight="600.0" prefWidth="180.0" spacing="10.0" styleClass="sidebar">
             <children>
-                <Label text="Navegación" styleClass="sidebar-section" />
-                <Label text="Menú Principal" styleClass="sidebar-heading" />
-                <Label text="Ventas" styleClass="sidebar-item" />
-                <Label text="Compras" styleClass="sidebar-item" />
-                <Label text="Libros" styleClass="sidebar-item" />
-                <Label text="Inventario" styleClass="sidebar-item" />
-                <Label text="Usuarios" styleClass="sidebar-section" style="-fx-padding: 15 0 0 0;" />
+                <Label styleClass="sidebar-section" text="Navegación" />
+                <Label styleClass="sidebar-heading" text="Menú Principal" />
+                <Label styleClass="sidebar-item" text="Ventas" />
+                <Label styleClass="sidebar-item" text="Compras" />
+                <Label styleClass="sidebar-item" text="Libros" />
+                <Label styleClass="sidebar-item" text="Inventario" />
+                <Label style="-fx-padding: 15 0 0 0;" styleClass="sidebar-section" text="Usuarios" />
             </children>
         </VBox>
 
-        <Label fx:id="lblUsuarioActual" layoutX="20.0" layoutY="525.0" text="Administrador" styleClass="sidebar-user" />
-        <Button fx:id="btnCerrarSesion" mnemonicParsing="false" onAction="#eventoCerrarSesion" text="Cerrar sesión" style="-fx-background-color: transparent;" styleClass="logout-button" layoutX="20.0" layoutY="555.0" />
+        <Label fx:id="lblUsuarioActual" layoutX="20.0" layoutY="525.0" styleClass="sidebar-user" text="Administrador" />
+        <Button fx:id="btnCerrarSesion" layoutX="20.0" layoutY="555.0" mnemonicParsing="false" onAction="#eventoCerrarSesion" style="-fx-background-color: transparent;" styleClass="logout-button" text="Cerrar sesión" />
 
-        <Label layoutX="700.0" layoutY="15.0" text="LibreriaPaginaViva" styleClass="brand-title">
+        <Label layoutX="700.0" layoutY="15.0" styleClass="brand-title" text="LibreriaPaginaViva">
             <font>
                 <Font size="20.0" />
             </font>
         </Label>
 
-        <Label layoutX="200.0" layoutY="60.0" text="Bienvenido Administrador !" styleClass="page-title">
+        <Label layoutX="200.0" layoutY="60.0" styleClass="page-title" text="Bienvenido Administrador !">
             <font>
                 <Font size="22.0" />
             </font>
         </Label>
 
-        <GridPane layoutX="200.0" layoutY="120.0" hgap="20.0" vgap="20.0">
+        <GridPane hgap="20.0" layoutX="200.0" layoutY="120.0" vgap="20.0">
             <children>
-                <Button text="Nueva Venta" prefWidth="180.0" prefHeight="65.0" wrapText="true" onAction="#eventoNuevaVenta" styleClass="dashboard-card, card-1" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                <Button text="Detalle de Ventas" prefWidth="180.0" prefHeight="65.0" wrapText="true" onAction="#eventoDetalleVentas" styleClass="dashboard-card, card-2" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                <Button text="Lista de Ventas" prefWidth="180.0" prefHeight="65.0" wrapText="true" onAction="#eventoListaVentas" styleClass="dashboard-card, card-3" GridPane.columnIndex="2" GridPane.rowIndex="0" />
-                <Button text="Administrar Usuarios" prefWidth="180.0" prefHeight="65.0" wrapText="true" onAction="#eventoAdministrarUsuarios" styleClass="dashboard-card, card-4" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+                <Button onAction="#eventoNuevaVenta" prefHeight="65.0" prefWidth="180.0" styleClass="dashboard-card, card-1" text="Nueva Venta" wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <Button onAction="#eventoDetalleVentas" prefHeight="65.0" prefWidth="180.0" styleClass="dashboard-card, card-2" text="Detalle de Ventas" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                <Button onAction="#eventoListaVentas" prefHeight="65.0" prefWidth="180.0" styleClass="dashboard-card, card-3" text="Lista de Ventas" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                <Button onAction="#eventoAdministrarUsuarios" prefHeight="65.0" prefWidth="180.0" styleClass="dashboard-card, card-4" text="Administrar Usuarios" wrapText="true" GridPane.columnIndex="3" GridPane.rowIndex="0" />
 
-                <Button text="Nueva Compra" prefWidth="180.0" prefHeight="65.0" wrapText="true" onAction="#eventoModuloEnDesarrollo" styleClass="dashboard-card, card-5" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                <Button text="Detalle de Compras" prefWidth="180.0" prefHeight="65.0" wrapText="true" onAction="#eventoModuloEnDesarrollo" styleClass="dashboard-card, card-6" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                <Button text="Lista de Compras" prefWidth="180.0" prefHeight="65.0" wrapText="true" onAction="#eventoModuloEnDesarrollo" styleClass="dashboard-card, card-1" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                <Button text="Consultar Libros" prefWidth="180.0" prefHeight="65.0" wrapText="true" onAction="#eventoConsultarStock" styleClass="dashboard-card, card-2" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                <Button onAction="#eventoModuloEnDesarrollo" prefHeight="65.0" prefWidth="180.0" styleClass="dashboard-card, card-5" text="Nueva Compra" wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <Button onAction="#eventoModuloEnDesarrollo" prefHeight="65.0" prefWidth="180.0" styleClass="dashboard-card, card-6" text="Detalle de Compras" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <Button onAction="#eventoModuloEnDesarrollo" prefHeight="65.0" prefWidth="180.0" styleClass="dashboard-card, card-1" text="Lista de Compras" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                <Button onAction="#eventoConsultarLibros" prefHeight="65.0" prefWidth="180.0" styleClass="dashboard-card, card-2" text="Consultar Libros" wrapText="true" GridPane.columnIndex="3" GridPane.rowIndex="1" />
 
-                <Button text="Crear/Modificar Libros" prefWidth="180.0" prefHeight="65.0" wrapText="true" onAction="#eventoModuloEnDesarrollo" styleClass="dashboard-card, card-3" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                <Button text="Consultar Stock Actual" prefWidth="180.0" prefHeight="65.0" wrapText="true" onAction="#eventoModuloEnDesarrollo" styleClass="dashboard-card, card-4" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                <Button text="Consultar Stock Bajo" prefWidth="180.0" prefHeight="65.0" wrapText="true" onAction="#eventoModuloEnDesarrollo" styleClass="dashboard-card, card-5" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                <Button text="Registrar Ingresos" prefWidth="180.0" prefHeight="65.0" wrapText="true" onAction="#eventoModuloEnDesarrollo" styleClass="dashboard-card, card-6" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                <Button onAction="#eventoGestionarLibros" prefHeight="65.0" prefWidth="180.0" styleClass="dashboard-card, card-3" text="Crear/Modificar Libros" wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                <Button onAction="#eventoConsultarStockActual" prefHeight="65.0" prefWidth="180.0" styleClass="dashboard-card, card-4" text="Consultar Stock Actual" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                <Button onAction="#eventoConsultarStockBajo" prefHeight="65.0" prefWidth="180.0" styleClass="dashboard-card, card-5" text="Consultar Stock Bajo" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                <Button onAction="#eventoRegistrarIngreso" prefHeight="65.0" prefWidth="180.0" styleClass="dashboard-card, card-6" text="Registrar Ingresos" wrapText="true" GridPane.columnIndex="3" GridPane.rowIndex="2" />
 
-                <Button text="Registrar Salidas" prefWidth="180.0" prefHeight="65.0" wrapText="true" onAction="#eventoModuloEnDesarrollo" styleClass="dashboard-card, card-1" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                <Button onAction="#eventoRegistrarSalida" prefHeight="65.0" prefWidth="180.0" styleClass="dashboard-card, card-1" text="Registrar Salidas" wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="3" />
             </children>
+         <columnConstraints>
+            <ColumnConstraints />
+            <ColumnConstraints />
+            <ColumnConstraints />
+            <ColumnConstraints />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+         </rowConstraints>
         </GridPane>
     </children>
 </AnchorPane>

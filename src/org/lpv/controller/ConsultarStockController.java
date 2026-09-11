@@ -34,8 +34,6 @@ public class ConsultarStockController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         librosDAO = new LibrosDAOImpl();
         lblMensaje.setText("");
- 
-        // columna calculada: no existe como campo en Libros, se arma en el controller
         colEstado.setCellValueFactory(data -> {
             Libros libro = data.getValue();
             String estado = libro.getStockActual() <= libro.getStockMinimo() ? "BAJO" : "NORMAL";
@@ -60,7 +58,6 @@ public class ConsultarStockController implements Initializable {
     }
  
     private void cargarStock() {
-        // solo libros activos, igual que en Ingreso de Inventario
         ObservableList<Libros> libros = FXCollections.observableArrayList(
                 librosDAO.listar().stream().filter(Libros::isActivo).toList());
         tblStock.setItems(libros);

@@ -89,4 +89,34 @@ public class AdminDashboardController implements Initializable {
         Alert alerta = new Alert(tipo, mensaje, ButtonType.OK);
         alerta.show();
     }
+    
+    @FXML
+    public void eventoConsultarLibros(ActionEvent evento) {
+        cambiarEscena("/org/lpv/view/BuscarLibrosView.fxml");
+    }
+
+    @FXML
+    public void eventoGestionarLibros(ActionEvent evento) {
+        cambiarEscena("/org/lpv/view/LibrosFormView.fxml");
+    }
+
+    @FXML
+    public void eventoRegistrarIngreso(ActionEvent evento) {
+        cambiarEscena("/org/lpv/view/IngresoInventarioView.fxml");
+    }
+    
+    @FXML
+    public void eventoConsultarStockActual(ActionEvent evento) {
+        cambiarEscena("/org/lpv/view/ConsultarStockView.fxml");
+    }
+    
+    @FXML
+    public void eventoConsultarStockBajo(ActionEvent evento) {
+        cambiarEscena("/org/lpv/view/StockCriticoView.fxml");
+    }
+    
+    @FXML
+    public void eventoRegistrarSalida(ActionEvent evento) {
+        cambiarEscena("/org/lpv/view/SalidaInventarioView.fxml");
+    }
 }
