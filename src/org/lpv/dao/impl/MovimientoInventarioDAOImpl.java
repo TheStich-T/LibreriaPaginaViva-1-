@@ -62,7 +62,6 @@ public class MovimientoInventarioDAOImpl implements MovimientoInventarioDAO {
                     throw new SQLException("El libro " + movimiento.getIsbn() + " está inactivo.");
                 }
 
-               
                 try (CallableStatement consultaMovimiento = conexion.prepareCall(sqlMovimiento)) {
                     consultaMovimiento.setString(1, movimiento.getIsbn());
                     consultaMovimiento.setString(2, "INGRESO");
@@ -81,7 +80,6 @@ public class MovimientoInventarioDAOImpl implements MovimientoInventarioDAO {
                     consultaMovimiento.executeUpdate();
                 }
 
-                // nunca se actualiza el stock sin dejar registrado el movimiento
                 int nuevoStock = stockActual + movimiento.getCantidad();
                 try (CallableStatement consultaActualizar = conexion.prepareCall(sqlActualizarStock)) {
                     consultaActualizar.setString(1, movimiento.getIsbn());
@@ -165,8 +163,23 @@ public class MovimientoInventarioDAOImpl implements MovimientoInventarioDAO {
 
     @Override
     public List<MovimientoInventario> listar() {
-        log.warning("use listarPorIsbn(isbn)");
-        throw new UnsupportedOperationException("Los movimientos se consultan por libro (listarPorIsbn)");
+        log.info("Listando salidas de inventario");
+
+        List<MovimientoInventario> movimientos = new ArrayList<>();
+        String sql = "{call sp_listarsalidas()}";
+
+        try (Connection conexion = Conexion.getInstancia().conectar();
+             CallableStatement consulta = conexion.prepareCall(sql);
+             ResultSet tablaResultado = consulta.executeQuery()) {
+
+            while (tablaResultado.next()) {
+                movimientos.add(mapearMovimiento(tablaResultado));
+            }
+
+        } catch (SQLException e) {
+            log.log(Level.SEVERE, "Error al listar salidas de inventario", e);
+        }
+        return movimientos;
     }
 
     @Override

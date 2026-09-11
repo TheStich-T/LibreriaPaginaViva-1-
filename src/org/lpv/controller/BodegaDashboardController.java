@@ -50,7 +50,6 @@ public class BodegaDashboardController implements Initializable {
 
         librosDAO = new LibrosDAOImpl();
 
-        // T3.5.3/T3.5.4 — resalta en rojo cada fila de libro con stock crítico (mismo criterio que StockCriticoController)
         tblStockCriticoDashboard.setRowFactory(tv -> {
             TableRow<Libros> fila = new TableRow<Libros>() {
                 @Override
@@ -63,7 +62,6 @@ public class BodegaDashboardController implements Initializable {
                     }
                 }
             };
-            // T3.5.6 — doble clic en la fila también abre la ficha del libro
             fila.setOnMouseClicked(evento -> {
                 if (evento.getClickCount() == 2 && !fila.isEmpty()) {
                     abrirFichaDelLibro(fila.getItem());
