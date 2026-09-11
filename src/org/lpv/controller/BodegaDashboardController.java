@@ -62,11 +62,7 @@ public class BodegaDashboardController implements Initializable {
                     }
                 }
             };
-            fila.setOnMouseClicked(evento -> {
-                if (evento.getClickCount() == 2 && !fila.isEmpty()) {
-                    abrirFichaDelLibro(fila.getItem());
-                }
-            });
+
             return fila;
         });
 
