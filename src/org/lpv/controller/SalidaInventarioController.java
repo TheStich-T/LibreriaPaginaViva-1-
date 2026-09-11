@@ -64,7 +64,7 @@ public class SalidaInventarioController implements Initializable {
         cargarTiposSalida();
         cargarProveedores();
         configurarTabla();
-        tblSalidas.setItems(FXCollections.observableArrayList());
+        cargarTablaSalidas();
 
         cmbLibro.setConverter(new StringConverter<Libros>() {
             @Override
@@ -151,9 +151,9 @@ public class SalidaInventarioController implements Initializable {
                 mostrarAlerta(Alert.AlertType.INFORMATION,
                         "Salida registrada con éxito. Nuevo stock: "
                         + (libroSeleccionado.getStockActual() - cantidad));
-                tblSalidas.getItems().add(movimiento);
                 limpiarCampos();
                 cargarLibrosDisponibles();
+                cargarTablaSalidas();        
             } else {
                 mostrarAlerta(Alert.AlertType.ERROR, "No se pudo registrar la salida");
             }
@@ -195,4 +195,8 @@ public class SalidaInventarioController implements Initializable {
     colNit.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getNitProveedor()));
 }
 
+    private void cargarTablaSalidas() {
+    ObservableList<MovimientoInventario> listaSalidas = FXCollections.observableArrayList(movimientoDAO.listar());
+    tblSalidas.setItems(listaSalidas);
+}
 }

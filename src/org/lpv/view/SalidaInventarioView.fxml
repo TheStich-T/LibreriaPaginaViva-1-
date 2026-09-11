@@ -52,13 +52,13 @@
             <Label styleClass="field-label" text="Libro" />
             <Label styleClass="field-label" text="Tipo de salida" GridPane.rowIndex="1" />
             <Label styleClass="field-label" text="Cantidad a retirar" GridPane.rowIndex="2" />
-            <Label styleClass="field-label" text="Nit proveedor" GridPane.rowIndex="3" />
+            <Label styleClass="field-label" text="Proveedor" GridPane.rowIndex="3" />
             <Label styleClass="field-label" text="Observación" GridPane.rowIndex="4" />
 
             <ComboBox fx:id="cmbLibro" prefWidth="210.0" styleClass="text-input" GridPane.columnIndex="1" GridPane.rowIndex="0" />
             <ComboBox fx:id="cmbTipoSalida" prefWidth="210.0" styleClass="text-input" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <TextField fx:id="txtCantidad" prefWidth="210.0" styleClass="text-input" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <TextField fx:id="txtNitProveedor" prefWidth="210.0" styleClass="text-input" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <ComboBox fx:id="cmbProveedor" prefWidth="210.0" styleClass="text-input" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             <TextArea fx:id="txtObservacion" prefHeight="90.0" prefWidth="210.0" styleClass="text-input" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
          </children>
       </GridPane>
