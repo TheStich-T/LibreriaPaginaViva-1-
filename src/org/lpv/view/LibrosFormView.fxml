@@ -13,6 +13,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.control.ComboBox?>
 
 <AnchorPane id="AnchorPane" prefHeight="620.0" prefWidth="700.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lpv.controller.LibrosFormController">
     <stylesheets>
@@ -71,7 +72,7 @@
                   <Label styleClass="field-label" text="Título" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <Label styleClass="field-label" text="Fecha de publicación" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <Label styleClass="field-label" text="Precio" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <Label styleClass="field-label" text="Id. categoría" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                  <Label styleClass="field-label" text="Categoría" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                   <Label styleClass="field-label" text="Nit editorial" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                   <Label styleClass="field-label" text="Stock mínimo" GridPane.columnIndex="1" GridPane.rowIndex="6" />
 
@@ -79,7 +80,7 @@
                   <TextField fx:id="txtTitulo" styleClass="text-input" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                   <TextField fx:id="txtFechaPublicacion" promptText="dd/MM/yyyy" styleClass="text-input" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                   <TextField fx:id="txtPrecio" styleClass="text-input" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                  <TextField fx:id="txtIdCategoria" styleClass="text-input" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                  <ComboBox fx:id="cmbCategoria" prefWidth="220.0" styleClass="text-input" GridPane.columnIndex="2" GridPane.rowIndex="4" />
                   <TextField fx:id="txtNitEditorial" styleClass="text-input" GridPane.columnIndex="2" GridPane.rowIndex="5" />
                   <TextField fx:id="txtStockMinimo" styleClass="text-input" GridPane.columnIndex="2" GridPane.rowIndex="6" />
                </children>

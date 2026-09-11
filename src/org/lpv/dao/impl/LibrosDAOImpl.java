@@ -36,48 +36,6 @@ public class LibrosDAOImpl implements LibrosDAO {
         return libro;
     }
 
-    @Override
-    public List<Libros> buscarPorTitulo(String titulo) {
-        log.info("Buscando libros por título: " + titulo);
-        List<Libros> libros = new ArrayList<>();
-        String sql = "{call sp_buscarlibroportitulo(?)}";
-        try (Connection conexion = Conexion.getInstancia().conectar();
-             CallableStatement consulta = conexion.prepareCall(sql)) {
-            consulta.setString(1, titulo);
-            try (ResultSet tablaResultado = consulta.executeQuery()) {
-                while (tablaResultado.next()) {
-                    libros.add(mapearLibro(tablaResultado));
-                }
-            }
-        } catch (SQLException e) {
-            log.log(Level.SEVERE, "Error al buscar libros por título: " + titulo, e);
-        }
-        return libros;
-    }
-
-    @Override
-    public List<Libros> buscarPorAutor(String autor) {
-        log.info("Buscando libros por autor: " + autor);
-        List<Libros> libros = new ArrayList<>();
-        String sql = "{call sp_buscarlibrosporautor(?)}";
-        try (Connection conexion = Conexion.getInstancia().conectar();
-             CallableStatement consulta = conexion.prepareCall(sql)) {
-            consulta.setString(1, autor);
-            try (ResultSet tablaResultado = consulta.executeQuery()) {
-                while (tablaResultado.next()) {
-                    Libros libro = new Libros();
-                    libro.setIsbn(tablaResultado.getString("isbn"));
-                    libro.setTitulo(tablaResultado.getString("titulo"));
-                    libro.setPrecio(tablaResultado.getDouble("precio"));
-                    libro.setStockActual(tablaResultado.getInt("stock_actual"));
-                    libros.add(libro);
-                }
-            }
-        } catch (SQLException e) {
-            log.log(Level.SEVERE, "Error al buscar libros por autor: " + autor, e);
-        }
-        return libros;
-    }
 
     private Libros mapearLibro(ResultSet rs) throws SQLException {
         Libros libro = new Libros();

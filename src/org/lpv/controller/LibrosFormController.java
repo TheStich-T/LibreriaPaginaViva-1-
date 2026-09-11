@@ -14,13 +14,17 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import org.lpv.dao.CategoriaDAO;
 import org.lpv.dao.LibrosDAO;
+import org.lpv.dao.impl.CategoriaDAOImpl;
 import org.lpv.dao.impl.LibrosDAOImpl;
 import org.lpv.exception.ValidarException;
+import org.lpv.model.Categoria;
 import org.lpv.model.Libros;
 import org.lpv.system.main;
 
@@ -38,7 +42,7 @@ public class LibrosFormController implements Initializable {
     @FXML private TextField txtTitulo;
     @FXML private TextField txtFechaPublicacion;
     @FXML private TextField txtPrecio;
-    @FXML private TextField txtIdCategoria;
+    @FXML private ComboBox<Categoria> cmbCategoria;
     @FXML private TextField txtNitEditorial;
     @FXML private TextField txtStockMinimo;
 
@@ -49,12 +53,15 @@ public class LibrosFormController implements Initializable {
     @FXML private Label lblMensaje;
 
     private LibrosDAO librosDAO;
+    private CategoriaDAO categoriaDAO;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         librosDAO = new LibrosDAOImpl();
+        categoriaDAO = new CategoriaDAOImpl();
         lblMensaje.setText("");
 
+        cargarCategorias();
         cargarLibros();
 
         tblLibros.getSelectionModel().selectedItemProperty().addListener((obs, anterior, seleccionado) -> {
@@ -66,11 +73,27 @@ public class LibrosFormController implements Initializable {
                         ? seleccionado.getFechaPublicacion().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
                         : "");
                 txtPrecio.setText(String.valueOf(seleccionado.getPrecio()));
-                txtIdCategoria.setText(String.valueOf(seleccionado.getIdCategoria()));
+                seleccionarCategoria(seleccionado.getIdCategoria());
                 txtNitEditorial.setText(seleccionado.getNitEditorial());
                 txtStockMinimo.setText(String.valueOf(seleccionado.getStockMinimo()));
             }
         });
+    }
+
+    // ComboBox<Categoria> ligado a la FK id_categoria (patrón ComboBox_con_FK.pdf)
+    private void cargarCategorias() {
+        ObservableList<Categoria> categorias = FXCollections.observableArrayList(categoriaDAO.listar());
+        cmbCategoria.setItems(categorias);
+    }
+
+    private void seleccionarCategoria(int idCategoria) {
+        for (Categoria categoria : cmbCategoria.getItems()) {
+            if (categoria.getIdCategoria() == idCategoria) {
+                cmbCategoria.setValue(categoria);
+                return;
+            }
+        }
+        cmbCategoria.setValue(null);
     }
 
     private void cargarLibros() {
@@ -185,12 +208,12 @@ public class LibrosFormController implements Initializable {
         ValidarException.validarNoVacio(txtTitulo.getText(), "título");
         ValidarException.validarNoVacio(txtFechaPublicacion.getText(), "fecha de publicación");
         ValidarException.validarNoVacio(txtPrecio.getText(), "precio");
-        ValidarException.validarNoVacio(txtIdCategoria.getText(), "categoría");
+        ValidarException.validarNulo(cmbCategoria.getValue(), "Selecciona una categoría");
         ValidarException.validarNoVacio(txtNitEditorial.getText(), "editorial");
         ValidarException.validarNoVacio(txtStockMinimo.getText(), "stock mínimo");
 
         double precio;
-        int idCategoria;
+        int idCategoria = cmbCategoria.getValue().getIdCategoria();
         int stockMinimo;
         LocalDate fechaPublicacion;
 
@@ -201,12 +224,6 @@ public class LibrosFormController implements Initializable {
         }
         if (precio <= 0) {
             throw new ValidarException("El precio debe ser mayor a 0");
-        }
-
-        try {
-            idCategoria = Integer.parseInt(txtIdCategoria.getText().trim());
-        } catch (NumberFormatException e) {
-            throw new ValidarException("La categoría debe ser un número válido (id de categoría)");
         }
 
         try {
@@ -245,7 +262,7 @@ public class LibrosFormController implements Initializable {
         txtTitulo.clear();
         txtFechaPublicacion.clear();
         txtPrecio.clear();
-        txtIdCategoria.clear();
+        cmbCategoria.setValue(null);
         txtNitEditorial.clear();
         txtStockMinimo.clear();
         lblMensaje.setText("");
