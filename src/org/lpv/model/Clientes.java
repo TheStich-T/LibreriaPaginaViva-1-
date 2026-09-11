@@ -49,7 +49,6 @@ public class Clientes {
         this.correoElectronico = correoElectronico;
     }
 
-    // el ComboBox<Cliente> usa este texto para mostrar la opción (patrón ComboBox_con_FK.pdf)
     @Override
     public String toString() {
         return cui + " - " + nombreCliente + " " + apellidoCliente;

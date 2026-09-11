@@ -29,7 +29,6 @@ public class Categoria {
         this.nombreCategoria = nombreCategoria;
     }
 
-    // el ComboBox<Categoria> usa este texto para mostrar la opción (mismo patrón que Clientes)
     @Override
     public String toString() {
         return nombreCategoria;
