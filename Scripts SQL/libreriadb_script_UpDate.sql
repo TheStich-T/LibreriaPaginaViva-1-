@@ -491,6 +491,19 @@ from movimientos_inventario m
 inner join libros l on m.isbn = l.isbn;
 
 -- Stock de prueba para poder registrar ventas
+-- Stock de prueba para poder registrar ventas (los 32 libros del DML)
+CALL sp_actualizarstocklibro('978-0-123', 50, 5);
+CALL sp_actualizarstocklibro('978-0-124', 50, 5);
+CALL sp_actualizarstocklibro('978-0-125', 50, 5);
+CALL sp_actualizarstocklibro('978-0-126', 50, 5);
+CALL sp_actualizarstocklibro('978-0-127', 50, 5);
+CALL sp_actualizarstocklibro('978-0-128', 50, 5);
+CALL sp_actualizarstocklibro('978-0-129', 50, 5);
+CALL sp_actualizarstocklibro('978-0-130', 50, 5);
+CALL sp_actualizarstocklibro('978-0-131', 50, 5);
+CALL sp_actualizarstocklibro('978-0-132', 50, 5);
+CALL sp_actualizarstocklibro('978-0-133', 50, 5);
+CALL sp_actualizarstocklibro('978-0-134', 50, 5);
 CALL sp_actualizarstocklibro('978-0-135', 50, 5);
 CALL sp_actualizarstocklibro('978-0-136', 50, 5);
 CALL sp_actualizarstocklibro('978-0-137', 50, 5);
@@ -512,10 +525,8 @@ CALL sp_actualizarstocklibro('978-0-152', 50, 5);
 CALL sp_actualizarstocklibro('978-0-153', 50, 5);
 CALL sp_actualizarstocklibro('978-0-154', 50, 5);
 
--- =============================================================================
--- corrección US-3.4: sincronizar procedimientos de libros con stock_actual,
--- stock_minimo, activo, y con lo que realmente llama LibrosDAOImpl
--- =============================================================================
+
+-- corrección US-3.4: sincronizar procedimientos de libros con stock_actual, stock_minimo, activo, y con lo que realmente llama LibrosDAOImpl
 drop procedure if exists sp_listarlibros;
 drop procedure if exists sp_insertarlibro;
 drop procedure if exists sp_actualizarlibro;
@@ -599,10 +610,9 @@ end $$
 
 delimiter ;
 
--- =============================================================================
--- datos de ejemplo: proveedores (necesarios para probar Salida de Inventario,
--- ya que el CRUD de proveedores es nuevo y la tabla estaba vacía)
--- =============================================================================
+
+-- datos de ejemplo: proveedores (necesarios para probar Salida de Inventario
+
 CALL sp_insertarproveedor('P001-A', 'Distribuidora Central', '22551001', 'Zona 4, Ciudad');
 CALL sp_insertarproveedor('P002-B', 'Suministros del Libro S.A.', '22551002', 'Zona 9, Ciudad');
 CALL sp_insertarproveedor('P003-C', 'Importadora Literaria', '22551003', 'Zona 1, Ciudad');
@@ -615,4 +625,131 @@ begin
     where tipo_movimiento in ('MERMA','TRASLADO','DEVOLUCION')
     order by fecha_movimiento desc;
 end $$
+delimiter ;
+
+-- Sprint 4: Categorías 
+delimiter $$
+
+create procedure sp_insertarcategoria(
+    in _nombre_categoria varchar(100)
+)
+begin
+    insert into categorias(nombre_categoria)
+    values (_nombre_categoria);
+end $$
+
+create procedure sp_listarcategorias()
+begin
+    select id_categoria, nombre_categoria
+    from categorias
+    order by nombre_categoria;
+end $$
+
+create procedure sp_actualizarcategoria(
+    in _id_categoria int,
+    in _nombre_categoria varchar(100)
+)
+begin
+    update categorias
+    set nombre_categoria = _nombre_categoria
+    where id_categoria = _id_categoria;
+end $$
+
+delimiter ;
+
+-- Sprint 4: Dashboard Administrativo 
+delimiter $$
+
+create procedure sp_totalventas()
+begin
+    select coalesce(sum(total), 0) as total_ventas
+    from ventas
+    where estado = 'COMPLETADA';
+end $$
+
+create procedure sp_totallibrosactivos()
+begin
+    select count(*) as total_libros
+    from libros
+    where activo = true;
+end $$
+
+create procedure sp_totalusuariosactivos()
+begin
+    select count(*) as total_usuarios
+    from usuarios
+    where activo = true;
+end $$
+
+delimiter ;
+
+
+-- Sprint 4: Reportes de Ventas 
+delimiter $$
+
+create procedure sp_reporteventasdiario(
+    in _fecha date
+)
+begin
+    select id_venta, fecha_venta, subtotal, descuento, total, estado, id_usuario
+    from ventas
+    where date(fecha_venta) = _fecha
+      and estado = 'COMPLETADA'
+    order by fecha_venta;
+end $$
+
+create procedure sp_reporteventassemanal(
+    in _fecha date
+)
+begin
+    select id_venta, fecha_venta, subtotal, descuento, total, estado, id_usuario
+    from ventas
+    where yearweek(fecha_venta, 1) = yearweek(_fecha, 1)
+      and estado = 'COMPLETADA'
+    order by fecha_venta;
+end $$
+
+create procedure sp_reporteventasmensual(
+    in _anio int,
+    in _mes int
+)
+begin
+    select id_venta, fecha_venta, subtotal, descuento, total, estado, id_usuario
+    from ventas
+    where year(fecha_venta) = _anio
+      and month(fecha_venta) = _mes
+      and estado = 'COMPLETADA'
+    order by fecha_venta;
+end $$
+
+delimiter ;
+
+
+-- Sprint 4
+
+delimiter $$
+
+create procedure sp_libromasvendidos(
+    in _limite int
+)
+begin
+    select l.isbn, l.titulo, sum(dv.cantidad) as unidades_vendidas
+    from detalle_venta dv
+    inner join libros l on dv.isbn = l.isbn
+    inner join ventas v on dv.id_venta = v.id_venta
+    where v.estado = 'COMPLETADA'
+    group by l.isbn, l.titulo
+    order by unidades_vendidas desc
+    limit _limite;
+end $$
+
+create procedure sp_stockvalorizado()
+begin
+    select isbn, titulo, stock_actual, precio,
+           (stock_actual * precio) as valor_inventario
+    from libros
+    where activo = true
+    order by valor_inventario desc;
+end $$
+
 delimiter ;

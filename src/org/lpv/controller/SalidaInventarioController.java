@@ -25,6 +25,7 @@ import org.lpv.dao.impl.LibrosDAOImpl;
 import org.lpv.dao.impl.MovimientoInventarioDAOImpl;
 import org.lpv.dao.impl.ProveedorDAOImpl;
 import org.lpv.exception.ValidarException;
+import org.lpv.manager.RolPermisos;
 import org.lpv.manager.SessionContext;
 import org.lpv.model.Libros;
 import org.lpv.model.MovimientoInventario;
@@ -54,6 +55,13 @@ public class SalidaInventarioController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        Usuario actual = SessionContext.getInstancia().getUsuairoActual();
+        if (actual == null || !RolPermisos.tienePermiso(actual.getRol(), RolPermisos.STOCK_GESTIONAR)) {
+            mostrarAlerta(Alert.AlertType.ERROR, "No tenés permiso para acceder a esta pantalla");
+            volverAlLogin();
+            return;
+        }
+
         librosDAO = new LibrosDAOImpl();
         movimientoDAO = new MovimientoInventarioDAOImpl();
         proveedorDAO = new ProveedorDAOImpl();
@@ -89,7 +97,6 @@ public class SalidaInventarioController implements Initializable {
     }
 
     private void cargarLibrosDisponibles() {
-        // solo libros activos pueden tener salidas de inventario
         ObservableList<Libros> libros = FXCollections.observableArrayList(
                 librosDAO.listar().stream().filter(Libros::isActivo).toList());
         cmbLibro.setItems(libros);
@@ -102,6 +109,14 @@ public class SalidaInventarioController implements Initializable {
     private void cargarProveedores() {
         ObservableList<Proveedor> proveedores = FXCollections.observableArrayList(proveedorDAO.listar());
         cmbProveedor.setItems(proveedores);
+
+        cmbTipoSalida.getSelectionModel().selectedItemProperty().addListener((obs, anterior, seleccionado) -> {
+            boolean esDevolucion = "DEVOLUCION".equals(seleccionado);
+            cmbProveedor.setDisable(!esDevolucion);
+            if (!esDevolucion) {
+                cmbProveedor.setValue(null);
+            }
+        });
     }
 
     @FXML
@@ -113,8 +128,12 @@ public class SalidaInventarioController implements Initializable {
             String tipoSeleccionado = cmbTipoSalida.getValue();
             ValidarException.validarNulo(tipoSeleccionado, "Selecciona el tipo de salida");
 
+            boolean esDevolucion = "DEVOLUCION".equals(tipoSeleccionado);
+
             Proveedor proveedorSeleccionado = cmbProveedor.getValue();
-            ValidarException.validarNulo(proveedorSeleccionado, "Selecciona el proveedor");
+            if (esDevolucion) {
+                ValidarException.validarNulo(proveedorSeleccionado, "Selecciona el proveedor al que se devuelve");
+            }
 
             ValidarException.validarNoVacio(txtCantidad.getText(), "cantidad");
 
@@ -143,7 +162,7 @@ public class SalidaInventarioController implements Initializable {
             movimiento.setCantidad(cantidad);
             movimiento.setIdUsuario(usuarioActual != null ? usuarioActual.getId() : 0);
             movimiento.setObservacion(txtObservacion.getText() != null ? txtObservacion.getText().trim() : "");
-            movimiento.setNitProveedor(proveedorSeleccionado.getNitProveedor());
+            movimiento.setNitProveedor(esDevolucion ? proveedorSeleccionado.getNitProveedor() : null);
 
             boolean registrado = movimientoDAO.registrarSalida(movimiento);
 
@@ -153,7 +172,7 @@ public class SalidaInventarioController implements Initializable {
                         + (libroSeleccionado.getStockActual() - cantidad));
                 limpiarCampos();
                 cargarLibrosDisponibles();
-                cargarTablaSalidas();        
+                cargarTablaSalidas();
             } else {
                 mostrarAlerta(Alert.AlertType.ERROR, "No se pudo registrar la salida");
             }
@@ -187,16 +206,24 @@ public class SalidaInventarioController implements Initializable {
         Alert alerta = new Alert(tipo, mensaje, ButtonType.OK);
         alerta.show();
     }
-    
+
+    private void volverAlLogin() {
+        try {
+            main.cambiarEscena("/org/lpv/view/LoginView.fxml");
+        } catch (IOException e) {
+            System.err.println("Error al redirigir al login: " + e.getMessage());
+        }
+    }
+
     private void configurarTabla() {
-    colLibro.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getIsbn()));
-    colTipoSalida.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getTipoMovimiento()));
-    colCantidad.setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getCantidad()));
-    colNit.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getNitProveedor()));
-}
+        colLibro.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getIsbn()));
+        colTipoSalida.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getTipoMovimiento()));
+        colCantidad.setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getCantidad()));
+        colNit.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getNitProveedor()));
+    }
 
     private void cargarTablaSalidas() {
-    ObservableList<MovimientoInventario> listaSalidas = FXCollections.observableArrayList(movimientoDAO.listar());
-    tblSalidas.setItems(listaSalidas);
-}
+        ObservableList<MovimientoInventario> listaSalidas = FXCollections.observableArrayList(movimientoDAO.listar());
+        tblSalidas.setItems(listaSalidas);
+    }
 }

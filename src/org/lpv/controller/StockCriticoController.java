@@ -8,13 +8,18 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import org.lpv.dao.LibrosDAO;
 import org.lpv.dao.impl.LibrosDAOImpl;
+import org.lpv.manager.RolPermisos;
+import org.lpv.manager.SessionContext;
 import org.lpv.model.Libros;
+import org.lpv.model.Usuario;
 import org.lpv.system.main;
 
 public class StockCriticoController implements Initializable {
@@ -31,6 +36,13 @@ public class StockCriticoController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        Usuario actual = SessionContext.getInstancia().getUsuairoActual();
+        if (actual == null || !RolPermisos.tienePermiso(actual.getRol(), RolPermisos.STOCK_CONSULTAR)) {
+            mostrarAlerta(Alert.AlertType.ERROR, "No tenés permiso para acceder a esta pantalla");
+            volverAlLogin();
+            return;
+        }
+
         librosDAO = new LibrosDAOImpl();
         lblMensaje.setText("");
 
@@ -68,6 +80,19 @@ public class StockCriticoController implements Initializable {
             main.volverAlDashboard();
         } catch (IOException e) {
             System.err.println("Error al volver al dashboard: " + e.getMessage());
+        }
+    }
+
+    private void mostrarAlerta(Alert.AlertType tipo, String mensaje) {
+        Alert alerta = new Alert(tipo, mensaje, ButtonType.OK);
+        alerta.show();
+    }
+
+    private void volverAlLogin() {
+        try {
+            main.cambiarEscena("/org/lpv/view/LoginView.fxml");
+        } catch (IOException e) {
+            System.err.println("Error al redirigir al login: " + e.getMessage());
         }
     }
 }
