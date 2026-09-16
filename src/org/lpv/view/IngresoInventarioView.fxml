@@ -54,8 +54,8 @@
 
             <ComboBox fx:id="cmbLibro" prefWidth="210.0" styleClass="text-input" GridPane.columnIndex="1" GridPane.rowIndex="0" />
             <TextField fx:id="txtCantidad" prefWidth="210.0" styleClass="text-input" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <TextField fx:id="txtNitProveedor" prefWidth="210.0" styleClass="text-input" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <TextArea fx:id="txtObservacion" prefHeight="90.0" prefWidth="210.0" styleClass="text-input" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <ComboBox fx:id="cmbProveedor" prefWidth="210.0" styleClass="text-input" GridPane.columnIndex="1" GridPane.rowIndex="2" />
          </children>
       </GridPane>
 

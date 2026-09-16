@@ -107,81 +107,72 @@ public class SalidaInventarioController implements Initializable {
     }
 
     private void cargarProveedores() {
-        ObservableList<Proveedor> proveedores = FXCollections.observableArrayList(proveedorDAO.listar());
+    ObservableList proveedores = FXCollections.observableArrayList(proveedorDAO.listar());
         cmbProveedor.setItems(proveedores);
-
-        cmbTipoSalida.getSelectionModel().selectedItemProperty().addListener((obs, anterior, seleccionado) -> {
-            boolean esDevolucion = "DEVOLUCION".equals(seleccionado);
-            cmbProveedor.setDisable(!esDevolucion);
-            if (!esDevolucion) {
-                cmbProveedor.setValue(null);
-            }
-        });
+        cmbProveedor.setDisable(false); 
     }
 
     @FXML
-    public void eventoRegistrar(ActionEvent evento) {
+public void eventoRegistrar(ActionEvent evento) {
+    try {
+        Libros libroSeleccionado = cmbLibro.getValue();
+        ValidarException.validarNulo(libroSeleccionado, "Selecciona un libro");
+
+        String tipoSeleccionado = cmbTipoSalida.getValue();
+        ValidarException.validarNulo(tipoSeleccionado, "Selecciona el tipo de salida");
+
+        // Proveedor ahora está habilitado siempre; es opcional o puedes hacerlo obligatorio si lo deseas
+        Proveedor proveedorSeleccionado = cmbProveedor.getValue();
+
+        ValidarException.validarNoVacio(txtCantidad.getText(), "cantidad");
+
+        int cantidad;
         try {
-            Libros libroSeleccionado = cmbLibro.getValue();
-            ValidarException.validarNulo(libroSeleccionado, "Selecciona un libro");
-
-            String tipoSeleccionado = cmbTipoSalida.getValue();
-            ValidarException.validarNulo(tipoSeleccionado, "Selecciona el tipo de salida");
-
-            boolean esDevolucion = "DEVOLUCION".equals(tipoSeleccionado);
-
-            Proveedor proveedorSeleccionado = cmbProveedor.getValue();
-            if (esDevolucion) {
-                ValidarException.validarNulo(proveedorSeleccionado, "Selecciona el proveedor al que se devuelve");
-            }
-
-            ValidarException.validarNoVacio(txtCantidad.getText(), "cantidad");
-
-            int cantidad;
-            try {
-                cantidad = Integer.parseInt(txtCantidad.getText().trim());
-            } catch (NumberFormatException e) {
-                throw new ValidarException("La cantidad debe ser un número entero válido");
-            }
-            if (cantidad <= 0) {
-                throw new ValidarException("La cantidad debe ser mayor a 0");
-            }
-
-            if (cantidad > libroSeleccionado.getStockActual()) {
-                mostrarAlerta(Alert.AlertType.WARNING,
-                        "La cantidad de salida (" + cantidad + ") supera el stock actual ("
-                        + libroSeleccionado.getStockActual() + ") del libro seleccionado.");
-                return;
-            }
-
-            Usuario usuarioActual = SessionContext.getInstancia().getUsuairoActual();
-
-            MovimientoInventario movimiento = new MovimientoInventario();
-            movimiento.setIsbn(libroSeleccionado.getIsbn());
-            movimiento.setTipoMovimiento(tipoSeleccionado);
-            movimiento.setCantidad(cantidad);
-            movimiento.setIdUsuario(usuarioActual != null ? usuarioActual.getId() : 0);
-            movimiento.setObservacion(txtObservacion.getText() != null ? txtObservacion.getText().trim() : "");
-            movimiento.setNitProveedor(esDevolucion ? proveedorSeleccionado.getNitProveedor() : null);
-
-            boolean registrado = movimientoDAO.registrarSalida(movimiento);
-
-            if (registrado) {
-                mostrarAlerta(Alert.AlertType.INFORMATION,
-                        "Salida registrada con éxito. Nuevo stock: "
-                        + (libroSeleccionado.getStockActual() - cantidad));
-                limpiarCampos();
-                cargarLibrosDisponibles();
-                cargarTablaSalidas();
-            } else {
-                mostrarAlerta(Alert.AlertType.ERROR, "No se pudo registrar la salida");
-            }
-
-        } catch (ValidarException e) {
-            mostrarAlerta(Alert.AlertType.WARNING, e.getMessage());
-            lblMensaje.setText(e.getMessage());
+            cantidad = Integer.parseInt(txtCantidad.getText().trim());
+        } catch (NumberFormatException e) {
+            throw new ValidarException("La cantidad debe ser un número entero válido");
         }
+        if (cantidad <= 0) {
+            throw new ValidarException("La cantidad debe ser mayor a 0");
+        }
+
+        if (cantidad > libroSeleccionado.getStockActual()) {
+            mostrarAlerta(Alert.AlertType.WARNING,
+                    "La cantidad de salida (" + cantidad + ") supera el stock actual ("
+                    + libroSeleccionado.getStockActual() + ") del libro seleccionado.");
+            return;
+        }
+
+        Usuario usuarioActual = SessionContext.getInstancia().getUsuairoActual();
+
+        MovimientoInventario movimiento = new MovimientoInventario();
+        movimiento.setIsbn(libroSeleccionado.getIsbn());
+        movimiento.setTipoMovimiento(tipoSeleccionado);
+        movimiento.setCantidad(cantidad);
+        movimiento.setIdUsuario(usuarioActual != null ? usuarioActual.getId() : 0);
+        movimiento.setObservacion(txtObservacion.getText() != null ? txtObservacion.getText().trim() : "");
+        
+        // Asigna el NIT del proveedor si se seleccionó uno, de lo contrario guarda null
+        movimiento.setNitProveedor(proveedorSeleccionado != null ? proveedorSeleccionado.getNitProveedor() : null);
+
+        boolean registrado = movimientoDAO.registrarSalida(movimiento);
+
+        if (registrado) {
+            mostrarAlerta(Alert.AlertType.INFORMATION,
+                    "Salida registrada con éxito. Nuevo stock: "
+                    + (libroSeleccionado.getStockActual() - cantidad));
+            limpiarCampos();
+            cargarLibrosDisponibles();
+            cargarTablaSalidas();
+        } else {
+            mostrarAlerta(Alert.AlertType.ERROR, "No se pudo registrar la salida");
+        }
+
+    } catch (ValidarException e) {
+        mostrarAlerta(Alert.AlertType.WARNING, e.getMessage());
+        lblMensaje.setText(e.getMessage());
     }
+}
 
     @FXML
     public void eventoVolver(ActionEvent evento) {
