@@ -19,21 +19,26 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import org.lpv.dao.AutorDAO;
 import org.lpv.dao.CategoriaDAO;
+import org.lpv.dao.EditorialDAO;
 import org.lpv.dao.LibrosDAO;
+import org.lpv.dao.impl.AutorDAOImpl;
 import org.lpv.dao.impl.CategoriaDAOImpl;
+import org.lpv.dao.impl.EditorialDAOImpl;
 import org.lpv.dao.impl.LibrosDAOImpl;
 import org.lpv.exception.ValidarException;
 import org.lpv.manager.RolPermisos;
 import org.lpv.manager.SessionContext;
+import org.lpv.model.Autor;
 import org.lpv.model.Categoria;
+import org.lpv.model.Editorial;
 import org.lpv.model.Libros;
 import org.lpv.model.Usuario;
 import org.lpv.system.main;
 
 public class LibrosFormController implements Initializable {
 
-    // T3.5.6 — ISBN que otra pantalla (ej. Dashboard Bodega) pide abrir directo al cargar este formulario
     public static String isbnAAbrir = null;
 
     @FXML private TableView<Libros> tblLibros;
@@ -43,7 +48,6 @@ public class LibrosFormController implements Initializable {
     @FXML private TableColumn<Libros, Integer> colStockActual;
     @FXML private TableColumn<Libros, Integer> colStockMinimo;
     @FXML private TableColumn<Libros, Boolean> colActivo;
-
     @FXML private TextField txtIsbn;
     @FXML private TextField txtTitulo;
     @FXML private TextField txtFechaPublicacion;
@@ -51,15 +55,26 @@ public class LibrosFormController implements Initializable {
     @FXML private ComboBox<Categoria> cmbCategoria;
     @FXML private TextField txtNitEditorial;
     @FXML private TextField txtStockMinimo;
-
     @FXML private Button btnAgregar;
     @FXML private Button btnActualizar;
     @FXML private Button btnDesactivar;
     @FXML private Button btnActivar;
     @FXML private Label lblMensaje;
+    @FXML private ComboBox<Autor> cmbAutor;
+    @FXML private TextField txtNuevoNitEditorial;
+    @FXML private TextField txtNuevoNombreEditorial;
+    @FXML private TextField txtNuevoTelefonoEditorial;
+    @FXML private TextField txtNuevaDireccionEditorial;
+    @FXML private Button btnCrearEditorial;
+    @FXML private TextField txtNuevoNombreAutor;
+    @FXML private TextField txtNuevoApellidoAutor;
+    @FXML private TextField txtNuevaNacionalidadAutor;
+    @FXML private Button btnCrearAutor;
 
     private LibrosDAO librosDAO;
     private CategoriaDAO categoriaDAO;
+    private EditorialDAO editorialDAO;
+    private AutorDAO autorDAO;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -72,15 +87,18 @@ public class LibrosFormController implements Initializable {
 
         librosDAO = new LibrosDAOImpl();
         categoriaDAO = new CategoriaDAOImpl();
+        editorialDAO = new EditorialDAOImpl();
+        autorDAO = new AutorDAOImpl();
         lblMensaje.setText("");
 
         cargarCategorias();
+        cargarAutores();
         cargarLibros();
 
         tblLibros.getSelectionModel().selectedItemProperty().addListener((obs, anterior, seleccionado) -> {
             if (seleccionado != null) {
                 txtIsbn.setText(seleccionado.getIsbn());
-                txtIsbn.setDisable(true); // el ISBN no se edita una vez creado
+                txtIsbn.setDisable(true); 
                 txtTitulo.setText(seleccionado.getTitulo());
                  txtFechaPublicacion.setText(seleccionado.getFechaPublicacion() != null
                         ? seleccionado.getFechaPublicacion().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
@@ -92,7 +110,6 @@ public class LibrosFormController implements Initializable {
             }
         });
 
-        // T3.5.6 — si venimos del Dashboard de Bodega con un ISBN pedido, seleccionarlo ya cargado
         if (isbnAAbrir != null) {
             for (Libros libro : tblLibros.getItems()) {
                 if (libro.getIsbn().equals(isbnAAbrir)) {
@@ -105,10 +122,14 @@ public class LibrosFormController implements Initializable {
         }
     }
 
-    // ComboBox<Categoria> ligado a la FK id_categoria (patrón ComboBox_con_FK.pdf)
     private void cargarCategorias() {
         ObservableList<Categoria> categorias = FXCollections.observableArrayList(categoriaDAO.listar());
         cmbCategoria.setItems(categorias);
+    }
+
+    private void cargarAutores() {
+        ObservableList<Autor> autores = FXCollections.observableArrayList(autorDAO.listar());
+        cmbAutor.setItems(autores);
     }
 
     private void seleccionarCategoria(int idCategoria) {
@@ -127,6 +148,79 @@ public class LibrosFormController implements Initializable {
     }
 
     @FXML
+    public void eventoCrearEditorial(ActionEvent evento) {
+        try {
+            ValidarException.validarNoVacio(txtNuevoNitEditorial.getText(), "NIT de la nueva editorial");
+            ValidarException.validarNoVacio(txtNuevoNombreEditorial.getText(), "nombre de la nueva editorial");
+            ValidarException.validarNoVacio(txtNuevoTelefonoEditorial.getText(), "teléfono de la nueva editorial");
+            ValidarException.validarNoVacio(txtNuevaDireccionEditorial.getText(), "dirección de la nueva editorial");
+
+            Editorial nueva = new Editorial();
+            nueva.setNit(txtNuevoNitEditorial.getText().trim());
+            nueva.setNombreEditorial(txtNuevoNombreEditorial.getText().trim());
+            nueva.setTelefonoEditorial(txtNuevoTelefonoEditorial.getText().trim());
+            nueva.setDireccionEditoria(txtNuevaDireccionEditorial.getText().trim());
+
+            boolean creada = editorialDAO.insertar(nueva);
+
+            if (creada) {
+                mostrarAlerta(Alert.AlertType.INFORMATION, "Editorial creada con éxito");
+                txtNitEditorial.setText(nueva.getNit());
+                txtNuevoNitEditorial.clear();
+                txtNuevoNombreEditorial.clear();
+                txtNuevoTelefonoEditorial.clear();
+                txtNuevaDireccionEditorial.clear();
+            } else {
+                mostrarAlerta(Alert.AlertType.ERROR, "No se pudo crear la editorial");
+            }
+
+        } catch (ValidarException e) {
+            mostrarAlerta(Alert.AlertType.WARNING, e.getMessage());
+            lblMensaje.setText(e.getMessage());
+        }
+    }
+
+    @FXML
+    public void eventoCrearAutor(ActionEvent evento) {
+        try {
+            ValidarException.validarNoVacio(txtNuevoNombreAutor.getText(), "nombre del nuevo autor");
+            ValidarException.validarNoVacio(txtNuevoApellidoAutor.getText(), "apellido del nuevo autor");
+
+            Autor nuevo = new Autor();
+            nuevo.setNombreAutor(txtNuevoNombreAutor.getText().trim());
+            nuevo.setApellidoAutor(txtNuevoApellidoAutor.getText().trim());
+            nuevo.setNacionalidad(txtNuevaNacionalidadAutor.getText() == null ? "" : txtNuevaNacionalidadAutor.getText().trim());
+            nuevo.setBiografia("");
+
+            boolean creado = autorDAO.insertar(nuevo);
+
+            if (creado) {
+                mostrarAlerta(Alert.AlertType.INFORMATION, "Autor creado con éxito");
+                cargarAutores();
+                seleccionarAutorPorNombre(nuevo.getNombreAutor(), nuevo.getApellidoAutor());
+                txtNuevoNombreAutor.clear();
+                txtNuevoApellidoAutor.clear();
+                txtNuevaNacionalidadAutor.clear();
+            } else {
+                mostrarAlerta(Alert.AlertType.ERROR, "No se pudo crear el autor");
+            }
+
+        } catch (ValidarException e) {
+            mostrarAlerta(Alert.AlertType.WARNING, e.getMessage());
+            lblMensaje.setText(e.getMessage());
+        }
+    }
+
+    private void seleccionarAutorPorNombre(String nombre, String apellido) {
+        for (Autor autor : cmbAutor.getItems()) {
+            if (autor.getNombreAutor().equalsIgnoreCase(nombre) && autor.getApellidoAutor().equalsIgnoreCase(apellido)) {
+                cmbAutor.setValue(autor);
+                return;
+            }
+        }
+    }
+
+    @FXML
     public void eventoAgregar(ActionEvent evento) {
         try {
             Libros nuevoLibro = leerFormulario(true);
@@ -134,6 +228,7 @@ public class LibrosFormController implements Initializable {
             boolean creado = librosDAO.insertar(nuevoLibro);
 
             if (creado) {
+                asociarAutorSiAplica(nuevoLibro.getIsbn());
                 mostrarAlerta(Alert.AlertType.INFORMATION, "Libro creado con éxito");
                 limpiarCampos();
                 cargarLibros();
@@ -159,6 +254,7 @@ public class LibrosFormController implements Initializable {
             boolean actualizado = librosDAO.actualizar(datosActualizados);
 
             if (actualizado) {
+                asociarAutorSiAplica(seleccionado.getIsbn());
                 mostrarAlerta(Alert.AlertType.INFORMATION, "Libro actualizado con éxito");
                 limpiarCampos();
                 cargarLibros();
@@ -169,6 +265,13 @@ public class LibrosFormController implements Initializable {
         } catch (ValidarException e) {
             mostrarAlerta(Alert.AlertType.WARNING, e.getMessage());
             lblMensaje.setText(e.getMessage());
+        }
+    }
+
+    private void asociarAutorSiAplica(String isbn) {
+        Autor autorSeleccionado = cmbAutor.getValue();
+        if (autorSeleccionado != null) {
+            autorDAO.asociarLibro(autorSeleccionado.getIdAutor(), isbn);
         }
     }
 
@@ -275,7 +378,7 @@ public class LibrosFormController implements Initializable {
         libro.setPrecio(precio);
         libro.setIdCategoria(idCategoria);
         libro.setNitEditorial(txtNitEditorial.getText().trim());
-        libro.setStockActual(0); // un libro nuevo inicia sin stock; se carga con un ingreso (US-3.1)
+        libro.setStockActual(0);
         libro.setStockMinimo(stockMinimo);
 
         return libro;
@@ -290,6 +393,7 @@ public class LibrosFormController implements Initializable {
         cmbCategoria.setValue(null);
         txtNitEditorial.clear();
         txtStockMinimo.clear();
+        cmbAutor.setValue(null);
         lblMensaje.setText("");
     }
 

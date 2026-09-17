@@ -14,33 +14,34 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="520.0" prefWidth="700.0" styleClass="mainFxmlClass"
+<AnchorPane id="AnchorPane" prefHeight="560.0" prefWidth="700.0" styleClass="mainFxmlClass"
             xmlns="http://javafx.com/javafx/21.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="org.lpv.controller.EditorialController">
+            fx:controller="org.lpv.controller.AutorController">
     <stylesheets>
         <URL value="@/org/lpv/view/style/editorialview.css" />
     </stylesheets>
     <children>
-        <Label layoutX="220.0" layoutY="15.0" styleClass="page-title" text="Gestión de Editoriales">
-            <font>
-                <Font size="22.0" />
-            </font>
+        <Label layoutX="250.0" layoutY="15.0" styleClass="page-title" text="Gestión de Autores">
+            <font><Font size="22.0" /></font>
         </Label>
 
-        <TableView fx:id="tblEditoriales" layoutX="30.0" layoutY="60.0" prefHeight="200.0" prefWidth="640.0" styleClass="table-view">
+        <TableView fx:id="tblAutores" layoutX="30.0" layoutY="60.0" prefHeight="200.0" prefWidth="640.0" styleClass="table-view">
             <columns>
-                <TableColumn fx:id="colNit" prefWidth="130.0" text="NIT">
-                    <cellValueFactory><PropertyValueFactory property="nit" /></cellValueFactory>
+                <TableColumn fx:id="colIdAutor" prefWidth="60.0" text="ID">
+                    <cellValueFactory><PropertyValueFactory property="idAutor" /></cellValueFactory>
                 </TableColumn>
-                <TableColumn fx:id="colNombreEditorial" prefWidth="200.0" text="Nombre">
-                    <cellValueFactory><PropertyValueFactory property="nombreEditorial" /></cellValueFactory>
+                <TableColumn fx:id="colNombreAutor" prefWidth="140.0" text="Nombre">
+                    <cellValueFactory><PropertyValueFactory property="nombreAutor" /></cellValueFactory>
                 </TableColumn>
-                <TableColumn fx:id="colTelefonoEditorial" prefWidth="140.0" text="Teléfono">
-                    <cellValueFactory><PropertyValueFactory property="telefonoEditorial" /></cellValueFactory>
+                <TableColumn fx:id="colApellidoAutor" prefWidth="140.0" text="Apellido">
+                    <cellValueFactory><PropertyValueFactory property="apellidoAutor" /></cellValueFactory>
                 </TableColumn>
-                <TableColumn fx:id="colDireccionEditoria" prefWidth="170.0" text="Dirección">
-                    <cellValueFactory><PropertyValueFactory property="direccionEditoria" /></cellValueFactory>
+                <TableColumn fx:id="colNacionalidad" prefWidth="130.0" text="Nacionalidad">
+                    <cellValueFactory><PropertyValueFactory property="nacionalidad" /></cellValueFactory>
+                </TableColumn>
+                <TableColumn fx:id="colBiografia" prefWidth="170.0" text="Biografía">
+                    <cellValueFactory><PropertyValueFactory property="biografia" /></cellValueFactory>
                 </TableColumn>
             </columns>
         </TableView>
@@ -61,15 +62,15 @@
                         <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                     <children>
-                        <Label styleClass="field-label" text="NIT"                   GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                        <Label styleClass="field-label" text="Nombre de la editorial" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Label styleClass="field-label" text="Teléfono"               GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Label styleClass="field-label" text="Dirección"              GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label styleClass="field-label" text="Nombre"       GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                        <Label styleClass="field-label" text="Apellido"     GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label styleClass="field-label" text="Nacionalidad" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label styleClass="field-label" text="Biografía"    GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
-                        <TextField fx:id="txtNit"               styleClass="text-input" GridPane.columnIndex="2" GridPane.rowIndex="0" />
-                        <TextField fx:id="txtNombreEditorial"   styleClass="text-input" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                        <TextField fx:id="txtTelefonoEditorial" styleClass="text-input" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                        <TextField fx:id="txtDireccionEditoria" styleClass="text-input" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                        <TextField fx:id="txtNombreAutor"   styleClass="text-input" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                        <TextField fx:id="txtApellidoAutor" styleClass="text-input" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                        <TextField fx:id="txtNacionalidad"  styleClass="text-input" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                        <TextField fx:id="txtBiografia"     styleClass="text-input" GridPane.columnIndex="2" GridPane.rowIndex="3" />
                     </children>
                 </GridPane>
             </children>
