@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="820.0" prefWidth="720.0" styleClass="mainFxmlClass"
+<AnchorPane prefHeight="850.0" prefWidth="720.0" styleClass="mainFxmlClass"
             xmlns="http://javafx.com/javafx/21.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.lpv.controller.LibrosFormController">
@@ -35,7 +35,7 @@
 
         <Label layoutX="20.0" layoutY="56.0" styleClass="section-label" text="LISTADO DE LIBROS" />
         <TableView fx:id="tblLibros" layoutX="20.0" layoutY="76.0"
-                   prefHeight="200.0" prefWidth="680.0" styleClass="table-view">
+                   prefHeight="180.0" prefWidth="680.0" styleClass="table-view">
             <columns>
                 <TableColumn fx:id="colIsbn"        prefWidth="110.0" text="ISBN">
                     <cellValueFactory><PropertyValueFactory property="isbn" /></cellValueFactory>
@@ -58,14 +58,15 @@
             </columns>
         </TableView>
 
-        <Label layoutX="20.0" layoutY="292.0" styleClass="section-label" text="DATOS DEL LIBRO" />
-        <GridPane layoutX="20.0" layoutY="312.0" prefWidth="680.0" hgap="14.0" vgap="10.0">
+        <Label layoutX="20.0" layoutY="272.0" styleClass="section-label" text="DATOS DEL LIBRO" />
+        <GridPane layoutX="20.0" layoutY="292.0" prefWidth="680.0" hgap="14.0" vgap="10.0">
             <columnConstraints>
                 <ColumnConstraints prefWidth="220.0" />
                 <ColumnConstraints prefWidth="220.0" />
                 <ColumnConstraints prefWidth="220.0" />
             </columnConstraints>
             <rowConstraints>
+                <RowConstraints prefHeight="54.0" />
                 <RowConstraints prefHeight="54.0" />
                 <RowConstraints prefHeight="54.0" />
             </rowConstraints>
@@ -94,11 +95,15 @@
                     <Label styleClass="field-label" text="Stock mínimo" />
                     <TextField fx:id="txtStockMinimo" styleClass="text-input" />
                 </VBox>
+                <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                    <Label styleClass="field-label" text="NIT Editorial" />
+                    <TextField fx:id="txtNitEditorial" styleClass="text-input" />
+                </VBox>
             </children>
         </GridPane>
 
-        <Label layoutX="20.0" layoutY="438.0" styleClass="section-label" text="AUTOR DEL LIBRO" />
-        <GridPane layoutX="20.0" layoutY="458.0" prefWidth="330.0" hgap="10.0" vgap="8.0">
+        <Label layoutX="20.0" layoutY="480.0" styleClass="section-label" text="AUTOR DEL LIBRO" />
+        <GridPane layoutX="20.0" layoutY="500.0" prefWidth="330.0" hgap="10.0" vgap="8.0">
             <columnConstraints>
                 <ColumnConstraints prefWidth="160.0" />
                 <ColumnConstraints prefWidth="160.0" />
@@ -132,8 +137,8 @@
             </children>
         </GridPane>
 
-        <Label layoutX="370.0" layoutY="438.0" styleClass="section-label" text="NUEVA EDITORIAL" />
-        <GridPane layoutX="370.0" layoutY="458.0" prefWidth="330.0" hgap="10.0" vgap="8.0">
+        <Label layoutX="370.0" layoutY="480.0" styleClass="section-label" text="NUEVA EDITORIAL" />
+        <GridPane layoutX="370.0" layoutY="500.0" prefWidth="330.0" hgap="10.0" vgap="8.0">
             <columnConstraints>
                 <ColumnConstraints prefWidth="160.0" />
                 <ColumnConstraints prefWidth="160.0" />
@@ -147,7 +152,7 @@
             <children>
                 <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="2">
                     <Label styleClass="field-label" text="NIT editorial" />
-                    <TextField fx:id="txtNitEditorial" styleClass="text-input" />
+                    <TextField fx:id="txtNuevoNitEditorial" styleClass="text-input" />
                 </VBox>
                 <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="1">
                     <Label styleClass="field-label" text="Nombre" />
@@ -167,14 +172,14 @@
             </children>
         </GridPane>
 
-        <HBox layoutX="20.0" layoutY="708.0" spacing="10.0" prefWidth="680.0">
+        <HBox layoutX="20.0" layoutY="750.0" spacing="10.0" prefWidth="680.0">
             <Button fx:id="btnAgregar"    onAction="#eventoAgregar"    prefHeight="32.0" prefWidth="160.0" styleClass="primary-button"   text="AGREGAR" />
             <Button fx:id="btnActualizar" onAction="#eventoActualizar" prefHeight="32.0" prefWidth="160.0" styleClass="primary-button"   text="ACTUALIZAR" />
             <Button fx:id="btnDesactivar" onAction="#eventoDesactivar" prefHeight="32.0" prefWidth="160.0" styleClass="secondary-button" text="DESACTIVAR" />
             <Button fx:id="btnActivar"    onAction="#eventoActivar"    prefHeight="32.0" prefWidth="160.0" styleClass="secondary-button" text="ACTIVAR" />
         </HBox>
 
-        <Label fx:id="lblMensaje" layoutX="20.0" layoutY="748.0" text="" textFill="#b5453f" />
+        <Label fx:id="lblMensaje" layoutX="20.0" layoutY="790.0" text="" textFill="#b5453f" />
 
     </children>
 </AnchorPane>
