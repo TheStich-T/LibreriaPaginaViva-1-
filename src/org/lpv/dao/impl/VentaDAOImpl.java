@@ -296,4 +296,119 @@ public class VentaDAOImpl implements VentaDAO {
             return false;
         }
     }
+    
+     @Override
+    public boolean devolverVenta(int idVenta, int usuarioAnulacion, String motivoAnulacion) {
+        log.info("Procesando devolución de venta: " + idVenta);
+
+        String sqlEstado = "select estado from ventas where id_venta = ? for update";
+        String sqlDetalle = "{call sp_listardetalleventa(?)}";
+        String sqlStock = "select stock_actual, stock_minimo from libros where isbn = ? for update";
+        String sqlActualizarStock = "{call sp_actualizarstocklibro(?, ?, ?)}";
+        String sqlMovimiento = "{call sp_registrarmovimiento(?, ?, ?, ?, ?, ?)}";
+        String sqlAnular = "{call sp_anularventa(?, ?, ?)}";
+
+        try (Connection conexion = Conexion.getInstancia().conectar()) {
+            conexion.setAutoCommit(false);
+
+            try {
+                String estadoActual;
+                try (PreparedStatement consultaEstado = conexion.prepareStatement(sqlEstado)) {
+                    consultaEstado.setInt(1, idVenta);
+                    try (ResultSet resultadoEstado = consultaEstado.executeQuery()) {
+                        if (!resultadoEstado.next()) {
+                            throw new SQLException("La venta " + idVenta + " no existe.");
+                        }
+                        estadoActual = resultadoEstado.getString("estado");
+                    }
+                }
+                if (!"COMPLETADA".equalsIgnoreCase(estadoActual)) {
+                    throw new SQLException("La venta " + idVenta + " ya fue anulada o devuelta anteriormente.");
+                }
+
+                List<detalleVenta> detalles = new ArrayList<>();
+                try (CallableStatement consultaDetalle = conexion.prepareCall(sqlDetalle)) {
+                    consultaDetalle.setInt(1, idVenta);
+                    try (ResultSet resultadoDetalle = consultaDetalle.executeQuery()) {
+                        while (resultadoDetalle.next()) {
+                            detalleVenta detalle = new detalleVenta();
+                            detalle.setIsbn(resultadoDetalle.getString("isbn"));
+                            detalle.setCantidad(resultadoDetalle.getInt("cantidad"));
+                            detalles.add(detalle);
+                        }
+                    }
+                }
+                if (detalles.isEmpty()) {
+                    throw new SQLException("La venta " + idVenta + " no tiene detalle registrado.");
+                }
+
+                for (detalleVenta detalle : detalles) {
+                    int stockActual;
+                    int stockMinimo;
+                    try (PreparedStatement consultaStock = conexion.prepareStatement(sqlStock)) {
+                        consultaStock.setString(1, detalle.getIsbn());
+                        try (ResultSet resultadoStock = consultaStock.executeQuery()) {
+                            if (!resultadoStock.next()) {
+                                throw new SQLException("El libro " + detalle.getIsbn() + " no existe.");
+                            }
+                            stockActual = resultadoStock.getInt("stock_actual");
+                            stockMinimo = resultadoStock.getInt("stock_minimo");
+                        }
+                    }
+
+                    int nuevoStock = stockActual + detalle.getCantidad();
+                    try (CallableStatement consultaActualizar = conexion.prepareCall(sqlActualizarStock)) {
+                        consultaActualizar.setString(1, detalle.getIsbn());
+                        consultaActualizar.setInt(2, nuevoStock);
+                        consultaActualizar.setInt(3, stockMinimo);
+                        consultaActualizar.executeUpdate();
+                    }
+
+                    try (CallableStatement consultaMovimiento = conexion.prepareCall(sqlMovimiento)) {
+                        consultaMovimiento.setString(1, detalle.getIsbn());
+                        consultaMovimiento.setString(2, "DEVOLUCION");
+                        consultaMovimiento.setInt(3, detalle.getCantidad());
+                        if (usuarioAnulacion > 0) {
+                            consultaMovimiento.setInt(4, usuarioAnulacion);
+                        } else {
+                            consultaMovimiento.setNull(4, Types.INTEGER);
+                        }
+                        consultaMovimiento.setString(5, "Devolución de venta #" + idVenta + " - " + motivoAnulacion);
+                        consultaMovimiento.setNull(6, Types.VARCHAR);
+                        consultaMovimiento.executeUpdate();
+                    }
+                }
+
+                try (CallableStatement consultaAnular = conexion.prepareCall(sqlAnular)) {
+                    consultaAnular.setInt(1, idVenta);
+                    consultaAnular.setInt(2, usuarioAnulacion);
+                    consultaAnular.setString(3, motivoAnulacion);
+                    consultaAnular.executeUpdate();
+                }
+
+                conexion.commit();
+                log.info("Devolución procesada correctamente para la venta: " + idVenta);
+                return true;
+
+            } catch (SQLException e) {
+                try {
+                    conexion.rollback();
+                } catch (SQLException rollbackError) {
+                    log.log(Level.SEVERE, "Error al hacer rollback de la devolución", rollbackError);
+                }
+                log.log(Level.SEVERE, "Error al procesar devolución de la venta: " + idVenta, e);
+                return false;
+
+            } finally {
+                try {
+                    conexion.setAutoCommit(true);
+                } catch (SQLException e) {
+                    log.log(Level.SEVERE, "Error al restaurar autoCommit", e);
+                }
+            }
+        } catch (SQLException e) {
+            log.log(Level.SEVERE, "Error de conexión al procesar devolución", e);
+            return false;
+        }
+    }
 }
