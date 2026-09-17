@@ -59,7 +59,13 @@
                 <Button onAction="#eventoConsultarStockBajo" prefHeight="65.0" prefWidth="180.0" styleClass="dashboard-card, card-5" text="Consultar Stock Bajo" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                 <Button onAction="#eventoRegistrarIngreso" prefHeight="65.0" prefWidth="180.0" styleClass="dashboard-card, card-6" text="Registrar Ingresos" wrapText="true" GridPane.columnIndex="3" GridPane.rowIndex="2" />
 
-                <Button onAction="#eventoRegistrarSalida" prefHeight="65.0" prefWidth="180.0" styleClass="dashboard-card, card-1" text="Registrar Salidas" wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                                <Button onAction="#eventoRegistrarSalida" prefHeight="65.0" prefWidth="180.0" styleClass="dashboard-card, card-1" text="Registrar Salidas" wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                <Button onAction="#eventoGestionarCategorias" prefHeight="65.0" prefWidth="180.0" styleClass="dashboard-card, card-2" text="Gestionar Categorías" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                <Button onAction="#eventoGestionarProveedores" prefHeight="65.0" prefWidth="180.0" styleClass="dashboard-card, card-3" text="Gestionar Proveedores" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                <Button onAction="#eventoActualizarPrecio" prefHeight="65.0" prefWidth="180.0" styleClass="dashboard-card, card-4" text="Actualizar Precios" wrapText="true" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+
+                <Button onAction="#eventoGestionarEditoriales" prefHeight="65.0" prefWidth="180.0" styleClass="dashboard-card, card-5" text="Gestionar Editoriales" wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                <Button onAction="#eventoGestionarAutores" prefHeight="65.0" prefWidth="180.0" styleClass="dashboard-card, card-6" text="Gestionar Autores" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             </children>
          <columnConstraints>
             <ColumnConstraints />
