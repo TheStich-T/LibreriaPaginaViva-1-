@@ -8,7 +8,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.Label;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import org.lpv.model.detalleVenta;
@@ -27,6 +27,12 @@ public class FacturaController implements Initializable {
     @FXML private TextField txtCorreo;
     @FXML private TextField txtDescuento;
     @FXML private TextField txtTotal;
+    @FXML private Label lblNoFactura;
+    @FXML private Label lblFecha;
+    @FXML private Label lblCui;
+    @FXML private Label lblCliente;
+    @FXML private Label lblCorreo;
+    @FXML private Label lblTotal;
 
     @FXML private TableView<detalleVenta> tblDetalleFactura;
     @FXML private TableColumn<detalleVenta, String> colLibro;
@@ -119,6 +125,18 @@ public class FacturaController implements Initializable {
         tblDetalleFactura.setItems(
                 listaDetalles
         );
+    public void cargarDatosFactura(Venta venta, Clientes clientes, ObservableList<detalleVenta> detalles) {
+        lblNoFactura.setText(String.valueOf(venta.getIdVenta()));
+        lblFecha.setText(venta.getFechaVenta() != null
+                ? venta.getFechaVenta().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))
+                : "");
+        lblCui.setText(String.valueOf(clientes.getCui()));
+        lblCliente.setText(clientes.getNombreCliente() + " " + clientes.getApellidoCliente());
+        lblCorreo.setText(clientes.getCorreoElectronico());
+        lblTotal.setText("Q " + String.format("%.2f", venta.getTotal()));
+
+        listaDetalles = FXCollections.observableArrayList(detalles);
+        tblDetalleFactura.setItems(listaDetalles);
     }
 
     @FXML
