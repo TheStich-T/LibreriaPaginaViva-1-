@@ -25,6 +25,7 @@ public class FacturaController implements Initializable {
     @FXML private TextField txtCui;
     @FXML private TextField txtCliente;
     @FXML private TextField txtCorreo;
+    @FXML private TextField txtDescuento;
     @FXML private TextField txtTotal;
 
     @FXML private TableView<detalleVenta> tblDetalleFactura;
@@ -36,30 +37,99 @@ public class FacturaController implements Initializable {
     private ObservableList<detalleVenta> listaDetalles;
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        colLibro.setCellValueFactory(new PropertyValueFactory<>("titulo"));
-        colCompra.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
-        colPrecio.setCellValueFactory(new PropertyValueFactory<>("precioUnitario"));
-        colSubtotal.setCellValueFactory(new PropertyValueFactory<>("subtotal"));
+    public void initialize(
+            URL location,
+            ResourceBundle resources) {
+
+        colLibro.setCellValueFactory(
+                new PropertyValueFactory<>("titulo")
+        );
+
+        colCompra.setCellValueFactory(
+                new PropertyValueFactory<>("cantidad")
+        );
+
+        colPrecio.setCellValueFactory(
+                new PropertyValueFactory<>("precioUnitario")
+        );
+
+        colSubtotal.setCellValueFactory(
+                new PropertyValueFactory<>("subtotal")
+        );
     }
 
-    public void cargarDatosFactura(Venta venta, Clientes clientes, ObservableList<detalleVenta> detalles) {
-        txtNoFactura.setText(String.valueOf(venta.getIdVenta()));
-        txtFecha.setText(venta.getFechaVenta() != null
-                ? venta.getFechaVenta().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))
-                : "");
-        txtCui.setText(String.valueOf(clientes.getCui()));
-        txtCliente.setText(clientes.getNombreCliente() + " " + clientes.getApellidoCliente());
-        txtCorreo.setText(clientes.getCorreoElectronico());
-        txtTotal.setText("Q " + String.format("%.2f", venta.getTotal()));
+    public void cargarDatosFactura(
+            Venta venta,
+            Clientes clientes,
+            ObservableList<detalleVenta> detalles) {
 
-        listaDetalles = FXCollections.observableArrayList(detalles);
-        tblDetalleFactura.setItems(listaDetalles);
+        txtNoFactura.setText(
+                String.valueOf(
+                        venta.getIdVenta()
+                )
+        );
+
+        txtFecha.setText(
+                venta.getFechaVenta() != null
+                ? venta.getFechaVenta().format(
+                        DateTimeFormatter.ofPattern(
+                                "dd/MM/yyyy HH:mm"
+                        )
+                )
+                : ""
+        );
+
+        txtCui.setText(
+                String.valueOf(
+                        clientes.getCui()
+                )
+        );
+
+        txtCliente.setText(
+                clientes.getNombreCliente()
+                + " "
+                + clientes.getApellidoCliente()
+        );
+
+        txtCorreo.setText(
+                clientes.getCorreoElectronico()
+        );
+
+        txtDescuento.setText(
+                "Q "
+                + String.format(
+                        "%.2f",
+                        venta.getDescuento()
+                )
+        );
+
+        txtTotal.setText(
+                "Q "
+                + String.format(
+                        "%.2f",
+                        venta.getTotal()
+                )
+        );
+
+        listaDetalles =
+                FXCollections.observableArrayList(
+                        detalles
+                );
+
+        tblDetalleFactura.setItems(
+                listaDetalles
+        );
     }
 
     @FXML
-    public void eventoCerrar(ActionEvent evento) {
-        Stage escenario = (Stage) ((Node) evento.getSource()).getScene().getWindow();
+    public void eventoCerrar(
+            ActionEvent evento) {
+
+        Stage escenario =
+                (Stage) ((Node) evento.getSource())
+                        .getScene()
+                        .getWindow();
+
         escenario.close();
     }
 }
