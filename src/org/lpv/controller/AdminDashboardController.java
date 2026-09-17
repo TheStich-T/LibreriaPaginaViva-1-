@@ -119,4 +119,29 @@ public class AdminDashboardController implements Initializable {
     public void eventoRegistrarSalida(ActionEvent evento) {
         cambiarEscena("/org/lpv/view/SalidaInventarioView.fxml");
     }
+     @FXML
+    public void eventoGestionarCategorias(ActionEvent evento) {
+        cambiarEscena("/org/lpv/view/CategoriaView.fxml");
+    }
+
+    @FXML
+    public void eventoGestionarProveedores(ActionEvent evento) {
+        cambiarEscena("/org/lpv/view/ProveedorView.fxml");
+    }
+
+    @FXML
+    public void eventoGestionarEditoriales(ActionEvent evento) {
+        cambiarEscena("/org/lpv/view/EditorialView.fxml");
+    }
+
+    @FXML
+    public void eventoGestionarAutores(ActionEvent evento) {
+        cambiarEscena("/org/lpv/view/AutorView.fxml");
+    }
+
+    @FXML
+    public void eventoActualizarPrecio(ActionEvent evento) {
+        cambiarEscena("/org/lpv/view/ActualizarPrecioView.fxml");
+    }
+    
 }
