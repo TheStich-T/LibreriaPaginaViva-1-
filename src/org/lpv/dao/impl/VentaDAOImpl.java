@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -410,5 +411,216 @@ public class VentaDAOImpl implements VentaDAO {
             log.log(Level.SEVERE, "Error de conexión al procesar devolución", e);
             return false;
         }
+    }
+
+    @Override
+    public List<Venta> listarVentaPorDia(LocalDate fecha) {
+          log.info(
+                "Generando reporte de ventas diario: "
+                + fecha
+        );
+        List<Venta> ventas = new ArrayList<>();
+        String sql =
+                "{call sp_reporteventasdiario(?)}";
+
+        try (Connection conexion =
+                Conexion.getInstancia().conectar();
+             CallableStatement consulta =
+                conexion.prepareCall(sql)) {
+
+            consulta.setDate(
+                    1,
+                    java.sql.Date.valueOf(fecha)
+            );
+
+            try (ResultSet resultado =
+                    consulta.executeQuery()) {
+
+                while (resultado.next()) {
+
+                    Venta venta =
+                            convertirVenta(resultado);
+
+                    venta.setIdUsuario(
+                            resultado.getInt(
+                                    "id_usuario"
+                            )
+                    );
+
+                    ventas.add(venta);
+                }
+            }
+
+            log.info(
+                    "Reporte diario generado. Registros: "
+                    + ventas.size()
+            );
+
+        } catch (SQLException e) {
+
+            log.log(
+                    Level.SEVERE,
+                    "Error al generar reporte diario",
+                    e
+            );
+        }
+
+        return ventas;
+    }
+    
+    @Override
+    public List<Venta> listarVentasPorSemana(LocalDate fecha) {
+
+        log.info(
+                "Generando reporte de ventas semanal: "
+                + fecha
+        );
+
+        List<Venta> ventas = new ArrayList<>();
+
+        String sql =
+                "{call sp_reporteventassemanal(?)}";
+
+        try (Connection conexion =
+                Conexion.getInstancia().conectar();
+             CallableStatement consulta =
+                conexion.prepareCall(sql)) {
+
+            consulta.setDate(
+                    1,
+                    java.sql.Date.valueOf(fecha)
+            );
+
+            try (ResultSet resultado =
+                    consulta.executeQuery()) {
+
+                while (resultado.next()) {
+
+                    Venta venta =
+                            convertirVenta(resultado);
+
+                    venta.setIdUsuario(
+                            resultado.getInt(
+                                    "id_usuario"
+                            )
+                    );
+
+                    ventas.add(venta);
+                }
+            }
+
+            log.info(
+                    "Reporte semanal generado. Registros: "
+                    + ventas.size()
+            );
+
+        } catch (SQLException e) {
+
+            log.log(
+                    Level.SEVERE,
+                    "Error al generar reporte semanal",
+                    e
+            );
+        }
+
+        return ventas;
+    }
+
+    @Override
+    public List<Venta> listarVentasPorMes(
+            int anio,
+            int mes) {
+
+        log.info(
+                "Generando reporte de ventas mensual: "
+                + mes
+                + "/"
+                + anio
+        );
+
+        List<Venta> ventas = new ArrayList<>();
+
+        String sql =
+                "{call sp_reporteventasmensual(?, ?)}";
+
+        try (Connection conexion =
+                Conexion.getInstancia().conectar();
+             CallableStatement consulta =
+                conexion.prepareCall(sql)) {
+
+            consulta.setInt(1, anio);
+            consulta.setInt(2, mes);
+
+            try (ResultSet resultado =
+                    consulta.executeQuery()) {
+
+                while (resultado.next()) {
+
+                    Venta venta =
+                            convertirVenta(resultado);
+
+                    venta.setIdUsuario(
+                            resultado.getInt(
+                                    "id_usuario"
+                            )
+                    );
+
+                    ventas.add(venta);
+                }
+            }
+
+            log.info(
+                    "Reporte mensual generado. Registros: "
+                    + ventas.size()
+            );
+
+        } catch (SQLException e) {
+
+            log.log(
+                    Level.SEVERE,
+                    "Error al generar reporte mensual",
+                    e
+            );
+        }
+
+        return ventas;
+    }
+    
+        private Venta convertirVenta(ResultSet resultado)
+            throws SQLException {
+
+        Venta venta = new Venta();
+
+        venta.setIdVenta(
+                resultado.getInt("id_venta")
+        );
+
+        if (resultado.getTimestamp("fecha_venta")
+                != null) {
+
+            venta.setFechaVenta(
+                    resultado
+                            .getTimestamp("fecha_venta")
+                            .toLocalDateTime()
+            );
+        }
+
+        venta.setSubtotal(
+                resultado.getDouble("subtotal")
+        );
+
+        venta.setDescuento(
+                resultado.getDouble("descuento")
+        );
+
+        venta.setTotal(
+                resultado.getDouble("total")
+        );
+
+        venta.setEstado(
+                resultado.getString("estado")
+        );
+
+        return venta;
     }
 }

@@ -3,22 +3,18 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Levi%20Salazar/B_4/LibreriaPaginaViva-1-/src/org/lpv/dao/impl/ClientesDAOImpl.java</file>
-            <file>file:/C:/Levi%20Salazar/B_4/LibreriaPaginaViva-1-/src/org/lpv/view/CategoriaView.fxml</file>
-            <file>file:/C:/Levi%20Salazar/B_4/LibreriaPaginaViva-1-/src/org/lpv/controller/CategoriaController.java</file>
-            <file>file:/C:/Levi%20Salazar/B_4/LibreriaPaginaViva-1-/src/org/lpv/view/style/categoriaview.css</file>
-            <file>file:/C:/Levi%20Salazar/B_4/LibreriaPaginaViva-1-/src/org/lpv/controller/ProveedorController.java</file>
-            <file>file:/C:/Levi%20Salazar/B_4/LibreriaPaginaViva-1-/src/org/lpv/view/style/proveedorview.css</file>
-            <file>file:/C:/Levi%20Salazar/B_4/LibreriaPaginaViva-1-/src/org/lpv/view/ProveedorView.fxml</file>
-            <file>file:/C:/Levi%20Salazar/B_4/LibreriaPaginaViva-1-/src/org/lpv/controller/ActualizarPrecioController.java</file>
-            <file>file:/C:/Levi%20Salazar/B_4/LibreriaPaginaViva-1-/src/org/lpv/view/ActualizarPrecioView.fxml</file>
-            <file>file:/C:/Levi%20Salazar/B_4/LibreriaPaginaViva-1-/src/org/lpv/view/style/actualizarprecioview.css</file>
-            <file>file:/C:/Levi%20Salazar/B_4/LibreriaPaginaViva-1-/src/org/lpv/controller/AdminDashboardController.java</file>
-            <file>file:/C:/Levi%20Salazar/B_4/LibreriaPaginaViva-1-/src/org/lpv/view/AdminDashboardView.fxml</file>
-            <file>file:/C:/Levi%20Salazar/B_4/LibreriaPaginaViva-1-/src/org/lpv/dao/VentaDAO.java</file>
-            <file>file:/C:/Levi%20Salazar/B_4/LibreriaPaginaViva-1-/src/org/lpv/dao/impl/VentaDAOImpl.java</file>
-            <file>file:/C:/Levi%20Salazar/B_4/LibreriaPaginaViva-1-/src/org/lpv/controller/ListaVentasController.java</file>
-            <file>file:/C:/Levi%20Salazar/B_4/LibreriaPaginaViva-1-/src/org/lpv/view/ListaVentasView.fxml</file>
+            <file>file:/C:/AP/Bim4/s6/LibreriaPaginaViva-1-/src/org/lpv/dao/VentaDAO.java</file>
+            <file>file:/C:/AP/Bim4/s6/LibreriaPaginaViva-1-/src/org/lpv/controller/ReportesVentasController.java</file>
+            <file>file:/C:/AP/Bim4/s6/LibreriaPaginaViva-1-/src/org/lpv/view/SalidaInventarioView.fxml</file>
+            <file>file:/C:/AP/Bim4/s6/LibreriaPaginaViva-1-/src/org/lpv/controller/AdminDashboardController.java</file>
+            <file>file:/C:/AP/Bim4/s6/LibreriaPaginaViva-1-/src/org/lpv/view/ReportesVentasView.fxml</file>
+            <file>file:/C:/AP/Bim4/s6/LibreriaPaginaViva-1-/src/org/lpv/view/ActualizarPrecioView.fxml</file>
+            <file>file:/C:/AP/Bim4/s6/LibreriaPaginaViva-1-/src/org/lpv/controller/CategoriaController.java</file>
+            <file>file:/C:/AP/Bim4/s6/LibreriaPaginaViva-1-/src/org/lpv/dao/impl/VentaDAOImpl.java</file>
+            <file>file:/C:/AP/Bim4/s6/LibreriaPaginaViva-1-/src/org/lpv/view/style/reportesventasview.css</file>
+            <file>file:/C:/AP/Bim4/s6/LibreriaPaginaViva-1-/src/org/lpv/view/AdminDashboardView.fxml</file>
+            <file>file:/C:/AP/Bim4/s6/LibreriaPaginaViva-1-/src/org/lpv/controller/ConsultarStockController.java</file>
+            <file>file:/C:/AP/Bim4/s6/LibreriaPaginaViva-1-/src/org/lpv/controller/ProveedorController.java</file>
         </group>
     </open-files>
 </project-private>

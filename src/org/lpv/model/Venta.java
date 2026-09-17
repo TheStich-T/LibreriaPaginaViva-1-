@@ -131,4 +131,3 @@ public class Venta {
         this.motivoAnulacion = motivoAnulacion;
     }
 }
-
