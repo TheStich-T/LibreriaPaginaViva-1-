@@ -115,7 +115,7 @@ public class EditorialDAOImpl implements EditorialDAO {
         editorial.setNit(rs.getString("nit"));
         editorial.setNombreEditorial(rs.getString("nombre_editorial"));
         editorial.setTelefonoEditorial(rs.getString("telefono_editorial"));
-        editorial.setDireccionEditoria(rs.getString("direccion_editoria"));
+        editorial.setDireccionEditoria(rs.getString("direccion_editorial"));
         return editorial;
     }
 }
