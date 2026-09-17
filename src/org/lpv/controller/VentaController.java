@@ -56,6 +56,7 @@ public class VentaController implements Initializable {
     @FXML private TableColumn<detalleVenta, Integer> colCantidad;
     @FXML private TableColumn<detalleVenta, Double> colPrecio;
     @FXML private TableColumn<detalleVenta, Double> colSubtotal;
+    @FXML private TextField txtDescuento;
     @FXML private Label lblSubtotal;
     @FXML private Label lblTotal;
     @FXML private Label lblMensaje;
@@ -83,6 +84,7 @@ public class VentaController implements Initializable {
         ventaDAO = new VentaDAOImpl();
         clienteDAO = new ClientesDAOImpl();
         txtCantidad.setText("1");
+        txtDescuento.setText("0");
         tblCarrito.setItems(carrito);
         colIsbn.setCellValueFactory(new PropertyValueFactory<>("isbn"));
         colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
@@ -93,6 +95,7 @@ public class VentaController implements Initializable {
         cargarLibros();
         txtFiltroCliente.textProperty().addListener((obs, textoAnterior, textoNuevo) -> filtrarClientes(textoNuevo));
         txtFiltroLibro.textProperty().addListener((obs, textoAnterior, textoNuevo) -> filtrarLibros(textoNuevo));
+        txtDescuento.textProperty().addListener((obs, textoAnterior, textoNuevo) -> actualizarTotales());
         cmbCliente.setOnAction(e -> seleccionarCliente());
         cmbLibro.setOnAction(e -> seleccionarLibro());
         cmbLibro.setConverter(new StringConverter<Libros>() {
@@ -120,6 +123,7 @@ public class VentaController implements Initializable {
             if (libro == null) {
                 throw new ValidarException("No se encontró el libro con ISBN " + isbn + ".");
             }
+
             if (!libro.isActivo()) {
                 throw new ValidarException("El libro seleccionado está inactivo.");
             }
@@ -159,16 +163,21 @@ public class VentaController implements Initializable {
         try {
             detalleVenta seleccionado = tblCarrito.getSelectionModel().getSelectedItem();
             ValidarException.validarNulo(seleccionado, "Seleccioná un producto del carrito.");
+
             int cantidad = leerCantidad();
+
             Libros libro = librosDAO.buscar(seleccionado.getIsbn());
             ValidarException.validarNulo(libro, "El libro ya no está disponible.");
+
             validarStock(libro, cantidad);
 
             seleccionado.setCantidad(cantidad);
             seleccionado.setSubtotal(cantidad * seleccionado.getPrecioUnitario());
+
             tblCarrito.refresh();
             actualizarTotales();
             lblMensaje.setText("");
+
         } catch (ValidarException e) {
             mostrarAlerta(Alert.AlertType.WARNING, e.getMessage());
             lblMensaje.setText(e.getMessage());
@@ -180,10 +189,12 @@ public class VentaController implements Initializable {
     @FXML
     public void eventoEliminar(ActionEvent evento) {
         detalleVenta seleccionado = tblCarrito.getSelectionModel().getSelectedItem();
+
         if (seleccionado == null) {
             mostrarAlerta(Alert.AlertType.WARNING, "Seleccioná un producto del carrito.");
             return;
         }
+
         carrito.remove(seleccionado);
         actualizarTotales();
     }
@@ -194,14 +205,29 @@ public class VentaController implements Initializable {
             if (carrito.isEmpty()) {
                 throw new ValidarException("El carrito no puede estar vacío.");
             }
-            ValidarException.validarNoVacio(txtCuiCliente.getText(), "CUI del cliente");
+
+            ValidarException.validarNoVacio(
+                    txtCuiCliente.getText(),
+                    "CUI del cliente"
+            );
 
             long cui = Long.parseLong(txtCuiCliente.getText().trim());
+
             Usuario actual = SessionContext.getInstancia().getUsuairoActual();
-            ValidarException.validarNulo(actual, "No hay una sesión activa.");
+            ValidarException.validarNulo(
+                    actual,
+                    "No hay una sesión activa."
+            );
 
             double subtotal = calcularSubtotal();
-            double descuento = 0;
+
+            double porcentajeDescuento = leerDescuento();
+
+            double descuento = calcularDescuento(
+                    subtotal,
+                    porcentajeDescuento
+            );
+
             double total = subtotal - descuento;
 
             Venta venta = new Venta();
@@ -211,23 +237,47 @@ public class VentaController implements Initializable {
             venta.setCuiCliente(cui);
             venta.setIdUsuario(actual.getId());
 
-            List<detalleVenta> detallesFactura = new ArrayList<>(carrito);
-            boolean registrada = ventaDAO.registrarVenta(venta, detallesFactura);
+            List<detalleVenta> detallesFactura =
+                    new ArrayList<>(carrito);
+
+            boolean registrada =
+                    ventaDAO.registrarVenta(
+                            venta,
+                            detallesFactura
+                    );
+
             if (!registrada) {
-                mostrarAlerta(Alert.AlertType.ERROR, "No se pudo registrar la venta. No se realizaron cambios en la base de datos.");
+                mostrarAlerta(
+                        Alert.AlertType.ERROR,
+                        "No se pudo registrar la venta. No se realizaron cambios en la base de datos."
+                );
                 return;
             }
 
-            mostrarAlerta(Alert.AlertType.INFORMATION,
-                    "Venta registrada correctamente. Número de venta: " + venta.getIdVenta());
+            mostrarAlerta(
+                    Alert.AlertType.INFORMATION,
+                    "Venta registrada correctamente. Número de venta: "
+                    + venta.getIdVenta()
+            );
 
             Clientes cliente = clienteDAO.buscar(cui);
-            Venta ventaRegistrada = ventaDAO.buscar(venta.getIdVenta());
-            abrirFactura(evento, ventaRegistrada != null ? ventaRegistrada : venta, cliente, detallesFactura);
+
+            Venta ventaRegistrada =
+                    ventaDAO.buscar(venta.getIdVenta());
+
+            abrirFactura(
+                    evento,
+                    ventaRegistrada != null
+                            ? ventaRegistrada
+                            : venta,
+                    cliente,
+                    detallesFactura
+            );
 
             carrito.clear();
             txtCuiCliente.clear();
             txtFiltroCliente.clear();
+            txtDescuento.setText("0");
             cmbCliente.getSelectionModel().clearSelection();
             limpiarEntrada();
             cargarLibros();
@@ -235,9 +285,16 @@ public class VentaController implements Initializable {
             lblMensaje.setText("");
 
         } catch (ValidarException e) {
-            mostrarAlerta(Alert.AlertType.WARNING, e.getMessage());
+            mostrarAlerta(
+                    Alert.AlertType.WARNING,
+                    e.getMessage()
+            );
+
         } catch (NumberFormatException e) {
-            mostrarAlerta(Alert.AlertType.WARNING, "El CUI debe ser un número válido.");
+            mostrarAlerta(
+                    Alert.AlertType.WARNING,
+                    "El CUI debe ser un número válido."
+            );
         }
     }
 
@@ -246,6 +303,7 @@ public class VentaController implements Initializable {
         carrito.clear();
         txtCuiCliente.clear();
         txtFiltroCliente.clear();
+        txtDescuento.setText("0");
         cmbCliente.getSelectionModel().clearSelection();
         limpiarEntrada();
         actualizarTotales();
@@ -257,62 +315,218 @@ public class VentaController implements Initializable {
         volverAlDashboard();
     }
 
-    private void abrirFactura(ActionEvent evento, Venta venta, Clientes cliente, List<detalleVenta> detalles) {
+    private void abrirFactura(
+            ActionEvent evento,
+            Venta venta,
+            Clientes cliente,
+            List<detalleVenta> detalles) {
+
         try {
-            FXMLLoader loader = new FXMLLoader(main.class.getResource("/org/lpv/view/FacturaView.fxml"));
+            FXMLLoader loader =
+                    new FXMLLoader(
+                            main.class.getResource(
+                                    "/org/lpv/view/FacturaView.fxml"
+                            )
+                    );
+
             Parent raiz = loader.load();
-            FacturaController controller = loader.getController();
-            controller.cargarDatosFactura(venta, cliente, FXCollections.observableArrayList(detalles));
+
+            FacturaController controller =
+                    loader.getController();
+
+            controller.cargarDatosFactura(
+                    venta,
+                    cliente,
+                    FXCollections.observableArrayList(detalles)
+            );
 
             Stage ventanaFactura = new Stage();
-            ventanaFactura.setTitle("Factura - Venta #" + venta.getIdVenta());
-            ventanaFactura.setScene(new Scene(raiz));
 
-            Stage ventanaVenta = (Stage) ((Node) evento.getSource()).getScene().getWindow();
+            ventanaFactura.setTitle(
+                    "Factura - Venta #" + venta.getIdVenta()
+            );
+
+            ventanaFactura.setScene(
+                    new Scene(raiz)
+            );
+
+            Stage ventanaVenta =
+                    (Stage) ((Node) evento.getSource())
+                            .getScene()
+                            .getWindow();
+
             ventanaFactura.initOwner(ventanaVenta);
-            ventanaFactura.initModality(Modality.WINDOW_MODAL);
+
+            ventanaFactura.initModality(
+                    Modality.WINDOW_MODAL
+            );
+
             ventanaFactura.showAndWait();
+
         } catch (IOException e) {
-            mostrarAlerta(Alert.AlertType.ERROR, "No se pudo abrir la factura: " + e.getMessage());
+            mostrarAlerta(
+                    Alert.AlertType.ERROR,
+                    "No se pudo abrir la factura: "
+                    + e.getMessage()
+            );
         }
     }
 
-    private int leerCantidad() throws ValidarException {
-        ValidarException.validarNoVacio(txtCantidad.getText(), "cantidad");
-        int cantidad = Integer.parseInt(txtCantidad.getText().trim());
+    private int leerCantidad()
+            throws ValidarException {
+
+        ValidarException.validarNoVacio(
+                txtCantidad.getText(),
+                "cantidad"
+        );
+
+        int cantidad =
+                Integer.parseInt(
+                        txtCantidad.getText().trim()
+                );
+
         if (cantidad <= 0) {
-            throw new ValidarException("La cantidad debe ser mayor a 0.");
+            throw new ValidarException(
+                    "La cantidad debe ser mayor a 0."
+            );
         }
+
         return cantidad;
     }
 
-    private void validarStock(Libros libro, int cantidad) throws ValidarException {
+    private void validarStock(
+            Libros libro,
+            int cantidad)
+            throws ValidarException {
+
         if (cantidad > libro.getStockActual()) {
-            throw new ValidarException("Stock insuficiente. Disponible: " + libro.getStockActual() + ".");
+            throw new ValidarException(
+                    "Stock insuficiente. Disponible: "
+                    + libro.getStockActual()
+                    + "."
+            );
         }
     }
 
-    private detalleVenta buscarEnCarrito(String isbn) {
+    private detalleVenta buscarEnCarrito(
+            String isbn) {
+
         for (detalleVenta detalle : carrito) {
-            if (detalle.getIsbn().equalsIgnoreCase(isbn)) {
+            if (detalle.getIsbn()
+                    .equalsIgnoreCase(isbn)) {
+
                 return detalle;
             }
         }
+
         return null;
     }
 
     private double calcularSubtotal() {
         double subtotal = 0;
+
         for (detalleVenta detalle : carrito) {
             subtotal += detalle.getSubtotal();
         }
+
         return subtotal;
     }
 
+    private double leerDescuento()
+            throws ValidarException {
+
+        ValidarException.validarNoVacio(
+                txtDescuento.getText(),
+                "descuento"
+        );
+
+        try {
+            double porcentaje =
+                    Double.parseDouble(
+                            txtDescuento.getText().trim()
+                    );
+
+            if (porcentaje < 0
+                    || porcentaje > 100) {
+
+                throw new ValidarException(
+                        "El descuento debe estar entre 0% y 100%."
+                );
+            }
+
+            return porcentaje;
+
+        } catch (NumberFormatException e) {
+
+            throw new ValidarException(
+                    "El descuento debe ser un porcentaje válido."
+            );
+        }
+    }
+
+    private double calcularDescuento(
+            double subtotal,
+            double porcentajeDescuento) {
+
+        return subtotal
+                * porcentajeDescuento
+                / 100;
+    }
+
     private void actualizarTotales() {
-        double subtotal = calcularSubtotal();
-        lblSubtotal.setText(String.format("Q %.2f", subtotal));
-        lblTotal.setText(String.format("Q %.2f", subtotal));
+
+        double subtotal =
+                calcularSubtotal();
+
+        double porcentajeDescuento = 0;
+
+        try {
+
+            String texto =
+                    txtDescuento == null
+                    || txtDescuento.getText() == null
+                    ? ""
+                    : txtDescuento.getText().trim();
+
+            if (!texto.isEmpty()) {
+
+                porcentajeDescuento =
+                        Double.parseDouble(texto);
+            }
+
+            if (porcentajeDescuento < 0
+                    || porcentajeDescuento > 100) {
+
+                porcentajeDescuento = 0;
+            }
+
+        } catch (NumberFormatException e) {
+
+            porcentajeDescuento = 0;
+        }
+
+        double descuento =
+                calcularDescuento(
+                        subtotal,
+                        porcentajeDescuento
+                );
+
+        double total =
+                subtotal - descuento;
+
+        lblSubtotal.setText(
+                String.format(
+                        "Q %.2f",
+                        subtotal
+                )
+        );
+
+        lblTotal.setText(
+                String.format(
+                        "Q %.2f",
+                        total
+                )
+        );
     }
 
     private void limpiarEntrada() {
@@ -322,80 +536,183 @@ public class VentaController implements Initializable {
     }
 
     private void cargarClientes() {
-        clientesData.setAll(clienteDAO.listar());
+
+        clientesData.setAll(
+                clienteDAO.listar()
+        );
+
         if (clientesData.isEmpty()) {
-            mostrarAlerta(Alert.AlertType.ERROR, "No se pudieron cargar los clientes.");
+
+            mostrarAlerta(
+                    Alert.AlertType.ERROR,
+                    "No se pudieron cargar los clientes."
+            );
         }
-        clientesFiltrados = new FilteredList<>(clientesData, cliente -> true);
-        cmbCliente.setItems(clientesFiltrados);
+
+        clientesFiltrados =
+                new FilteredList<>(
+                        clientesData,
+                        cliente -> true
+                );
+
+        cmbCliente.setItems(
+                clientesFiltrados
+        );
     }
 
-    private void filtrarClientes(String texto) {
+    private void filtrarClientes(
+            String texto) {
+
         if (clientesFiltrados == null) {
             return;
         }
-        if (texto == null || texto.isBlank()) {
-            clientesFiltrados.setPredicate(cliente -> true);
+
+        if (texto == null
+                || texto.isBlank()) {
+
+            clientesFiltrados.setPredicate(
+                    cliente -> true
+            );
+
             return;
         }
-        String textoBusqueda = texto.trim().toLowerCase();
-        clientesFiltrados.setPredicate(cliente ->
-                String.valueOf(cliente.getCui()).contains(textoBusqueda)
-                || cliente.getNombreCliente().toLowerCase().contains(textoBusqueda)
-                || cliente.getApellidoCliente().toLowerCase().contains(textoBusqueda));
+
+        String textoBusqueda =
+                texto.trim().toLowerCase();
+
+        clientesFiltrados.setPredicate(
+                cliente ->
+                        String.valueOf(
+                                cliente.getCui()
+                        ).contains(textoBusqueda)
+
+                        || cliente
+                                .getNombreCliente()
+                                .toLowerCase()
+                                .contains(textoBusqueda)
+
+                        || cliente
+                                .getApellidoCliente()
+                                .toLowerCase()
+                                .contains(textoBusqueda)
+        );
     }
 
     private void cargarLibros() {
+
         // solo libros activos se pueden vender
-        librosData.setAll(librosDAO.listar().stream().filter(Libros::isActivo).toList());
+        librosData.setAll(
+                librosDAO.listar()
+                        .stream()
+                        .filter(Libros::isActivo)
+                        .toList()
+        );
+
         if (librosFiltrados == null) {
-            librosFiltrados = new FilteredList<>(librosData, libro -> true);
-            cmbLibro.setItems(librosFiltrados);
+
+            librosFiltrados =
+                    new FilteredList<>(
+                            librosData,
+                            libro -> true
+                    );
+
+            cmbLibro.setItems(
+                    librosFiltrados
+            );
         }
     }
 
-    private void filtrarLibros(String texto) {
+    private void filtrarLibros(
+            String texto) {
+
         if (librosFiltrados == null) {
             return;
         }
-        if (texto == null || texto.isBlank()) {
-            librosFiltrados.setPredicate(libro -> true);
+
+        if (texto == null
+                || texto.isBlank()) {
+
+            librosFiltrados.setPredicate(
+                    libro -> true
+            );
+
             return;
         }
-        String textoBusqueda = texto.trim().toLowerCase();
-        librosFiltrados.setPredicate(libro ->
-                libro.getTitulo().toLowerCase().contains(textoBusqueda)
-                || libro.getIsbn().toLowerCase().contains(textoBusqueda));
+
+        String textoBusqueda =
+                texto.trim().toLowerCase();
+
+        librosFiltrados.setPredicate(
+                libro ->
+                        libro.getTitulo()
+                                .toLowerCase()
+                                .contains(textoBusqueda)
+
+                        || libro.getIsbn()
+                                .toLowerCase()
+                                .contains(textoBusqueda)
+        );
     }
 
     private void seleccionarLibro() {
-        Libros seleccionado = cmbLibro.getValue();
+
+        Libros seleccionado =
+                cmbLibro.getValue();
+
         if (seleccionado == null) {
             return;
         }
-        txtIsbn.setText(seleccionado.getIsbn());
+
+        txtIsbn.setText(
+                seleccionado.getIsbn()
+        );
+
         txtCantidad.requestFocus();
         txtCantidad.selectAll();
     }
 
     private void seleccionarCliente() {
-        Clientes seleccionado = cmbCliente.getValue();
+
+        Clientes seleccionado =
+                cmbCliente.getValue();
+
         if (seleccionado == null) {
             return;
         }
-        txtCuiCliente.setText(String.valueOf(seleccionado.getCui()));
+
+        txtCuiCliente.setText(
+                String.valueOf(
+                        seleccionado.getCui()
+                )
+        );
     }
 
     private void volverAlDashboard() {
+
         try {
+
             main.volverAlDashboard();
+
         } catch (IOException e) {
-            System.err.println("Error al volver al dashboard: " + e.getMessage());
+
+            System.err.println(
+                    "Error al volver al dashboard: "
+                    + e.getMessage()
+            );
         }
     }
 
-    private void mostrarAlerta(Alert.AlertType tipo, String mensaje) {
-        Alert alerta = new Alert(tipo, mensaje, ButtonType.OK);
+    private void mostrarAlerta(
+            Alert.AlertType tipo,
+            String mensaje) {
+
+        Alert alerta =
+                new Alert(
+                        tipo,
+                        mensaje,
+                        ButtonType.OK
+                );
+
         alerta.show();
     }
 }
