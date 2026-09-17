@@ -1,0 +1,70 @@
+.mainFxmlClass {
+    -fx-background-color: #3E3E3E;
+}
+
+.page-title {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.field-label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.combo-box,
+.date-picker {
+    -fx-background-color: white;
+    -fx-border-color: #012138;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+}
+
+.primary-button {
+    -fx-background-color: #012138;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+}
+
+.primary-button:hover {
+    -fx-background-color: #3E3E3E;
+}
+
+.secondary-button {
+    -fx-background-color: #012138;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #3E3E3E;
+}
+
+.table-view {
+    -fx-background-color: white;
+    -fx-border-color: #012138;
+    -fx-border-width: 2px;
+}
+
+.table-view .column-header {
+    -fx-background-color: #012138;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.result-label,
+.total-label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.total-label {
+    -fx-font-size: 16px;
+}
