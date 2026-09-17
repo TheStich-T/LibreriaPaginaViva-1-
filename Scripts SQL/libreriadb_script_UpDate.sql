@@ -794,8 +794,8 @@ begin
     order by valor_inventario desc;
 end $$
 
+delimiter ;
 
--- ------------------------------------------- --
 DROP PROCEDURE IF EXISTS sp_insertareditorial;
 DROP PROCEDURE IF EXISTS sp_listareditoriales;
 DROP PROCEDURE IF EXISTS sp_buscareditorial;
@@ -843,3 +843,39 @@ BEGIN
 END //
 
 DELIMITER ;
+
+set @sql_col = (
+    select if(count(*) > 0,
+        'alter table editoriales change column direccion_editoria direccion_editorial varchar(100)',
+        'do 0')
+    from information_schema.columns
+    where table_schema = database()
+      and table_name   = 'editoriales'
+      and column_name  = 'direccion_editoria'
+);
+prepare stmt_col from @sql_col;
+execute stmt_col;
+deallocate prepare stmt_col;
+
+
+drop procedure if exists sp_eliminareditorial;
+
+delimiter $$
+
+create procedure sp_eliminareditorial(
+    in _nit varchar(20)
+)
+begin
+    delete from editoriales where nit = _nit;
+end $$
+
+delimiter ;
+
+
+create or replace view vw_lista_editoriales as
+select
+    nit                 as 'nit editorial',
+    nombre_editorial    as 'editorial',
+    telefono_editorial  as 'teléfono',
+    direccion_editorial as 'dirección'
+from editoriales;
