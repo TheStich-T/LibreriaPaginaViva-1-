@@ -51,7 +51,7 @@ public class EditorialController implements Initializable {
         tblEditoriales.getSelectionModel().selectedItemProperty().addListener((obs, anterior, seleccionado) -> {
             if (seleccionado != null) {
                 txtNit.setText(seleccionado.getNit());
-                txtNit.setDisable(true); // el NIT no se edita una vez creado
+                txtNit.setDisable(true);
                 txtNombreEditorial.setText(seleccionado.getNombreEditorial());
                 txtTelefonoEditorial.setText(seleccionado.getTelefonoEditorial());
                 txtDireccionEditoria.setText(seleccionado.getDireccionEditoria());

@@ -2,6 +2,7 @@
 
 <?import java.net.URL?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -10,90 +11,175 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.control.ComboBox?>
 
-<AnchorPane id="AnchorPane" prefHeight="620.0" prefWidth="700.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lpv.controller.LibrosFormController">
+<AnchorPane prefHeight="850.0" prefWidth="720.0" styleClass="mainFxmlClass"
+            xmlns="http://javafx.com/javafx/21.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.lpv.controller.LibrosFormController">
     <stylesheets>
         <URL value="@/org/lpv/view/style/librosformview.css" />
     </stylesheets>
-   <children>
-      <Label layoutX="230.0" layoutY="15.0" styleClass="page-title" text="Gestión de Libros">
-         <font>
-            <Font size="22.0" />
-         </font>
-      </Label>
+    <children>
 
-      <TableView fx:id="tblLibros" layoutX="30.0" layoutY="60.0" prefHeight="220.0" prefWidth="640.0" styleClass="table-view">
-        <columns>
-          <TableColumn fx:id="colIsbn" prefWidth="110.0" text="ISBN">
-             <cellValueFactory><PropertyValueFactory property="isbn" /></cellValueFactory>
-          </TableColumn>
-          <TableColumn fx:id="colTitulo" prefWidth="190.0" text="Título">
-             <cellValueFactory><PropertyValueFactory property="titulo" /></cellValueFactory>
-          </TableColumn>
-          <TableColumn fx:id="colPrecio" prefWidth="80.0" text="Precio">
-             <cellValueFactory><PropertyValueFactory property="precio" /></cellValueFactory>
-          </TableColumn>
-          <TableColumn fx:id="colStockActual" prefWidth="90.0" text="Stock actual">
-             <cellValueFactory><PropertyValueFactory property="stockActual" /></cellValueFactory>
-          </TableColumn>
-          <TableColumn fx:id="colStockMinimo" prefWidth="90.0" text="Stock mínimo">
-             <cellValueFactory><PropertyValueFactory property="stockMinimo" /></cellValueFactory>
-          </TableColumn>
-          <TableColumn fx:id="colActivo" prefWidth="80.0" text="Activo">
-             <cellValueFactory><PropertyValueFactory property="activo" /></cellValueFactory>
-          </TableColumn>
-        </columns>
-      </TableView>
+        <HBox layoutX="20.0" layoutY="16.0" prefWidth="680.0" alignment="CENTER_LEFT">
+            <Label styleClass="page-title" text="Gestión de libros">
+                <font><Font size="20.0" /></font>
+            </Label>
+        </HBox>
+        <Button layoutX="610.0" layoutY="14.0" onAction="#eventoVolver"
+                prefHeight="30.0" prefWidth="90.0" styleClass="secondary-button" text="VOLVER" />
 
-      <StackPane layoutX="30.0" layoutY="300.0" prefHeight="220.0" prefWidth="640.0">
-         <children>
-            <GridPane>
-              <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="30.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="10.0" prefWidth="140.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="280.0" minWidth="10.0" prefWidth="240.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="30.0" />
-              </columnConstraints>
-              <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-               <children>
-                  <Label styleClass="field-label" text="ISBN" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                  <Label styleClass="field-label" text="Título" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <Label styleClass="field-label" text="Fecha de publicación" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <Label styleClass="field-label" text="Precio" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <Label styleClass="field-label" text="Categoría" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                  <Label styleClass="field-label" text="Nit editorial" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                  <Label styleClass="field-label" text="Stock mínimo" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+        <Label layoutX="20.0" layoutY="56.0" styleClass="section-label" text="LISTADO DE LIBROS" />
+        <TableView fx:id="tblLibros" layoutX="20.0" layoutY="76.0"
+                   prefHeight="180.0" prefWidth="680.0" styleClass="table-view">
+            <columns>
+                <TableColumn fx:id="colIsbn"        prefWidth="110.0" text="ISBN">
+                    <cellValueFactory><PropertyValueFactory property="isbn" /></cellValueFactory>
+                </TableColumn>
+                <TableColumn fx:id="colTitulo"      prefWidth="195.0" text="Título">
+                    <cellValueFactory><PropertyValueFactory property="titulo" /></cellValueFactory>
+                </TableColumn>
+                <TableColumn fx:id="colPrecio"      prefWidth="80.0"  text="Precio">
+                    <cellValueFactory><PropertyValueFactory property="precio" /></cellValueFactory>
+                </TableColumn>
+                <TableColumn fx:id="colStockActual" prefWidth="95.0"  text="Stock actual">
+                    <cellValueFactory><PropertyValueFactory property="stockActual" /></cellValueFactory>
+                </TableColumn>
+                <TableColumn fx:id="colStockMinimo" prefWidth="95.0"  text="Stock mínimo">
+                    <cellValueFactory><PropertyValueFactory property="stockMinimo" /></cellValueFactory>
+                </TableColumn>
+                <TableColumn fx:id="colActivo"      prefWidth="80.0"  text="Activo">
+                    <cellValueFactory><PropertyValueFactory property="activo" /></cellValueFactory>
+                </TableColumn>
+            </columns>
+        </TableView>
 
-                  <TextField fx:id="txtIsbn" styleClass="text-input" GridPane.columnIndex="2" GridPane.rowIndex="0" />
-                  <TextField fx:id="txtTitulo" styleClass="text-input" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                  <TextField fx:id="txtFechaPublicacion" promptText="dd/MM/yyyy" styleClass="text-input" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                  <TextField fx:id="txtPrecio" styleClass="text-input" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                  <ComboBox fx:id="cmbCategoria" prefWidth="220.0" styleClass="text-input" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-                  <TextField fx:id="txtNitEditorial" styleClass="text-input" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-                  <TextField fx:id="txtStockMinimo" styleClass="text-input" GridPane.columnIndex="2" GridPane.rowIndex="6" />
-               </children>
-            </GridPane>
-         </children>
-      </StackPane>
+        <Label layoutX="20.0" layoutY="272.0" styleClass="section-label" text="DATOS DEL LIBRO" />
+        <GridPane layoutX="20.0" layoutY="292.0" prefWidth="680.0" hgap="14.0" vgap="10.0">
+            <columnConstraints>
+                <ColumnConstraints prefWidth="220.0" />
+                <ColumnConstraints prefWidth="220.0" />
+                <ColumnConstraints prefWidth="220.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints prefHeight="54.0" />
+                <RowConstraints prefHeight="54.0" />
+                <RowConstraints prefHeight="54.0" />
+            </rowConstraints>
+            <children>
+                <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                    <Label styleClass="field-label" text="ISBN" />
+                    <TextField fx:id="txtIsbn" styleClass="text-input" />
+                </VBox>
+                <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                    <Label styleClass="field-label" text="Título" />
+                    <TextField fx:id="txtTitulo" styleClass="text-input" />
+                </VBox>
+                <VBox spacing="4" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                    <Label styleClass="field-label" text="Fecha de publicación" />
+                    <TextField fx:id="txtFechaPublicacion" promptText="dd/MM/yyyy" styleClass="text-input" />
+                </VBox>
+                <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                    <Label styleClass="field-label" text="Precio" />
+                    <TextField fx:id="txtPrecio" styleClass="text-input" />
+                </VBox>
+                <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                    <Label styleClass="field-label" text="Categoría" />
+                    <ComboBox fx:id="cmbCategoria" prefWidth="220.0" styleClass="text-input" />
+                </VBox>
+                <VBox spacing="4" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                    <Label styleClass="field-label" text="Stock mínimo" />
+                    <TextField fx:id="txtStockMinimo" styleClass="text-input" />
+                </VBox>
+                <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                    <Label styleClass="field-label" text="NIT Editorial" />
+                    <TextField fx:id="txtNitEditorial" styleClass="text-input" />
+                </VBox>
+            </children>
+        </GridPane>
 
-      <Button fx:id="btnAgregar" layoutX="30.0" layoutY="540.0" mnemonicParsing="false" onAction="#eventoAgregar" prefHeight="30.0" prefWidth="140.0" styleClass="primary-button" text="AGREGAR" />
-      <Button fx:id="btnActualizar" layoutX="180.0" layoutY="540.0" mnemonicParsing="false" onAction="#eventoActualizar" prefHeight="30.0" prefWidth="140.0" styleClass="primary-button" text="ACTUALIZAR" />
-      <Button fx:id="btnDesactivar" layoutX="330.0" layoutY="540.0" mnemonicParsing="false" onAction="#eventoDesactivar" prefHeight="30.0" prefWidth="140.0" styleClass="secondary-button" text="DESACTIVAR" />
-      <Button fx:id="btnActivar" layoutX="480.0" layoutY="540.0" mnemonicParsing="false" onAction="#eventoActivar" prefHeight="30.0" prefWidth="140.0" styleClass="secondary-button" text="ACTIVAR" />
-      <Button layoutX="580.0" layoutY="15.0" mnemonicParsing="false" onAction="#eventoVolver" prefHeight="30.0" prefWidth="90.0" styleClass="secondary-button" text="VOLVER" />
+        <Label layoutX="20.0" layoutY="480.0" styleClass="section-label" text="AUTOR DEL LIBRO" />
+        <GridPane layoutX="20.0" layoutY="500.0" prefWidth="330.0" hgap="10.0" vgap="8.0">
+            <columnConstraints>
+                <ColumnConstraints prefWidth="160.0" />
+                <ColumnConstraints prefWidth="160.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints prefHeight="50.0" />
+                <RowConstraints prefHeight="50.0" />
+                <RowConstraints prefHeight="50.0" />
+                <RowConstraints prefHeight="36.0" />
+            </rowConstraints>
+            <children>
+                <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="2">
+                    <Label styleClass="field-label" text="Seleccionar autor existente" />
+                    <ComboBox fx:id="cmbAutor" prefWidth="330.0" />
+                </VBox>
+                <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                    <Label styleClass="field-label" text="Nombre" />
+                    <TextField fx:id="txtNuevoNombreAutor" promptText="Nombre" styleClass="text-input" />
+                </VBox>
+                <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                    <Label styleClass="field-label" text="Apellido" />
+                    <TextField fx:id="txtNuevoApellidoAutor" promptText="Apellido" styleClass="text-input" />
+                </VBox>
+                <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="2">
+                    <Label styleClass="field-label" text="Nacionalidad" />
+                    <TextField fx:id="txtNuevaNacionalidadAutor" promptText="Nacionalidad" styleClass="text-input" />
+                </VBox>
+                <Button fx:id="btnCrearAutor" onAction="#eventoCrearAutor" prefWidth="330.0"
+                        styleClass="secondary-button" text="CREAR AUTOR"
+                        GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="2" />
+            </children>
+        </GridPane>
 
-      <Label fx:id="lblMensaje" layoutX="30.0" layoutY="580.0" text="" textFill="#b5453f" />
-   </children>
+        <Label layoutX="370.0" layoutY="480.0" styleClass="section-label" text="NUEVA EDITORIAL" />
+        <GridPane layoutX="370.0" layoutY="500.0" prefWidth="330.0" hgap="10.0" vgap="8.0">
+            <columnConstraints>
+                <ColumnConstraints prefWidth="160.0" />
+                <ColumnConstraints prefWidth="160.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints prefHeight="50.0" />
+                <RowConstraints prefHeight="50.0" />
+                <RowConstraints prefHeight="50.0" />
+                <RowConstraints prefHeight="36.0" />
+            </rowConstraints>
+            <children>
+                <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="2">
+                    <Label styleClass="field-label" text="NIT editorial" />
+                    <TextField fx:id="txtNuevoNitEditorial" styleClass="text-input" />
+                </VBox>
+                <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                    <Label styleClass="field-label" text="Nombre" />
+                    <TextField fx:id="txtNuevoNombreEditorial" promptText="Nombre" styleClass="text-input" />
+                </VBox>
+                <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                    <Label styleClass="field-label" text="Teléfono" />
+                    <TextField fx:id="txtNuevoTelefonoEditorial" promptText="Teléfono" styleClass="text-input" />
+                </VBox>
+                <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="2">
+                    <Label styleClass="field-label" text="Dirección" />
+                    <TextField fx:id="txtNuevaDireccionEditorial" promptText="Dirección" styleClass="text-input" />
+                </VBox>
+                <Button fx:id="btnCrearEditorial" onAction="#eventoCrearEditorial" prefWidth="330.0"
+                        styleClass="secondary-button" text="CREAR EDITORIAL"
+                        GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="2" />
+            </children>
+        </GridPane>
+
+        <HBox layoutX="20.0" layoutY="750.0" spacing="10.0" prefWidth="680.0">
+            <Button fx:id="btnAgregar"    onAction="#eventoAgregar"    prefHeight="32.0" prefWidth="160.0" styleClass="primary-button"   text="AGREGAR" />
+            <Button fx:id="btnActualizar" onAction="#eventoActualizar" prefHeight="32.0" prefWidth="160.0" styleClass="primary-button"   text="ACTUALIZAR" />
+            <Button fx:id="btnDesactivar" onAction="#eventoDesactivar" prefHeight="32.0" prefWidth="160.0" styleClass="secondary-button" text="DESACTIVAR" />
+            <Button fx:id="btnActivar"    onAction="#eventoActivar"    prefHeight="32.0" prefWidth="160.0" styleClass="secondary-button" text="ACTIVAR" />
+        </HBox>
+
+        <Label fx:id="lblMensaje" layoutX="20.0" layoutY="790.0" text="" textFill="#b5453f" />
+
+    </children>
 </AnchorPane>
