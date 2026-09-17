@@ -10,12 +10,12 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="950.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lpv.controller.AdminDashboardController">
+<AnchorPane id="AnchorPane" prefHeight="640.0" prefWidth="950.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lpv.controller.AdminDashboardController">
     <stylesheets>
         <URL value="@/org/lpv/view/style/admindashboardview.css" />
     </stylesheets>
     <children>
-        <VBox layoutX="0.0" layoutY="0.0" prefHeight="600.0" prefWidth="180.0" spacing="10.0" styleClass="sidebar">
+        <VBox layoutX="0.0" layoutY="0.0" prefHeight="640.0" prefWidth="180.0" spacing="10.0" styleClass="sidebar">
             <children>
                 <Label styleClass="sidebar-section" text="Navegación" />
                 <Label styleClass="sidebar-heading" text="Menú Principal" />
@@ -27,8 +27,8 @@
             </children>
         </VBox>
 
-        <Label fx:id="lblUsuarioActual" layoutX="20.0" layoutY="525.0" styleClass="sidebar-user" text="Administrador" />
-        <Button fx:id="btnCerrarSesion" layoutX="20.0" layoutY="555.0" mnemonicParsing="false" onAction="#eventoCerrarSesion" style="-fx-background-color: transparent;" styleClass="logout-button" text="Cerrar sesión" />
+        <Label fx:id="lblUsuarioActual" layoutX="20.0" layoutY="565.0" styleClass="sidebar-user" text="Administrador" />
+        <Button fx:id="btnCerrarSesion" layoutX="20.0" layoutY="595.0" mnemonicParsing="false" onAction="#eventoCerrarSesion" style="-fx-background-color: transparent;" styleClass="logout-button" text="Cerrar sesión" />
 
         <Label layoutX="700.0" layoutY="15.0" styleClass="brand-title" text="LibreriaPaginaViva">
             <font>
@@ -66,20 +66,20 @@
 
                 <Button onAction="#eventoGestionarEditoriales" prefHeight="65.0" prefWidth="180.0" styleClass="dashboard-card, card-5" text="Gestionar Editoriales" wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="4" />
                 <Button onAction="#eventoGestionarAutores" prefHeight="65.0" prefWidth="180.0" styleClass="dashboard-card, card-6" text="Gestionar Autores" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                <Button onAction="#eventoReportesVentas" prefHeight="65.0" prefWidth="180.0" styleClass="dashboard-card, card-5" text="Reportes de Ventas" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-            </children> 
-            <columnConstraints>
-                <ColumnConstraints />
-                <ColumnConstraints />
-                <ColumnConstraints />
-                <ColumnConstraints />
-            </columnConstraints>
-            <rowConstraints>
-                <RowConstraints />
-                <RowConstraints />
-                <RowConstraints />
-                <RowConstraints />
-            </rowConstraints>
+            </children>
+         <columnConstraints>
+            <ColumnConstraints />
+            <ColumnConstraints />
+            <ColumnConstraints />
+            <ColumnConstraints />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+         </rowConstraints>
         </GridPane>
     </children>
 </AnchorPane>

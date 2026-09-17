@@ -8,7 +8,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.Label;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import org.lpv.model.detalleVenta;
@@ -20,12 +20,12 @@ import java.util.ResourceBundle;
 
 public class FacturaController implements Initializable {
 
-    @FXML private TextField txtNoFactura;
-    @FXML private TextField txtFecha;
-    @FXML private TextField txtCui;
-    @FXML private TextField txtCliente;
-    @FXML private TextField txtCorreo;
-    @FXML private TextField txtTotal;
+    @FXML private Label lblNoFactura;
+    @FXML private Label lblFecha;
+    @FXML private Label lblCui;
+    @FXML private Label lblCliente;
+    @FXML private Label lblCorreo;
+    @FXML private Label lblTotal;
 
     @FXML private TableView<detalleVenta> tblDetalleFactura;
     @FXML private TableColumn<detalleVenta, String> colLibro;
@@ -44,14 +44,14 @@ public class FacturaController implements Initializable {
     }
 
     public void cargarDatosFactura(Venta venta, Clientes clientes, ObservableList<detalleVenta> detalles) {
-        txtNoFactura.setText(String.valueOf(venta.getIdVenta()));
-        txtFecha.setText(venta.getFechaVenta() != null
+        lblNoFactura.setText(String.valueOf(venta.getIdVenta()));
+        lblFecha.setText(venta.getFechaVenta() != null
                 ? venta.getFechaVenta().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))
                 : "");
-        txtCui.setText(String.valueOf(clientes.getCui()));
-        txtCliente.setText(clientes.getNombreCliente() + " " + clientes.getApellidoCliente());
-        txtCorreo.setText(clientes.getCorreoElectronico());
-        txtTotal.setText("Q " + String.format("%.2f", venta.getTotal()));
+        lblCui.setText(String.valueOf(clientes.getCui()));
+        lblCliente.setText(clientes.getNombreCliente() + " " + clientes.getApellidoCliente());
+        lblCorreo.setText(clientes.getCorreoElectronico());
+        lblTotal.setText("Q " + String.format("%.2f", venta.getTotal()));
 
         listaDetalles = FXCollections.observableArrayList(detalles);
         tblDetalleFactura.setItems(listaDetalles);
