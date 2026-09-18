@@ -33,6 +33,8 @@
 
                 <Label style="-fx-padding: 8 0 0 0;" styleClass="sidebar-section" text="Autores" />
                 <Button onAction="#eventoGestionarAutores" prefWidth="160.0" styleClass="secondary-button" text="Gestionar" />
+            <Label style="-fx-padding: 8 0 0 0;" styleClass="sidebar-section" text="Categoria" />
+            <Button onAction="#eventoGestionarCategorias" prefWidth="160.0" styleClass="secondary-button" text="Gestionar" />
             </children>
         </VBox>
 

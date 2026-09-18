@@ -182,4 +182,9 @@ public class BodegaDashboardController implements Initializable {
         Alert alerta = new Alert(tipo, mensaje, ButtonType.OK);
         alerta.show();
     }
+    
+     @FXML
+    public void eventoGestionarCategorias(ActionEvent evento) {
+        cambiarEscena("/org/lpv/view/CategoriaView.fxml");
+    }
 }
