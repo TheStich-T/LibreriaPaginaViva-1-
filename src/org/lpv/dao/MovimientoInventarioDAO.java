@@ -10,4 +10,8 @@ public interface MovimientoInventarioDAO extends CRUD<MovimientoInventario, Inte
     boolean registrarIngreso(MovimientoInventario movimiento);
     
     boolean registrarSalida(MovimientoInventario movimiento);
+    
+    boolean actualizarMovimiento(MovimientoInventario movimiento);
+    
+    List<MovimientoInventario> listarIngresos();
 }

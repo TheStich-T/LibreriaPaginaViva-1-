@@ -42,6 +42,7 @@ public class IngresoInventarioController implements Initializable {
     @FXML private Label lblStockActual;
     @FXML private Label lblMensaje;
     @FXML private Button btnRegistrar;
+    @FXML private Button btnActualizar;
     @FXML private TableView<MovimientoInventario> tblIngresos;
     @FXML private TableColumn<MovimientoInventario, String> colLibro;
     @FXML private TableColumn<MovimientoInventario, Integer> colCantidad;
@@ -65,15 +66,19 @@ public class IngresoInventarioController implements Initializable {
         proveedorDAO = new ProveedorDAOImpl();
         lblMensaje.setText("");
         lblStockActual.setText("");
+        btnActualizar.setDisable(true);
 
         cargarLibrosDisponibles();
         cargarProveedores();
         configurarTabla();
-        tblIngresos.setItems(FXCollections.observableArrayList());
+        cargarTablaIngresos();
 
         tblIngresos.getSelectionModel().selectedItemProperty().addListener((obs, anterior, seleccionado) -> {
             if (seleccionado != null) {
                 cargarSeleccionEnFormulario(seleccionado);
+                btnActualizar.setDisable(false);
+            } else {
+                btnActualizar.setDisable(true);
             }
         });
 
@@ -105,6 +110,11 @@ public class IngresoInventarioController implements Initializable {
         cmbLibro.setItems(libros);
     }
 
+    private void cargarTablaIngresos() {
+        ObservableList<MovimientoInventario> listaIngresos = FXCollections.observableArrayList(movimientoDAO.listarIngresos());
+        tblIngresos.setItems(listaIngresos);
+    }
+
     private void cargarProveedores() {
         ObservableList<Proveedor> proveedores = FXCollections.observableArrayList(proveedorDAO.listar());
         cmbProveedor.setItems(proveedores);
@@ -113,7 +123,7 @@ public class IngresoInventarioController implements Initializable {
 
     private void cargarSeleccionEnFormulario(MovimientoInventario movimiento) {
         Libros libro = cmbLibro.getItems().stream()
-                .filter(l -> l.getIsbn().equals(movimiento.getIsbn()))
+                .filter(l -> l.getIsbn() != null && l.getIsbn().equals(movimiento.getIsbn()))
                 .findFirst()
                 .orElse(null);
         cmbLibro.setValue(libro);
@@ -127,6 +137,7 @@ public class IngresoInventarioController implements Initializable {
         cmbProveedor.setValue(proveedor);
 
         txtObservacion.setText(movimiento.getObservacion() != null ? movimiento.getObservacion() : "");
+        lblMensaje.setText("");
     }
 
     @FXML
@@ -164,11 +175,75 @@ public class IngresoInventarioController implements Initializable {
                 mostrarAlerta(Alert.AlertType.INFORMATION,
                         "Ingreso registrado con éxito. Nuevo stock: "
                         + (libroSeleccionado.getStockActual() + cantidad));
-                tblIngresos.getItems().add(movimiento);
                 limpiarCampos();
                 cargarLibrosDisponibles();
+                cargarTablaIngresos();
             } else {
                 mostrarAlerta(Alert.AlertType.ERROR, "No se pudo registrar el ingreso");
+            }
+
+        } catch (ValidarException e) {
+            mostrarAlerta(Alert.AlertType.WARNING, e.getMessage());
+            lblMensaje.setText(e.getMessage());
+        }
+    }
+
+    @FXML
+    public void eventoActualizar(ActionEvent evento) {
+        try {
+            MovimientoInventario seleccionado = tblIngresos.getSelectionModel().getSelectedItem();
+            ValidarException.validarNulo(seleccionado, "Selecciona un registro de la tabla para actualizar");
+
+            Libros libroSeleccionado = cmbLibro.getValue();
+            ValidarException.validarNulo(libroSeleccionado, "Selecciona un libro");
+            ValidarException.validarNoVacio(txtCantidad.getText(), "cantidad");
+
+            int cantidad;
+            try {
+                cantidad = Integer.parseInt(txtCantidad.getText().trim());
+            } catch (NumberFormatException e) {
+                throw new ValidarException("La cantidad debe ser un número entero válido");
+            }
+            if (cantidad <= 0) {
+                throw new ValidarException("La cantidad debe ser mayor a 0");
+            }
+
+            if (libroSeleccionado.getIsbn().equals(seleccionado.getIsbn())) {
+                int stockResultante = libroSeleccionado.getStockActual() - seleccionado.getCantidad() + cantidad;
+                if (stockResultante < 0) {
+                    throw new ValidarException("No se puede reducir el ingreso a " + cantidad
+                            + ": el stock del libro quedaría en negativo (" + stockResultante + ")");
+                }
+            } else {
+                Libros libroAnterior = cmbLibro.getItems().stream()
+                        .filter(l -> l.getIsbn() != null && l.getIsbn().equals(seleccionado.getIsbn()))
+                        .findFirst()
+                        .orElse(null);
+                if (libroAnterior != null && libroAnterior.getStockActual() - seleccionado.getCantidad() < 0) {
+                    throw new ValidarException("No se puede cambiar el libro: el stock del libro anterior quedaría en negativo");
+                }
+            }
+
+            Proveedor proveedorSeleccionado = cmbProveedor.getValue();
+
+            MovimientoInventario movimiento = new MovimientoInventario();
+            movimiento.setIdMovimiento(seleccionado.getIdMovimiento());
+            movimiento.setIsbn(libroSeleccionado.getIsbn());
+            movimiento.setTipoMovimiento("INGRESO");
+            movimiento.setCantidad(cantidad);
+            movimiento.setIdUsuario(seleccionado.getIdUsuario());
+            movimiento.setObservacion(txtObservacion.getText() != null ? txtObservacion.getText().trim() : "");
+            movimiento.setNitProveedor(proveedorSeleccionado != null ? proveedorSeleccionado.getNitProveedor() : null);
+
+            boolean actualizado = movimientoDAO.actualizarMovimiento(movimiento);
+
+            if (actualizado) {
+                mostrarAlerta(Alert.AlertType.INFORMATION, "Ingreso actualizado con éxito.");
+                limpiarCampos();
+                cargarLibrosDisponibles();
+                cargarTablaIngresos();
+            } else {
+                mostrarAlerta(Alert.AlertType.ERROR, "No se pudo actualizar el ingreso");
             }
 
         } catch (ValidarException e) {
