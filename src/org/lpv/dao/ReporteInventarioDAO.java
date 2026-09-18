@@ -7,6 +7,5 @@ import org.lpv.model.StockValorizado;
 public interface ReporteInventarioDAO {
 
     List<LibroMasVendido> listarLibrosMasVendidos(int limite);
-
     List<StockValorizado> listarStockValorizado();
 }
