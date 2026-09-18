@@ -20,18 +20,12 @@ import java.util.ResourceBundle;
 
 public class FacturaController implements Initializable {
 
-    @FXML private TextField txtNoFactura;
-    @FXML private TextField txtFecha;
-    @FXML private TextField txtCui;
-    @FXML private TextField txtCliente;
-    @FXML private TextField txtCorreo;
-    @FXML private TextField txtDescuento;
-    @FXML private TextField txtTotal;
     @FXML private Label lblNoFactura;
     @FXML private Label lblFecha;
     @FXML private Label lblCui;
     @FXML private Label lblCliente;
     @FXML private Label lblCorreo;
+    @FXML private Label lblDescuento;
     @FXML private Label lblTotal;
 
     @FXML private TableView<detalleVenta> tblDetalleFactura;
@@ -40,114 +34,35 @@ public class FacturaController implements Initializable {
     @FXML private TableColumn<detalleVenta, Double> colPrecio;
     @FXML private TableColumn<detalleVenta, Double> colSubtotal;
 
-    private ObservableList<detalleVenta> listaDetalles;
+    private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     @Override
-    public void initialize(
-            URL location,
-            ResourceBundle resources) {
-
-        colLibro.setCellValueFactory(
-                new PropertyValueFactory<>("titulo")
-        );
-
-        colCompra.setCellValueFactory(
-                new PropertyValueFactory<>("cantidad")
-        );
-
-        colPrecio.setCellValueFactory(
-                new PropertyValueFactory<>("precioUnitario")
-        );
-
-        colSubtotal.setCellValueFactory(
-                new PropertyValueFactory<>("subtotal")
-        );
+    public void initialize(URL location, ResourceBundle resources) {
+        colLibro.setCellValueFactory(new PropertyValueFactory<>("titulo"));
+        colCompra.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
+        colPrecio.setCellValueFactory(new PropertyValueFactory<>("precioUnitario"));
+        colSubtotal.setCellValueFactory(new PropertyValueFactory<>("subtotal"));
     }
 
-    public void cargarDatosFactura(
-            Venta venta,
-            Clientes clientes,
-            ObservableList<detalleVenta> detalles) {
-
-        txtNoFactura.setText(
-                String.valueOf(
-                        venta.getIdVenta()
-                )
-        );
-
-        txtFecha.setText(
-                venta.getFechaVenta() != null
-                ? venta.getFechaVenta().format(
-                        DateTimeFormatter.ofPattern(
-                                "dd/MM/yyyy HH:mm"
-                        )
-                )
-                : ""
-        );
-
-        txtCui.setText(
-                String.valueOf(
-                        clientes.getCui()
-                )
-        );
-
-        txtCliente.setText(
-                clientes.getNombreCliente()
-                + " "
-                + clientes.getApellidoCliente()
-        );
-
-        txtCorreo.setText(
-                clientes.getCorreoElectronico()
-        );
-
-        txtDescuento.setText(
-                "Q "
-                + String.format(
-                        "%.2f",
-                        venta.getDescuento()
-                )
-        );
-
-        txtTotal.setText(
-                "Q "
-                + String.format(
-                        "%.2f",
-                        venta.getTotal()
-                )
-        );
-
-        listaDetalles =
-                FXCollections.observableArrayList(
-                        detalles
-                );
-
-        tblDetalleFactura.setItems(
-                listaDetalles
-        );
     public void cargarDatosFactura(Venta venta, Clientes clientes, ObservableList<detalleVenta> detalles) {
+
         lblNoFactura.setText(String.valueOf(venta.getIdVenta()));
-        lblFecha.setText(venta.getFechaVenta() != null
-                ? venta.getFechaVenta().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))
-                : "");
+
+        lblFecha.setText(venta.getFechaVenta() != null ? venta.getFechaVenta().format(FORMATO_FECHA): ""
+        );
+
         lblCui.setText(String.valueOf(clientes.getCui()));
         lblCliente.setText(clientes.getNombreCliente() + " " + clientes.getApellidoCliente());
         lblCorreo.setText(clientes.getCorreoElectronico());
+        lblDescuento.setText("Q " + String.format("%.2f", venta.getDescuento()));
         lblTotal.setText("Q " + String.format("%.2f", venta.getTotal()));
 
-        listaDetalles = FXCollections.observableArrayList(detalles);
-        tblDetalleFactura.setItems(listaDetalles);
+        tblDetalleFactura.setItems(FXCollections.observableArrayList(detalles));
     }
 
     @FXML
-    public void eventoCerrar(
-            ActionEvent evento) {
-
-        Stage escenario =
-                (Stage) ((Node) evento.getSource())
-                        .getScene()
-                        .getWindow();
-
+    public void eventoCerrar(ActionEvent evento) {
+        Stage escenario = (Stage) ((Node) evento.getSource()).getScene().getWindow();
         escenario.close();
     }
 }

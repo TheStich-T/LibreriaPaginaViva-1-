@@ -27,278 +27,137 @@ import org.lpv.manager.SessionContext;
 import org.lpv.system.main;
 
 public class ReportesVentasController implements Initializable {
-    @FXML
-    private ComboBox<String> cmbPeriodo;
-    @FXML
-    private DatePicker dpFecha;
-    @FXML
-    private TableView<Venta> tblReporteVentas;
-    @FXML
-    private TableColumn<Venta, Integer> colId;
-    @FXML
-    private TableColumn<Venta, String> colFecha;
-    @FXML
-    private TableColumn<Venta, Double> colSubtotal;
-    @FXML
-    private TableColumn<Venta, Double> colDescuento;
 
-    @FXML
-    private TableColumn<Venta, Double> colTotal;
-
-    @FXML
-    private TableColumn<Venta, String> colEstado;
-
-    @FXML
-    private Label lblTotalVentas;
-
-    @FXML
-    private Label lblCantidadVentas;
+    @FXML private ComboBox<String> cmbPeriodo;
+    @FXML private DatePicker dpFecha;
+    @FXML private TableView<Venta> tblReporteVentas;
+    @FXML private TableColumn<Venta, Integer> colId;
+    @FXML private TableColumn<Venta, String> colFecha;
+    @FXML private TableColumn<Venta, Double> colSubtotal;
+    @FXML private TableColumn<Venta, Double> colDescuento;
+    @FXML private TableColumn<Venta, Double> colTotal;
+    @FXML private TableColumn<Venta, String> colEstado;
+    @FXML private Label lblTotalVentas;
+    @FXML private Label lblCantidadVentas;
 
     private VentaDAO ventaDAO;
-
-private final DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-
+    private final DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     @Override
-    public void initialize(
-            URL url, ResourceBundle rb) {
-
+    public void initialize(URL url, ResourceBundle rb) {
         ventaDAO = new VentaDAOImpl();
 
         Usuario actual = SessionContext.getInstancia().getUsuairoActual();
 
-        if (actual == null
-                || !"admin".equalsIgnoreCase(
-                        actual.getRol())) {
-
-            mostrarAlerta(
-                    Alert.AlertType.ERROR,
-                    "No tenés permiso para acceder "
-                    + "a los reportes de ventas."
-            );
-
+        if (actual == null || !"admin".equalsIgnoreCase(actual.getRol())) {
+            mostrarAlerta(Alert.AlertType.ERROR, "No tenés permiso para acceder a los reportes de ventas.");
             volverAlDashboard();
             return;
         }
 
         configurarComboBox();
         configurarTabla();
-
         dpFecha.setValue(LocalDate.now());
-
         limpiarResultados();
     }
 
     private void configurarComboBox() {
-
-        cmbPeriodo.setItems(
-                FXCollections.observableArrayList(
-                        "Diario",
-                        "Semanal",
-                        "Mensual"
-                )
-        );
-
+        cmbPeriodo.setItems(FXCollections.observableArrayList("Diario", "Semanal", "Mensual"));
         cmbPeriodo.setValue("Diario");
     }
 
     private void configurarTabla() {
+        colId.setCellValueFactory(new PropertyValueFactory<>("idVenta"));
+        colSubtotal.setCellValueFactory(new PropertyValueFactory<>("subtotal"));
+        colDescuento.setCellValueFactory(new PropertyValueFactory<>("descuento"));
+        colTotal.setCellValueFactory(new PropertyValueFactory<>("total"));
+        colEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
 
-        colId.setCellValueFactory(
-                new PropertyValueFactory<>(
-                        "idVenta"
-                )
-        );
-
-        colSubtotal.setCellValueFactory(
-                new PropertyValueFactory<>(
-                        "subtotal"
-                )
-        );
-
-        colDescuento.setCellValueFactory(
-                new PropertyValueFactory<>(
-                        "descuento"
-                )
-        );
-
-        colTotal.setCellValueFactory(
-                new PropertyValueFactory<>(
-                        "total"
-                )
-        );
-
-        colEstado.setCellValueFactory(
-                new PropertyValueFactory<>(
-                        "estado"
-                )
-        );
-
-        colFecha.setCellValueFactory(
-                dato -> {
-
-                    if (dato.getValue()
-                            .getFechaVenta() == null) {
-
-                        return new SimpleStringProperty("");
-                    }
-
-                    return new SimpleStringProperty(
-                            dato.getValue()
-                                    .getFechaVenta()
-                                    .format(formatoFecha)
-                    );
-                }
-        );
+        colFecha.setCellValueFactory(dato -> {
+            if (dato.getValue().getFechaVenta() == null) {
+                return new SimpleStringProperty("");
+            }
+            return new SimpleStringProperty(dato.getValue().getFechaVenta().format(formatoFecha));
+        });
     }
 
     @FXML
-    public void eventoGenerarReporte(
-            ActionEvent evento) {
-
+    public void eventoGenerarReporte(ActionEvent evento) {
         try {
-
             if (dpFecha.getValue() == null) {
-
-                mostrarAlerta(
-                        Alert.AlertType.WARNING,
-                        "Selecciona una fecha."
-                );
-
+                mostrarAlerta(Alert.AlertType.WARNING, "Selecciona una fecha.");
                 return;
             }
 
-            String periodo
-                    = cmbPeriodo.getValue();
+            String periodo = cmbPeriodo.getValue();
 
-            if (periodo == null
-                    || periodo.isBlank()) {
-
-                mostrarAlerta(
-                        Alert.AlertType.WARNING,
-                        "Selecciona un período."
-                );
-
+            if (periodo == null || periodo.isBlank()) {
+                mostrarAlerta(Alert.AlertType.WARNING, "Selecciona un período.");
                 return;
             }
 
-            LocalDate fecha
-                    = dpFecha.getValue();
-
+            LocalDate fecha = dpFecha.getValue();
             List<Venta> ventas;
 
             switch (periodo) {
-
                 case "Diario":
-
-                    ventas
-                            = ventaDAO
-                                    .listarVentaPorDia(
-                                            fecha
-                                    );
-
+                    ventas = ventaDAO.listarVentaPorDia(fecha);
                     break;
 
-                case "Semanal":ventas=ventaDAO.listarVentasPorSemana( fecha );
+                case "Semanal":
+                    ventas = ventaDAO.listarVentasPorSemana(fecha);
                     break;
-                case "Mensual":ventas=ventaDAO.listarVentasPorMes(fecha.getYear(),fecha.getMonthValue());
-                    break;
-                    
-                default:mostrarAlerta(
-                            Alert.AlertType.WARNING,
-                            "Período no válido."
-                    );
 
+                case "Mensual":
+                    ventas = ventaDAO.listarVentasPorMes(fecha.getYear(), fecha.getMonthValue());
+                    break;
+
+                default:
+                    mostrarAlerta(Alert.AlertType.WARNING, "Período no válido.");
                     return;
             }
 
             mostrarResultados(ventas);
 
         } catch (Exception e) {
-
-            mostrarAlerta(
-                    Alert.AlertType.ERROR,
-                    "Ocurrió un error al generar "
-                    + "el reporte: "
-                    + e.getMessage()
-            );
+            mostrarAlerta(Alert.AlertType.ERROR, "Ocurrió un error al generar el reporte: " + e.getMessage());
         }
     }
 
-    private void mostrarResultados(
-            List<Venta> ventas) {
-
-        tblReporteVentas.setItems(
-                FXCollections.observableArrayList(
-                        ventas
-                )
-        );
+    private void mostrarResultados(List<Venta> ventas) {
+        tblReporteVentas.setItems(FXCollections.observableArrayList(ventas));
 
         double total = 0;
 
         for (Venta venta : ventas) {
-
             total += venta.getTotal();
         }
 
-        lblCantidadVentas.setText(
-                "Cantidad de ventas: "
-                + ventas.size()
-        );
-
-        lblTotalVentas.setText(
-                String.format(
-                        "Total de ventas: Q %.2f",
-                        total
-                )
-        );
+        lblCantidadVentas.setText("Cantidad de ventas: " + ventas.size());
+        lblTotalVentas.setText(String.format("Total de ventas: Q %.2f", total));
     }
 
     private void limpiarResultados() {
-
-        tblReporteVentas.setItems(
-                FXCollections.observableArrayList()
-        );
-
+        tblReporteVentas.setItems(FXCollections.observableArrayList());
         lblCantidadVentas.setText("Cantidad de ventas: 0");
-
         lblTotalVentas.setText("Total de ventas: Q 0.00");
     }
 
     @FXML
-    public void eventoVolver(
-            ActionEvent evento) {
-
+    public void eventoVolver(ActionEvent evento) {
         volverAlDashboard();
     }
 
     private void volverAlDashboard() {
-
         try {
-
             main.volverAlDashboard();
-
         } catch (IOException e) {
-
-            mostrarAlerta(
-                    Alert.AlertType.ERROR,
-                    "No se pudo volver al dashboard: "
-                    + e.getMessage()
-            );
+            mostrarAlerta(Alert.AlertType.ERROR, "No se pudo volver al dashboard: " + e.getMessage());
         }
     }
 
-    private void mostrarAlerta(
-            Alert.AlertType tipo,
-            String mensaje) {
-
-        Alert alerta
-                = new Alert(
-                        tipo,
-                        mensaje,
-                        ButtonType.OK
-                );
-
+    private void mostrarAlerta(Alert.AlertType tipo, String mensaje) {
+        Alert alerta = new Alert(tipo, mensaje, ButtonType.OK);
         alerta.show();
     }
 }
