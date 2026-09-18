@@ -3,13 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Levi_Salazar/4_B/s_8/LibreriaPaginaViva-1-/src/org/lpv/controller/IngresoInventarioController.java</file>
-            <file>file:/C:/Levi_Salazar/4_B/s_8/LibreriaPaginaViva-1-/src/db.properties</file>
-            <file>file:/C:/Levi_Salazar/4_B/s_8/LibreriaPaginaViva-1-/src/org/lpv/controller/SalidaInventarioController.java</file>
-            <file>file:/C:/Levi_Salazar/4_B/s_8/LibreriaPaginaViva-1-/src/org/lpv/view/IngresoInventarioView.fxml</file>
-            <file>file:/C:/Levi_Salazar/4_B/s_8/LibreriaPaginaViva-1-/src/org/lpv/view/SalidaInventarioView.fxml</file>
-            <file>file:/C:/Levi_Salazar/4_B/s_8/LibreriaPaginaViva-1-/src/org/lpv/dao/MovimientoInventarioDAO.java</file>
-            <file>file:/C:/Levi_Salazar/4_B/s_8/LibreriaPaginaViva-1-/src/org/lpv/dao/impl/MovimientoInventarioDAOImpl.java</file>
+            <file>file:/C:/diego%20raguay/LibreriaPaginaViva-1-/src/org/lpv/controller/ReporteInventarioController.java</file>
+            <file>file:/C:/diego%20raguay/LibreriaPaginaViva-1-/src/org/lpv/model/LibroMasVendido.java</file>
+            <file>file:/C:/diego%20raguay/LibreriaPaginaViva-1-/src/org/lpv/model/StockValorizado.java</file>
+            <file>file:/C:/diego%20raguay/LibreriaPaginaViva-1-/src/org/lpv/view/ReporteInventarioView.fxml</file>
+            <file>file:/C:/diego%20raguay/LibreriaPaginaViva-1-/src/org/lpv/dao/ReporteInventarioDAO.java</file>
+            <file>file:/C:/diego%20raguay/LibreriaPaginaViva-1-/src/org/lpv/controller/AdminDashboardController.java</file>
+            <file>file:/C:/diego%20raguay/LibreriaPaginaViva-1-/src/org/lpv/view/style/reporteinventarioview.css</file>
+            <file>file:/C:/diego%20raguay/LibreriaPaginaViva-1-/src/org/lpv/dao/impl/ReporteInventarioDAOImpl.java</file>
+            <file>file:/C:/diego%20raguay/LibreriaPaginaViva-1-/src/org/lpv/view/AdminDashboardView.fxml</file>
         </group>
     </open-files>
 </project-private>
