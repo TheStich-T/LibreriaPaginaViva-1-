@@ -1,5 +1,6 @@
 package org.lpv.controller;
 
+import java.io.IOException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -17,6 +18,7 @@ import org.lpv.model.Clientes;
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
+import org.lpv.system.main;
 
 public class FacturaController implements Initializable {
 
@@ -60,9 +62,18 @@ public class FacturaController implements Initializable {
         tblDetalleFactura.setItems(FXCollections.observableArrayList(detalles));
     }
 
-    @FXML
-    public void eventoCerrar(ActionEvent evento) {
-        Stage escenario = (Stage) ((Node) evento.getSource()).getScene().getWindow();
-        escenario.close();
+//    @FXML
+//    public void eventoCerrar(ActionEvent evento) {
+//        Stage escenario = (Stage) ((Node) evento.getSource()).getScene().getWindow();
+//        escenario.close();
+//    }
+     @FXML
+    public void eventoVolver(ActionEvent evento) {
+        try {
+            main.volverAlDashboard();
+        } catch (IOException e) {
+            System.err.println("Error al volver al dashboard: " + e.getMessage());
+        }
     }
+    
 }

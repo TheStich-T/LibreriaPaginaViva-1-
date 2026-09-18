@@ -7,15 +7,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity"
-            maxWidth="-Infinity"
-            minHeight="-Infinity"
-            minWidth="-Infinity"
-            prefHeight="420.0"
-            prefWidth="647.0"
-            xmlns="http://javafx.com/javafx/21.0.1"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="org.lpv.controller.FacturaController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="420.0" prefWidth="647.0" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lpv.controller.FacturaController">
     <children>
         <Label layoutX="14.0" layoutY="14.0" prefHeight="30.0" prefWidth="200.0" text="FACTURA">
             <font>
@@ -46,14 +38,9 @@
         <Label fx:id="lblCliente" layoutX="64.0" layoutY="169.0" prefHeight="17.0" prefWidth="150.0" text="Cliente" />
         <Label fx:id="lblCorreo" layoutX="64.0" layoutY="202.0" prefHeight="17.0" prefWidth="150.0" text="usuario@usuario.com" />
         <Label fx:id="lblDescuento" layoutX="90.0" layoutY="235.0" prefHeight="17.0" prefWidth="120.0" text="Q 0.00" />
-        <Label fx:id="lblTotal" layoutX="97.0" layoutY="269.0" prefHeight="17.0" prefWidth="120.0" text="Q 0.00" style="-fx-font-weight: bold;" />
+        <Label fx:id="lblTotal" layoutX="97.0" layoutY="269.0" prefHeight="17.0" prefWidth="120.0" style="-fx-font-weight: bold;" text="Q 0.00" />
 
-        <Button layoutX="14.0"
-                layoutY="315.0"
-                mnemonicParsing="false"
-                onAction="#eventoCerrar"
-                prefWidth="100.0"
-                text="Cerrar" />
+        <Button layoutX="14.0" layoutY="315.0" mnemonicParsing="false" onAction="#eventoVolver" prefWidth="100.0" text="Cerrar" />
     </children>
 
 </AnchorPane>

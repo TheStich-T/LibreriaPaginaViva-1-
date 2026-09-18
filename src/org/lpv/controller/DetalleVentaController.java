@@ -81,6 +81,15 @@ public class DetalleVentaController implements Initializable {
             System.err.println("Error al volver al dashboard: " + e.getMessage());
         }
     }
+    
+        @FXML
+    public void eventoFactura(ActionEvent evento) {
+        try {
+            main.cambiarEscena("/org/lpv/view/FacturaView.fxml");
+        } catch (IOException e) {
+            System.err.println("Error al redirigir al login: " + e.getMessage());
+        }
+    }
 
     private void mostrarAlerta(Alert.AlertType tipo, String mensaje) {
         new Alert(tipo, mensaje, ButtonType.OK).show();
