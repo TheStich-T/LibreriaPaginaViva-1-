@@ -20,13 +20,16 @@ import javafx.scene.control.TextField;
 import javafx.util.StringConverter;
 import org.lpv.dao.LibrosDAO;
 import org.lpv.dao.MovimientoInventarioDAO;
+import org.lpv.dao.ProveedorDAO;
 import org.lpv.dao.impl.LibrosDAOImpl;
 import org.lpv.dao.impl.MovimientoInventarioDAOImpl;
+import org.lpv.dao.impl.ProveedorDAOImpl;
 import org.lpv.exception.ValidarException;
 import org.lpv.manager.RolPermisos;
 import org.lpv.manager.SessionContext;
 import org.lpv.model.Libros;
 import org.lpv.model.MovimientoInventario;
+import org.lpv.model.Proveedor;
 import org.lpv.model.Usuario;
 import org.lpv.system.main;
 
@@ -34,7 +37,7 @@ public class IngresoInventarioController implements Initializable {
 
     @FXML private ComboBox<Libros> cmbLibro;
     @FXML private TextField txtCantidad;
-    @FXML private TextField txtNitProveedor;
+    @FXML private ComboBox<Proveedor> cmbProveedor;
     @FXML private TextArea txtObservacion;
     @FXML private Label lblStockActual;
     @FXML private Label lblMensaje;
@@ -46,6 +49,7 @@ public class IngresoInventarioController implements Initializable {
 
     private LibrosDAO librosDAO;
     private MovimientoInventarioDAO movimientoDAO;
+    private ProveedorDAO proveedorDAO;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -58,12 +62,20 @@ public class IngresoInventarioController implements Initializable {
 
         librosDAO = new LibrosDAOImpl();
         movimientoDAO = new MovimientoInventarioDAOImpl();
+        proveedorDAO = new ProveedorDAOImpl();
         lblMensaje.setText("");
         lblStockActual.setText("");
 
         cargarLibrosDisponibles();
+        cargarProveedores();
         configurarTabla();
         tblIngresos.setItems(FXCollections.observableArrayList());
+
+        tblIngresos.getSelectionModel().selectedItemProperty().addListener((obs, anterior, seleccionado) -> {
+            if (seleccionado != null) {
+                cargarSeleccionEnFormulario(seleccionado);
+            }
+        });
 
         cmbLibro.setConverter(new StringConverter<Libros>() {
             @Override
@@ -88,10 +100,33 @@ public class IngresoInventarioController implements Initializable {
     }
 
     private void cargarLibrosDisponibles() {
-        // solo libros activos pueden recibir ingresos de inventario
         ObservableList<Libros> libros = FXCollections.observableArrayList(
                 librosDAO.listar().stream().filter(Libros::isActivo).toList());
         cmbLibro.setItems(libros);
+    }
+
+    private void cargarProveedores() {
+        ObservableList<Proveedor> proveedores = FXCollections.observableArrayList(proveedorDAO.listar());
+        cmbProveedor.setItems(proveedores);
+        cmbProveedor.setDisable(false);
+    }
+
+    private void cargarSeleccionEnFormulario(MovimientoInventario movimiento) {
+        Libros libro = cmbLibro.getItems().stream()
+                .filter(l -> l.getIsbn().equals(movimiento.getIsbn()))
+                .findFirst()
+                .orElse(null);
+        cmbLibro.setValue(libro);
+
+        txtCantidad.setText(String.valueOf(movimiento.getCantidad()));
+
+        Proveedor proveedor = cmbProveedor.getItems().stream()
+                .filter(p -> p.getNitProveedor() != null && p.getNitProveedor().equals(movimiento.getNitProveedor()))
+                .findFirst()
+                .orElse(null);
+        cmbProveedor.setValue(proveedor);
+
+        txtObservacion.setText(movimiento.getObservacion() != null ? movimiento.getObservacion() : "");
     }
 
     @FXML
@@ -113,13 +148,15 @@ public class IngresoInventarioController implements Initializable {
 
             Usuario usuarioActual = SessionContext.getInstancia().getUsuairoActual();
 
+            Proveedor proveedorSeleccionado = cmbProveedor.getValue();
+
             MovimientoInventario movimiento = new MovimientoInventario();
             movimiento.setIsbn(libroSeleccionado.getIsbn());
             movimiento.setTipoMovimiento("INGRESO");
             movimiento.setCantidad(cantidad);
             movimiento.setIdUsuario(usuarioActual != null ? usuarioActual.getId() : 0);
             movimiento.setObservacion(txtObservacion.getText() != null ? txtObservacion.getText().trim() : "");
-            movimiento.setNitProveedor(txtNitProveedor.getText() != null ? txtNitProveedor.getText().trim() : null);
+            movimiento.setNitProveedor(proveedorSeleccionado != null ? proveedorSeleccionado.getNitProveedor() : null);
 
             boolean registrado = movimientoDAO.registrarIngreso(movimiento);
 
@@ -152,10 +189,11 @@ public class IngresoInventarioController implements Initializable {
     private void limpiarCampos() {
         cmbLibro.setValue(null);
         txtCantidad.clear();
-        txtNitProveedor.clear();
+        cmbProveedor.setValue(null);
         txtObservacion.clear();
         lblStockActual.setText("");
         lblMensaje.setText("");
+        tblIngresos.getSelectionModel().clearSelection();
     }
 
     private void mostrarAlerta(Alert.AlertType tipo, String mensaje) {
