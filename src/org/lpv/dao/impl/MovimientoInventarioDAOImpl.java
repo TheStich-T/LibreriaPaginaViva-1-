@@ -190,14 +190,183 @@ public class MovimientoInventarioDAOImpl implements MovimientoInventarioDAO {
 
     @Override
     public boolean actualizar(MovimientoInventario objeto) {
-        log.warning("operación no permitida");
-        throw new UnsupportedOperationException("Los movimientos de inventario no se editan");
+        return actualizarMovimiento(objeto);
     }
 
     @Override
     public boolean eliminar(Integer id) {
         log.warning("operación no permitida");
         throw new UnsupportedOperationException("Los movimientos de inventario no se eliminan");
+    }
+
+    @Override
+    public List<MovimientoInventario> listarIngresos() {
+        log.info("Listando ingresos de inventario");
+
+        List<MovimientoInventario> movimientos = new ArrayList<>();
+        String sql = "select id_movimiento, isbn, tipo_movimiento, cantidad, fecha_movimiento, "
+                + "id_usuario, observacion, nit_proveedor "
+                + "from movimientos_inventario "
+                + "where tipo_movimiento = 'INGRESO' "
+                + "order by fecha_movimiento desc, id_movimiento desc";
+
+        try (Connection conexion = Conexion.getInstancia().conectar();
+             PreparedStatement consulta = conexion.prepareStatement(sql);
+             ResultSet tablaResultado = consulta.executeQuery()) {
+
+            while (tablaResultado.next()) {
+                movimientos.add(mapearMovimiento(tablaResultado));
+            }
+
+        } catch (SQLException e) {
+            log.log(Level.SEVERE, "Error al listar ingresos de inventario", e);
+        }
+        return movimientos;
+    }
+
+    private int efectoEnStock(String tipoMovimiento, int cantidad) throws SQLException {
+        if ("INGRESO".equals(tipoMovimiento)) {
+            return cantidad;
+        }
+        if ("MERMA".equals(tipoMovimiento) || "TRASLADO".equals(tipoMovimiento) || "DEVOLUCION".equals(tipoMovimiento)) {
+            return -cantidad;
+        }
+        throw new SQLException("El tipo de movimiento " + tipoMovimiento + " no se puede editar.");
+    }
+
+    private int[] leerStockLibro(Connection conexion, String isbn) throws SQLException {
+        String sqlStock = "select stock_actual, stock_minimo, activo from libros where isbn = ? for update";
+        try (PreparedStatement consultaStock = conexion.prepareStatement(sqlStock)) {
+            consultaStock.setString(1, isbn);
+            try (ResultSet resultado = consultaStock.executeQuery()) {
+                if (!resultado.next()) {
+                    throw new SQLException("El libro " + isbn + " no existe.");
+                }
+                return new int[]{
+                    resultado.getInt("stock_actual"),
+                    resultado.getInt("stock_minimo"),
+                    resultado.getBoolean("activo") ? 1 : 0
+                };
+            }
+        }
+    }
+
+    private void guardarStockLibro(Connection conexion, String isbn, int stock, int stockMinimo) throws SQLException {
+        if (stock < 0) {
+            throw new SQLException("El stock del libro " + isbn + " quedaría en negativo (" + stock + ").");
+        }
+        try (CallableStatement consultaActualizar = conexion.prepareCall("{call sp_actualizarstocklibro(?, ?, ?)}")) {
+            consultaActualizar.setString(1, isbn);
+            consultaActualizar.setInt(2, stock);
+            consultaActualizar.setInt(3, stockMinimo);
+            consultaActualizar.executeUpdate();
+        }
+    }
+
+    @Override
+    public boolean actualizarMovimiento(MovimientoInventario movimiento) {
+
+        if (movimiento == null || movimiento.getIdMovimiento() <= 0 || movimiento.getIsbn() == null) {
+            log.warning("No se puede actualizar un movimiento sin datos.");
+            return false;
+        }
+        if (movimiento.getCantidad() <= 0) {
+            log.warning("Cantidad inválida para actualizar el movimiento: " + movimiento.getCantidad());
+            return false;
+        }
+
+        log.info("Actualizando movimiento de inventario: " + movimiento.getIdMovimiento());
+
+        String sqlMovimientoActual = "select isbn, tipo_movimiento, cantidad "
+                + "from movimientos_inventario where id_movimiento = ? for update";
+        String sqlActualizarMovimiento = "update movimientos_inventario "
+                + "set isbn = ?, tipo_movimiento = ?, cantidad = ?, observacion = ?, nit_proveedor = ? "
+                + "where id_movimiento = ?";
+
+        try (Connection conexion = Conexion.getInstancia().conectar()) {
+            conexion.setAutoCommit(false);
+
+            try {
+                String isbnAnterior;
+                String tipoAnterior;
+                int cantidadAnterior;
+
+                try (PreparedStatement consulta = conexion.prepareStatement(sqlMovimientoActual)) {
+                    consulta.setInt(1, movimiento.getIdMovimiento());
+                    try (ResultSet resultado = consulta.executeQuery()) {
+                        if (!resultado.next()) {
+                            throw new SQLException("El movimiento " + movimiento.getIdMovimiento() + " no existe.");
+                        }
+                        isbnAnterior = resultado.getString("isbn");
+                        tipoAnterior = resultado.getString("tipo_movimiento");
+                        cantidadAnterior = resultado.getInt("cantidad");
+                    }
+                }
+
+                boolean eraIngreso = "INGRESO".equals(tipoAnterior);
+                boolean esIngreso = "INGRESO".equals(movimiento.getTipoMovimiento());
+                if (eraIngreso != esIngreso) {
+                    throw new SQLException("No se puede cambiar un ingreso por una salida (ni al revés).");
+                }
+
+                int efectoAnterior = efectoEnStock(tipoAnterior, cantidadAnterior);
+                int efectoNuevo = efectoEnStock(movimiento.getTipoMovimiento(), movimiento.getCantidad());
+
+                int[] datosLibroAnterior = leerStockLibro(conexion, isbnAnterior);
+                boolean mismoLibro = isbnAnterior.equals(movimiento.getIsbn());
+                int[] datosLibroNuevo = mismoLibro ? datosLibroAnterior : leerStockLibro(conexion, movimiento.getIsbn());
+
+                if (datosLibroNuevo[2] == 0) {
+                    throw new SQLException("El libro " + movimiento.getIsbn() + " está inactivo.");
+                }
+
+                try (PreparedStatement consulta = conexion.prepareStatement(sqlActualizarMovimiento)) {
+                    consulta.setString(1, movimiento.getIsbn());
+                    consulta.setString(2, movimiento.getTipoMovimiento());
+                    consulta.setInt(3, movimiento.getCantidad());
+                    consulta.setString(4, movimiento.getObservacion());
+                    if (movimiento.getNitProveedor() != null && !movimiento.getNitProveedor().isBlank()) {
+                        consulta.setString(5, movimiento.getNitProveedor());
+                    } else {
+                        consulta.setNull(5, Types.VARCHAR);
+                    }
+                    consulta.setInt(6, movimiento.getIdMovimiento());
+                    consulta.executeUpdate();
+                }
+
+                if (mismoLibro) {
+                    int stockFinal = datosLibroAnterior[0] - efectoAnterior + efectoNuevo;
+                    guardarStockLibro(conexion, isbnAnterior, stockFinal, datosLibroAnterior[1]);
+                } else {
+                    guardarStockLibro(conexion, isbnAnterior, datosLibroAnterior[0] - efectoAnterior, datosLibroAnterior[1]);
+                    guardarStockLibro(conexion, movimiento.getIsbn(), datosLibroNuevo[0] + efectoNuevo, datosLibroNuevo[1]);
+                }
+
+                conexion.commit();
+                log.info("Movimiento actualizado correctamente: " + movimiento.getIdMovimiento());
+                return true;
+
+            } catch (SQLException e) {
+                try {
+                    conexion.rollback();
+                } catch (SQLException rollbackError) {
+                    log.log(Level.SEVERE, "Error al hacer rollback de la actualización", rollbackError);
+                }
+                log.log(Level.SEVERE, "Error al actualizar movimiento de inventario", e);
+                return false;
+
+            } finally {
+                try {
+                    conexion.setAutoCommit(true);
+                } catch (SQLException e) {
+                    log.log(Level.SEVERE, "Error al restaurar autoCommit", e);
+                }
+            }
+
+        } catch (SQLException e) {
+            log.log(Level.SEVERE, "Error de conexión al actualizar movimiento de inventario", e);
+            return false;
+        }
     }
 
     @Override
