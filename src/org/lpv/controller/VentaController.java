@@ -13,6 +13,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -52,7 +53,6 @@ import org.lpv.util.SecurityUtil;
 
 public class VentaController implements Initializable {
 
-    // Porcentaje de descuento a partir del cual se exige autorización de un administrador.
     private static final double UMBRAL_DESCUENTO_AUTORIZACION = 10.0;
 
     @FXML private TextField txtFiltroLibro;
@@ -106,9 +106,9 @@ public class VentaController implements Initializable {
         actualizarTotales();
         cargarClientes();
         cargarLibros();
-        txtFiltroCliente.textProperty().addListener((obs, textoAnterior, textoNuevo) -> filtrarClientes(textoNuevo));
-        txtFiltroLibro.textProperty().addListener((obs, textoAnterior, textoNuevo) -> filtrarLibros(textoNuevo));
-        txtDescuento.textProperty().addListener((obs, textoAnterior, textoNuevo) -> actualizarTotales());
+        txtFiltroCliente.textProperty().addListener((obs, anterior, nuevo) -> filtrarClientes(nuevo));
+        txtFiltroLibro.textProperty().addListener((obs, anterior, nuevo) -> filtrarLibros(nuevo));
+        txtDescuento.textProperty().addListener((obs, anterior, nuevo) -> actualizarTotales());
         cmbCliente.setOnAction(e -> seleccionarCliente());
         cmbLibro.setOnAction(e -> seleccionarLibro());
         cmbLibro.setConverter(new StringConverter<Libros>() {
@@ -116,7 +116,6 @@ public class VentaController implements Initializable {
             public String toString(Libros libro) {
                 return libro == null ? "" : libro.getIsbn() + " - " + libro.getTitulo();
             }
-
             @Override
             public Libros fromString(String string) {
                 return cmbLibro.getValue();
@@ -136,7 +135,6 @@ public class VentaController implements Initializable {
             if (libro == null) {
                 throw new ValidarException("No se encontró el libro con ISBN " + isbn + ".");
             }
-
             if (!libro.isActivo()) {
                 throw new ValidarException("El libro seleccionado está inactivo.");
             }
@@ -178,15 +176,12 @@ public class VentaController implements Initializable {
             ValidarException.validarNulo(seleccionado, "Seleccioná un producto del carrito.");
 
             int cantidad = leerCantidad();
-
             Libros libro = librosDAO.buscar(seleccionado.getIsbn());
             ValidarException.validarNulo(libro, "El libro ya no está disponible.");
-
             validarStock(libro, cantidad);
 
             seleccionado.setCantidad(cantidad);
             seleccionado.setSubtotal(cantidad * seleccionado.getPrecioUnitario());
-
             tblCarrito.refresh();
             actualizarTotales();
             lblMensaje.setText("");
@@ -202,12 +197,10 @@ public class VentaController implements Initializable {
     @FXML
     public void eventoEliminar(ActionEvent evento) {
         detalleVenta seleccionado = tblCarrito.getSelectionModel().getSelectedItem();
-
         if (seleccionado == null) {
             mostrarAlerta(Alert.AlertType.WARNING, "Seleccioná un producto del carrito.");
             return;
         }
-
         carrito.remove(seleccionado);
         actualizarTotales();
     }
@@ -218,7 +211,6 @@ public class VentaController implements Initializable {
             if (carrito.isEmpty()) {
                 throw new ValidarException("El carrito no puede estar vacío.");
             }
-
             ValidarException.validarNoVacio(txtCuiCliente.getText(), "CUI del cliente");
             long cui = Long.parseLong(txtCuiCliente.getText().trim());
 
@@ -230,7 +222,6 @@ public class VentaController implements Initializable {
             double descuento = calcularDescuento(subtotal, porcentajeDescuento);
             double total = subtotal - descuento;
 
-            // Si el descuento supera el umbral, se exige autorización de un administrador.
             int idAutorizaDescuento = solicitarAutorizacionDescuento(porcentajeDescuento);
 
             Venta venta = new Venta();
@@ -253,7 +244,6 @@ public class VentaController implements Initializable {
 
             Clientes cliente = clienteDAO.buscar(cui);
             Venta ventaRegistrada = ventaDAO.buscar(venta.getIdVenta());
-
             abrirFactura(evento, ventaRegistrada != null ? ventaRegistrada : venta, cliente, detallesFactura);
 
             carrito.clear();
@@ -290,6 +280,104 @@ public class VentaController implements Initializable {
         volverAlDashboard();
     }
 
+    // ─── Nuevo cliente desde la pantalla de venta ───────────────────────────────
+
+    @FXML
+    public void eventoNuevoCliente(ActionEvent evento) {
+        // Campos del formulario
+        TextField txtCui      = new TextField();
+        TextField txtNombre   = new TextField();
+        TextField txtApellido = new TextField();
+        TextField txtCorreo   = new TextField();
+
+        txtCui.setPromptText("Ej: 1234567890101");
+        txtNombre.setPromptText("Nombre");
+        txtApellido.setPromptText("Apellido");
+        txtCorreo.setPromptText("correo@ejemplo.com");
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(12);
+        grid.setPadding(new Insets(20, 20, 10, 20));
+        grid.addRow(0, new Label("CUI:"),     txtCui);
+        grid.addRow(1, new Label("Nombre:"),  txtNombre);
+        grid.addRow(2, new Label("Apellido:"), txtApellido);
+        grid.addRow(3, new Label("Correo:"),  txtCorreo);
+
+        // Dar un ancho fijo a los campos para que el diálogo no quede angosto
+        txtCui.setPrefWidth(220);
+        txtNombre.setPrefWidth(220);
+        txtApellido.setPrefWidth(220);
+        txtCorreo.setPrefWidth(220);
+
+        ButtonType btnGuardar  = new ButtonType("Guardar",  ButtonBar.ButtonData.OK_DONE);
+        ButtonType btnCancelar = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        Dialog<ButtonType> dialogo = new Dialog<>();
+        dialogo.setTitle("Nuevo Cliente");
+        dialogo.setHeaderText("Registrá los datos del nuevo cliente");
+        dialogo.getDialogPane().setContent(grid);
+        dialogo.getDialogPane().getButtonTypes().addAll(btnGuardar, btnCancelar);
+
+        // Foco inicial en el campo CUI
+        dialogo.setOnShown(e -> txtCui.requestFocus());
+
+        Optional<ButtonType> resultado = dialogo.showAndWait();
+
+        if (resultado.isEmpty() || resultado.get() != btnGuardar) {
+            return; // canceló
+        }
+
+        // Validar que ningún campo esté vacío
+        String cuiTexto  = txtCui.getText()      == null ? "" : txtCui.getText().trim();
+        String nombre    = txtNombre.getText()   == null ? "" : txtNombre.getText().trim();
+        String apellido  = txtApellido.getText() == null ? "" : txtApellido.getText().trim();
+        String correo    = txtCorreo.getText()   == null ? "" : txtCorreo.getText().trim();
+
+        if (cuiTexto.isEmpty() || nombre.isEmpty() || apellido.isEmpty() || correo.isEmpty()) {
+            mostrarAlerta(Alert.AlertType.WARNING, "Todos los campos del cliente son obligatorios.");
+            return;
+        }
+
+        long cui;
+        try {
+            cui = Long.parseLong(cuiTexto);
+        } catch (NumberFormatException e) {
+            mostrarAlerta(Alert.AlertType.WARNING, "El CUI debe ser un número válido.");
+            return;
+        }
+
+        // Verificar que el CUI no esté ya registrado
+        if (clienteDAO.buscar(cui) != null) {
+            mostrarAlerta(Alert.AlertType.WARNING, "Ya existe un cliente con ese CUI.");
+            return;
+        }
+
+        Clientes nuevo = new Clientes(cui, nombre, apellido, correo);
+        boolean guardado = clienteDAO.insertar(nuevo);
+
+        if (!guardado) {
+            mostrarAlerta(Alert.AlertType.ERROR, "No se pudo registrar el cliente. Intentá de nuevo.");
+            return;
+        }
+
+        // Recargar lista y seleccionar automáticamente al cliente recién creado
+        cargarClientes();
+        txtFiltroCliente.clear();
+
+        // Buscamos al cliente nuevo en la lista y lo seleccionamos
+        for (Clientes c : clientesData) {
+            if (c.getCui() == cui) {
+                cmbCliente.getSelectionModel().select(c);
+                break;
+            }
+        }
+
+        mostrarAlerta(Alert.AlertType.INFORMATION, "Cliente registrado correctamente.");
+    }
+
+    // ─── Factura ────────────────────────────────────────────────────────────────
+
     private void abrirFactura(ActionEvent evento, Venta venta, Clientes cliente, List<detalleVenta> detalles) {
         try {
             FXMLLoader loader = new FXMLLoader(main.class.getResource("/org/lpv/view/FacturaView.fxml"));
@@ -311,14 +399,14 @@ public class VentaController implements Initializable {
         }
     }
 
+    // ─── Helpers ────────────────────────────────────────────────────────────────
+
     private int leerCantidad() throws ValidarException {
         ValidarException.validarNoVacio(txtCantidad.getText(), "cantidad");
         int cantidad = Integer.parseInt(txtCantidad.getText().trim());
-
         if (cantidad <= 0) {
             throw new ValidarException("La cantidad debe ser mayor a 0.");
         }
-
         return cantidad;
     }
 
@@ -339,26 +427,20 @@ public class VentaController implements Initializable {
 
     private double calcularSubtotal() {
         double subtotal = 0;
-
         for (detalleVenta detalle : carrito) {
             subtotal += detalle.getSubtotal();
         }
-
         return subtotal;
     }
 
     private double leerDescuento() throws ValidarException {
         ValidarException.validarNoVacio(txtDescuento.getText(), "descuento");
-
         try {
             double porcentaje = Double.parseDouble(txtDescuento.getText().trim());
-
             if (porcentaje < 0 || porcentaje > 100) {
                 throw new ValidarException("El descuento debe estar entre 0% y 100%.");
             }
-
             return porcentaje;
-
         } catch (NumberFormatException e) {
             throw new ValidarException("El descuento debe ser un porcentaje válido.");
         }
@@ -368,9 +450,6 @@ public class VentaController implements Initializable {
         return subtotal * porcentajeDescuento / 100;
     }
 
- 
-      //Si el porcentaje de descuento supera el umbral permitido, pide usuario y
-      //contraseña de un administrador antes de continuar con la venta.
     private int solicitarAutorizacionDescuento(double porcentajeDescuento) throws ValidarException {
         if (porcentajeDescuento <= UMBRAL_DESCUENTO_AUTORIZACION) {
             return 0;
@@ -388,14 +467,13 @@ public class VentaController implements Initializable {
 
         TextField txtUsuarioAutoriza = new TextField();
         txtUsuarioAutoriza.setPromptText("Usuario administrador");
-
         PasswordField txtPasswordAutoriza = new PasswordField();
         txtPasswordAutoriza.setPromptText("Contraseña");
 
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
-        grid.addRow(0, new Label("Usuario:"), txtUsuarioAutoriza);
+        grid.addRow(0, new Label("Usuario:"),    txtUsuarioAutoriza);
         grid.addRow(1, new Label("Contraseña:"), txtPasswordAutoriza);
         dialogo.getDialogPane().setContent(grid);
 
@@ -418,11 +496,9 @@ public class VentaController implements Initializable {
         if (autorizador == null || !autorizador.getPasswordHash().equals(hashIngresado)) {
             throw new ValidarException("Usuario o contraseña de autorización incorrectos.");
         }
-
         if (!autorizador.isActivo()) {
             throw new ValidarException("El usuario autorizador está inactivo.");
         }
-
         if (!"admin".equalsIgnoreCase(autorizador.getRol())) {
             throw new ValidarException("Solo un administrador puede autorizar descuentos mayores al " + UMBRAL_DESCUENTO_AUTORIZACION + "%.");
         }
@@ -433,25 +509,19 @@ public class VentaController implements Initializable {
     private void actualizarTotales() {
         double subtotal = calcularSubtotal();
         double porcentajeDescuento = 0;
-
         try {
             String texto = txtDescuento == null || txtDescuento.getText() == null ? "" : txtDescuento.getText().trim();
-
             if (!texto.isEmpty()) {
                 porcentajeDescuento = Double.parseDouble(texto);
             }
-
             if (porcentajeDescuento < 0 || porcentajeDescuento > 100) {
                 porcentajeDescuento = 0;
             }
-
         } catch (NumberFormatException e) {
             porcentajeDescuento = 0;
         }
-
         double descuento = calcularDescuento(subtotal, porcentajeDescuento);
         double total = subtotal - descuento;
-
         lblSubtotal.setText(String.format("Q %.2f", subtotal));
         lblTotal.setText(String.format("Q %.2f", total));
     }
@@ -464,38 +534,29 @@ public class VentaController implements Initializable {
 
     private void cargarClientes() {
         clientesData.setAll(clienteDAO.listar());
-
         if (clientesData.isEmpty()) {
             mostrarAlerta(Alert.AlertType.ERROR, "No se pudieron cargar los clientes.");
         }
-
         clientesFiltrados = new FilteredList<>(clientesData, cliente -> true);
         cmbCliente.setItems(clientesFiltrados);
     }
 
     private void filtrarClientes(String texto) {
-        if (clientesFiltrados == null) {
-            return;
-        }
-
+        if (clientesFiltrados == null) return;
         if (texto == null || texto.isBlank()) {
             clientesFiltrados.setPredicate(cliente -> true);
             return;
         }
-
-        String textoBusqueda = texto.trim().toLowerCase();
-
+        String busqueda = texto.trim().toLowerCase();
         clientesFiltrados.setPredicate(cliente ->
-                String.valueOf(cliente.getCui()).contains(textoBusqueda)
-                || cliente.getNombreCliente().toLowerCase().contains(textoBusqueda)
-                || cliente.getApellidoCliente().toLowerCase().contains(textoBusqueda)
+                String.valueOf(cliente.getCui()).contains(busqueda)
+                || cliente.getNombreCliente().toLowerCase().contains(busqueda)
+                || cliente.getApellidoCliente().toLowerCase().contains(busqueda)
         );
     }
 
     private void cargarLibros() {
-        // solo libros activos se pueden vender
         librosData.setAll(librosDAO.listar().stream().filter(Libros::isActivo).toList());
-
         if (librosFiltrados == null) {
             librosFiltrados = new FilteredList<>(librosData, libro -> true);
             cmbLibro.setItems(librosFiltrados);
@@ -503,30 +564,21 @@ public class VentaController implements Initializable {
     }
 
     private void filtrarLibros(String texto) {
-        if (librosFiltrados == null) {
-            return;
-        }
-
+        if (librosFiltrados == null) return;
         if (texto == null || texto.isBlank()) {
             librosFiltrados.setPredicate(libro -> true);
             return;
         }
-
-        String textoBusqueda = texto.trim().toLowerCase();
-
+        String busqueda = texto.trim().toLowerCase();
         librosFiltrados.setPredicate(libro ->
-                libro.getTitulo().toLowerCase().contains(textoBusqueda)
-                || libro.getIsbn().toLowerCase().contains(textoBusqueda)
+                libro.getTitulo().toLowerCase().contains(busqueda)
+                || libro.getIsbn().toLowerCase().contains(busqueda)
         );
     }
 
     private void seleccionarLibro() {
         Libros seleccionado = cmbLibro.getValue();
-
-        if (seleccionado == null) {
-            return;
-        }
-
+        if (seleccionado == null) return;
         txtIsbn.setText(seleccionado.getIsbn());
         txtCantidad.requestFocus();
         txtCantidad.selectAll();
@@ -534,11 +586,7 @@ public class VentaController implements Initializable {
 
     private void seleccionarCliente() {
         Clientes seleccionado = cmbCliente.getValue();
-
-        if (seleccionado == null) {
-            return;
-        }
-
+        if (seleccionado == null) return;
         txtCuiCliente.setText(String.valueOf(seleccionado.getCui()));
     }
 

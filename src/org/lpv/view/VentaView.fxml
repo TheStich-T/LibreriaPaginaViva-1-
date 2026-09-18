@@ -97,41 +97,33 @@
                 <TableColumn fx:id="colIsbn"
                              prefWidth="190.0"
                              text="ISBN">
-
                     <cellValueFactory>
                         <PropertyValueFactory property="isbn" />
                     </cellValueFactory>
-
                 </TableColumn>
 
                 <TableColumn fx:id="colCantidad"
                              prefWidth="110.0"
                              text="Cantidad">
-
                     <cellValueFactory>
                         <PropertyValueFactory property="cantidad" />
                     </cellValueFactory>
-
                 </TableColumn>
 
                 <TableColumn fx:id="colPrecio"
                              prefWidth="150.0"
                              text="Precio unitario">
-
                     <cellValueFactory>
                         <PropertyValueFactory property="precioUnitario" />
                     </cellValueFactory>
-
                 </TableColumn>
 
                 <TableColumn fx:id="colSubtotal"
                              prefWidth="160.0"
                              text="Subtotal">
-
                     <cellValueFactory>
                         <PropertyValueFactory property="subtotal" />
                     </cellValueFactory>
-
                 </TableColumn>
 
             </columns>
@@ -170,8 +162,16 @@
         <ComboBox fx:id="cmbCliente"
                   layoutX="700.0"
                   layoutY="235.0"
-                  prefWidth="210.0"
+                  prefWidth="178.0"
                   promptText="Seleccionar cliente" />
+
+        <Button layoutX="882.0"
+                layoutY="235.0"
+                prefWidth="28.0"
+                prefHeight="26.0"
+                text="+"
+                onAction="#eventoNuevoCliente"
+                styleClass="primary-button" />
 
         <Label layoutX="700.0"
                layoutY="285.0"
