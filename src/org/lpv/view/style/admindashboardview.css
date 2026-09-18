@@ -2,69 +2,69 @@
     -fx-background-color: #eef1f5;
     -fx-font-family: "Segoe UI", Arial, sans-serif;
 }
-
+ 
 /* SIDEBAR */
-
+ 
 .sidebar {
     -fx-background-color: #10141d;
     -fx-padding: 20px 15px;
 }
-
+ 
 .sidebar-heading {
     -fx-text-fill: #ffffff;
     -fx-font-size: 13px;
     -fx-font-weight: bold;
 }
-
+ 
 .sidebar-section {
     -fx-text-fill: #6d7280;
     -fx-font-size: 10px;
     -fx-font-weight: bold;
 }
-
+ 
 .sidebar-item {
     -fx-text-fill: #c6cbd6;
     -fx-font-size: 12.5px;
 }
-
+ 
 .sidebar-item:hover {
     -fx-text-fill: #ffffff;
 }
-
+ 
 .sidebar-user {
     -fx-text-fill: #ffffff;
     -fx-font-size: 12px;
     -fx-font-weight: bold;
 }
-
+ 
 .logout-button {
     -fx-text-fill: #9aa1b0;
     -fx-font-size: 12px;
     -fx-cursor: hand;
 }
-
+ 
 .logout-button:hover {
     -fx-text-fill: #ffffff;
 }
-
+ 
 /* TÍTULO Y ENCABEZADO */
-
+ 
 .brand-title {
     -fx-text-fill: #202632;
     -fx-font-weight: bold;
 }
-
+ 
 .page-title {
     -fx-text-fill: #202632;
 }
-
+ 
 .page-subtitle {
     -fx-text-fill: #767c88;
     -fx-font-size: 11px;
 }
-
+ 
 /* TARJETAS DEL MENÚ */
-
+ 
 .dashboard-card {
     -fx-background-color: #ffffff;
     -fx-background-radius: 7px;
@@ -76,16 +76,56 @@
     -fx-cursor: hand;
     -fx-effect: dropshadow(gaussian, rgba(20,25,35,0.10), 8, 0.12, 0, 3);
 }
-
+ 
 .dashboard-card:hover {
     -fx-background-color: #f7f9fb;
     -fx-translate-y: -1px;
     -fx-effect: dropshadow(gaussian, rgba(20,25,35,0.18), 10, 0.16, 0, 4);
 }
-
+ 
 .card-1 { -fx-border-color: #24344a transparent transparent transparent; }
 .card-2 { -fx-border-color: #33506f transparent transparent transparent; }
 .card-3 { -fx-border-color: #46617d transparent transparent transparent; }
 .card-4 { -fx-border-color: #5a6b7a transparent transparent transparent; }
 .card-5 { -fx-border-color: #2e3b4d transparent transparent transparent; }
 .card-6 { -fx-border-color: #1c2735 transparent transparent transparent; }
+ 
+
+ 
+.kpi-card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-border-width: 0 0 0 4px;
+    -fx-padding: 10px 16px;
+    -fx-effect: dropshadow(gaussian, rgba(20,25,35,0.10), 8, 0.12, 0, 3);
+}
+ 
+.kpi-card-1 { -fx-border-color: transparent transparent transparent #24344a; }
+.kpi-card-2 { -fx-border-color: transparent transparent transparent #33506f; }
+.kpi-card-3 { -fx-border-color: transparent transparent transparent #46617d; }
+ 
+.kpi-label {
+    -fx-text-fill: #767c88;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+ 
+.kpi-value {
+    -fx-text-fill: #202632;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+ 
+.kpi-refresh-button {
+    -fx-background-color: #24344a;
+    -fx-text-fill: #ffffff;
+    -fx-background-radius: 6px;
+    -fx-font-size: 12px;
+    -fx-cursor: hand;
+    -fx-padding: 0 16px;
+}
+ 
+.kpi-refresh-button:hover {
+    -fx-background-color: #33506f;
+}
