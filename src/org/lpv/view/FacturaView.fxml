@@ -40,7 +40,7 @@
         <Label fx:id="lblDescuento" layoutX="90.0" layoutY="235.0" prefHeight="17.0" prefWidth="120.0" text="Q 0.00" />
         <Label fx:id="lblTotal" layoutX="97.0" layoutY="269.0" prefHeight="17.0" prefWidth="120.0" style="-fx-font-weight: bold;" text="Q 0.00" />
 
-        <Button layoutX="14.0" layoutY="315.0" mnemonicParsing="false" onAction="#eventoVolver" prefWidth="100.0" text="Cerrar" />
+        <Button layoutX="14.0" layoutY="315.0" mnemonicParsing="false" onAction="#eventoCerrar" prefWidth="100.0" text="Cerrar" />
     </children>
 
 </AnchorPane>

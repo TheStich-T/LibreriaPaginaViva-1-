@@ -3,15 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/diego%20raguay/LibreriaPaginaViva-1-/src/org/lpv/controller/ReporteInventarioController.java</file>
-            <file>file:/C:/diego%20raguay/LibreriaPaginaViva-1-/src/org/lpv/model/LibroMasVendido.java</file>
-            <file>file:/C:/diego%20raguay/LibreriaPaginaViva-1-/src/org/lpv/model/StockValorizado.java</file>
-            <file>file:/C:/diego%20raguay/LibreriaPaginaViva-1-/src/org/lpv/view/ReporteInventarioView.fxml</file>
-            <file>file:/C:/diego%20raguay/LibreriaPaginaViva-1-/src/org/lpv/dao/ReporteInventarioDAO.java</file>
-            <file>file:/C:/diego%20raguay/LibreriaPaginaViva-1-/src/org/lpv/controller/AdminDashboardController.java</file>
-            <file>file:/C:/diego%20raguay/LibreriaPaginaViva-1-/src/org/lpv/view/style/reporteinventarioview.css</file>
-            <file>file:/C:/diego%20raguay/LibreriaPaginaViva-1-/src/org/lpv/dao/impl/ReporteInventarioDAOImpl.java</file>
-            <file>file:/C:/diego%20raguay/LibreriaPaginaViva-1-/src/org/lpv/view/AdminDashboardView.fxml</file>
+            <file>file:/C:/diego%20raguay/LibreriaPaginaViva-1-/src/org/lpv/controller/VentaController.java</file>
+            <file>file:/C:/diego%20raguay/LibreriaPaginaViva-1-/src/org/lpv/controller/ReportesVentasController.java</file>
+            <file>file:/C:/diego%20raguay/LibreriaPaginaViva-1-/src/org/lpv/view/FacturaView.fxml</file>
+            <file>file:/C:/diego%20raguay/LibreriaPaginaViva-1-/src/org/lpv/controller/FacturaController.java</file>
         </group>
     </open-files>
 </project-private>

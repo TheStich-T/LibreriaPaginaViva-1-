@@ -1,6 +1,5 @@
 package org.lpv.controller;
 
-import java.io.IOException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -18,7 +17,6 @@ import org.lpv.model.Clientes;
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
-import org.lpv.system.main;
 
 public class FacturaController implements Initializable {
 
@@ -50,8 +48,7 @@ public class FacturaController implements Initializable {
 
         lblNoFactura.setText(String.valueOf(venta.getIdVenta()));
 
-        lblFecha.setText(venta.getFechaVenta() != null ? venta.getFechaVenta().format(FORMATO_FECHA): ""
-        );
+        lblFecha.setText(venta.getFechaVenta() != null ? venta.getFechaVenta().format(FORMATO_FECHA) : "");
 
         lblCui.setText(String.valueOf(clientes.getCui()));
         lblCliente.setText(clientes.getNombreCliente() + " " + clientes.getApellidoCliente());
@@ -62,18 +59,13 @@ public class FacturaController implements Initializable {
         tblDetalleFactura.setItems(FXCollections.observableArrayList(detalles));
     }
 
-//    @FXML
-//    public void eventoCerrar(ActionEvent evento) {
-//        Stage escenario = (Stage) ((Node) evento.getSource()).getScene().getWindow();
-//        escenario.close();
-//    }
-     @FXML
-    public void eventoVolver(ActionEvent evento) {
-        try {
-            main.volverAlDashboard();
-        } catch (IOException e) {
-            System.err.println("Error al volver al dashboard: " + e.getMessage());
-        }
+    // La factura SIEMPRE se abre como una ventana (Stage) nueva, encima de la pantalla que la
+    // invocó (Nueva Venta o Detalle de Venta). Por eso "Cerrar" solo debe cerrar ESTA ventana:
+    // así la pantalla de atrás queda intacta y visible, sin tocar el dashboard ni la ventana principal.
+    @FXML
+    public void eventoCerrar(ActionEvent evento) {
+        Stage escenario = (Stage) ((Node) evento.getSource()).getScene().getWindow();
+        escenario.close();
     }
-    
+
 }

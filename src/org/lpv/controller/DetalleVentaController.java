@@ -2,11 +2,16 @@ package org.lpv.controller;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
@@ -14,10 +19,15 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import org.lpv.dao.ClienteDAO;
 import org.lpv.dao.VentaDAO;
 import org.lpv.dao.detalleVentaDAO;
+import org.lpv.dao.impl.ClientesDAOImpl;
 import org.lpv.dao.impl.VentaDAOImpl;
 import org.lpv.dao.impl.detalleVentaDAOImpl;
+import org.lpv.model.Clientes;
 import org.lpv.model.Venta;
 import org.lpv.model.detalleVenta;
 import org.lpv.exception.ValidarException;
@@ -36,11 +46,17 @@ public class DetalleVentaController implements Initializable {
 
     private VentaDAO ventaDAO;
     private detalleVentaDAO detalleDAO;
+    private ClienteDAO clienteDAO;
+
+    // Guardamos la última venta consultada para poder generar su factura con los valores correctos.
+    private Venta ventaActual;
+    private List<detalleVenta> detallesActuales;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         ventaDAO = new VentaDAOImpl();
         detalleDAO = new detalleVentaDAOImpl();
+        clienteDAO = new ClientesDAOImpl();
         colIsbn.setCellValueFactory(new PropertyValueFactory<>("isbn"));
         colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
         colPrecio.setCellValueFactory(new PropertyValueFactory<>("precioUnitario"));
@@ -60,12 +76,20 @@ public class DetalleVentaController implements Initializable {
                 tblDetalles.setItems(FXCollections.observableArrayList());
                 lblVenta.setText("");
                 lblTotal.setText("Q 0.00");
+                ventaActual = null;
+                detallesActuales = null;
                 return;
             }
 
             lblVenta.setText("Venta #" + venta.getIdVenta() + " - " + venta.getEstado());
             lblTotal.setText(String.format("Q %.2f", venta.getTotal()));
-            tblDetalles.setItems(FXCollections.observableArrayList(detalleDAO.listarPorVenta(idVenta)));
+
+            List<detalleVenta> detalles = detalleDAO.listarPorVenta(idVenta);
+            tblDetalles.setItems(FXCollections.observableArrayList(detalles));
+
+            // Guardamos la venta y sus detalles ya consultados para usarlos al generar la factura.
+            ventaActual = venta;
+            detallesActuales = detalles;
         } catch (ValidarException e) {
             mostrarAlerta(Alert.AlertType.WARNING, e.getMessage());
         } catch (NumberFormatException e) {
@@ -81,13 +105,39 @@ public class DetalleVentaController implements Initializable {
             System.err.println("Error al volver al dashboard: " + e.getMessage());
         }
     }
-    
-        @FXML
+
+    @FXML
     public void eventoFactura(ActionEvent evento) {
+        if (ventaActual == null) {
+            mostrarAlerta(Alert.AlertType.WARNING, "Primero busca una venta para poder ver su factura.");
+            return;
+        }
+
+        Clientes cliente = clienteDAO.buscar(ventaActual.getCuiCliente());
+        if (cliente == null) {
+            mostrarAlerta(Alert.AlertType.ERROR, "No se encontró el cliente asociado a esta venta.");
+            return;
+        }
+
         try {
-            main.cambiarEscena("/org/lpv/view/FacturaView.fxml");
+            FXMLLoader loader = new FXMLLoader(main.class.getResource("/org/lpv/view/FacturaView.fxml"));
+            Parent raiz = loader.load();
+            FacturaController controller = loader.getController();
+            controller.cargarDatosFactura(ventaActual, cliente, FXCollections.observableArrayList(detallesActuales));
+
+            Stage ventanaFactura = new Stage();
+            ventanaFactura.setTitle("Factura - Venta #" + ventaActual.getIdVenta());
+            ventanaFactura.setScene(new Scene(raiz));
+
+            // La factura se abre como ventana modal ENCIMA de Detalle de Venta, sin reemplazar
+            // la escena de la ventana principal. Así, al cerrarla, Detalle de Venta sigue ahí.
+            Stage ventanaActual = (Stage) ((Node) evento.getSource()).getScene().getWindow();
+            ventanaFactura.initOwner(ventanaActual);
+            ventanaFactura.initModality(Modality.WINDOW_MODAL);
+            ventanaFactura.showAndWait();
+
         } catch (IOException e) {
-            System.err.println("Error al redirigir al login: " + e.getMessage());
+            mostrarAlerta(Alert.AlertType.ERROR, "No se pudo abrir la factura: " + e.getMessage());
         }
     }
 
@@ -95,4 +145,3 @@ public class DetalleVentaController implements Initializable {
         new Alert(tipo, mensaje, ButtonType.OK).show();
     }
 }
-
