@@ -984,3 +984,17 @@ BEGIN
     WHERE id = _id;
 END //
 DELIMITER ;
+
+-- Sprint 4: Dashboard Administrativo - ventas del día (solo COMPLETADAS, de todos los usuarios)
+drop procedure if exists sp_totalventasdia;
+delimiter $$
+
+create procedure sp_totalventasdia()
+begin
+    select coalesce(sum(total), 0) as total_ventas
+    from ventas
+    where estado = 'COMPLETADA'
+      and date(fecha_venta) = curdate();
+end $$
+
+delimiter ;

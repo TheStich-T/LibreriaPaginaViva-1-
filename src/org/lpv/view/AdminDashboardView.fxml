@@ -47,7 +47,7 @@
             <children>
                 <VBox alignment="CENTER_LEFT" prefHeight="90.0" prefWidth="200.0" spacing="4.0" styleClass="kpi-card, kpi-card-1">
                     <children>
-                        <Label styleClass="kpi-label" text="Ventas totales" />
+                        <Label styleClass="kpi-label" text="Ventas de hoy" />
                         <Label fx:id="lblKpiVentas" styleClass="kpi-value" text="Q 0.00" />
                     </children>
                 </VBox>

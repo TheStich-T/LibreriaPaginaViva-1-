@@ -21,10 +21,11 @@ public class IndicadorDAOImpl implements IndicadorDAO {
         Indicador indicadores = new Indicador();
  
         try (Connection conexion = Conexion.getInstancia().conectar()) {
-            indicadores.setTotalVentas(obtenerTotalVentas(conexion));
+            // totalVentas ahora representa las ventas del día actual
+            indicadores.setTotalVentas(obtenerVentasDelDia(conexion));
             indicadores.setTotalLibrosActivos(obtenerTotalLibrosActivos(conexion));
             indicadores.setTotalUsuariosActivos(obtenerTotalUsuariosActivos(conexion));
-            log.info("Indicadores cargados: ventas=" + indicadores.getTotalVentas()
+            log.info("Indicadores cargados: ventasDelDia=" + indicadores.getTotalVentas()
                     + ", libros=" + indicadores.getTotalLibrosActivos()
                     + ", usuarios=" + indicadores.getTotalUsuariosActivos());
         } catch (SQLException e) {
@@ -35,8 +36,8 @@ public class IndicadorDAOImpl implements IndicadorDAO {
         return indicadores;
     }
  
-    private BigDecimal obtenerTotalVentas(Connection conexion) throws SQLException {
-        String sql = "{call sp_totalventas()}";
+    private BigDecimal obtenerVentasDelDia(Connection conexion) throws SQLException {
+        String sql = "{call sp_totalventasdia()}";
         try (CallableStatement consulta = conexion.prepareCall(sql);
              ResultSet tablaResultado = consulta.executeQuery()) {
             if (tablaResultado.next()) {
