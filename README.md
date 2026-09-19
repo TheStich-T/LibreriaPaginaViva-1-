@@ -191,7 +191,7 @@ El proyecto se desarrolló con **Scrum** en 4 sprints, usando un tablero de Trel
 
 ## Créditos
 
-Proyecto educativo desarrollado para el curso de Programación 1 (estudiantes de informática).
+Proyecto educativo desarrollado para el curso de Taller (estudiantes de informática). Los alumnos demuestran aquí competencias en: programación orientada a objetos, persistencia de datos con JDBC y procedimientos almacenados, construcción de interfaces con JavaFX y trabajo colaborativo con Git y metodologia de Scrum.
 
 | Nombre | Usuario de GitHub |
 |---|---|
