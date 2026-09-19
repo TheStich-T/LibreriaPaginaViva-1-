@@ -879,3 +879,108 @@ select
     telefono_editorial  as 'teléfono',
     direccion_editorial as 'dirección'
 from editoriales;
+
+-- Corrección pedida por el Product Owner: agregar nombre, apellido y correo a la tabla usuarios para el módulo de Gestión de Usuarios
+
+-- 1. Agregar columna 'nombre' si no existe
+SET @existe_nombre = (
+    SELECT COUNT(*) FROM information_schema.columns
+    WHERE table_schema = DATABASE()
+      AND table_name   = 'usuarios'
+      AND column_name  = 'nombre'
+);
+SET @sql_nombre = IF(@existe_nombre = 0,
+    'ALTER TABLE usuarios ADD COLUMN nombre varchar(100) NULL AFTER username',
+    'DO 0');
+PREPARE stmt FROM @sql_nombre;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- 2. Agregar columna 'apellido' si no existe
+SET @existe_apellido = (
+    SELECT COUNT(*) FROM information_schema.columns
+    WHERE table_schema = DATABASE()
+      AND table_name   = 'usuarios'
+      AND column_name  = 'apellido'
+);
+SET @sql_apellido = IF(@existe_apellido = 0,
+    'ALTER TABLE usuarios ADD COLUMN apellido varchar(100) NULL AFTER nombre',
+    'DO 0');
+PREPARE stmt FROM @sql_apellido;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- 3. Agregar columna 'correo' si no existe
+SET @existe_correo = (
+    SELECT COUNT(*) FROM information_schema.columns
+    WHERE table_schema = DATABASE()
+      AND table_name   = 'usuarios'
+      AND column_name  = 'correo'
+);
+SET @sql_correo = IF(@existe_correo = 0,
+    'ALTER TABLE usuarios ADD COLUMN correo varchar(100) NULL AFTER apellido',
+    'DO 0');
+PREPARE stmt FROM @sql_correo;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- 4. Reemplazar sp_registrar_usuario para que acepte los 3 campos nuevos
+DROP PROCEDURE IF EXISTS sp_registrar_usuario;
+DELIMITER //
+CREATE PROCEDURE sp_registrar_usuario(
+    IN _username     varchar(50),
+    IN _password_hash varchar(255),
+    IN _rol          varchar(20),
+    IN _nombre       varchar(100),
+    IN _apellido     varchar(100),
+    IN _correo       varchar(100)
+)
+BEGIN
+    INSERT INTO usuarios (username, password_hash, rol, nombre, apellido, correo)
+    VALUES (_username, _password_hash, _rol, _nombre, _apellido, _correo);
+END //
+DELIMITER ;
+
+-- 5. Reemplazar sp_listar_usuarios para incluir los campos nuevos
+DROP PROCEDURE IF EXISTS sp_listar_usuarios;
+DELIMITER //
+CREATE PROCEDURE sp_listar_usuarios()
+BEGIN
+    SELECT id, username, nombre, apellido, correo, rol, activo, fecha_creacion
+    FROM usuarios
+    ORDER BY username;
+END //
+DELIMITER ;
+
+-- 6. Reemplazar sp_buscar_usuario_por_id para incluir los campos nuevos
+DROP PROCEDURE IF EXISTS sp_buscar_usuario_por_id;
+DELIMITER //
+CREATE PROCEDURE sp_buscar_usuario_por_id(
+    IN _id int
+)
+BEGIN
+    SELECT id, username, nombre, apellido, correo, rol, activo, fecha_creacion
+    FROM usuarios
+    WHERE id = _id;
+END //
+DELIMITER ;
+
+-- 7. Reemplazar sp_actualizar_usuario para que también guarde nombre, apellido y correo
+DROP PROCEDURE IF EXISTS sp_actualizar_usuario;
+DELIMITER //
+CREATE PROCEDURE sp_actualizar_usuario(
+    IN _id int,
+    IN _rol varchar(20),
+    IN _nombre varchar(100),
+    IN _apellido varchar(100),
+    IN _correo varchar(100)
+)
+BEGIN
+    UPDATE usuarios
+    SET rol = _rol,
+        nombre = _nombre,
+        apellido = _apellido,
+        correo = _correo
+    WHERE id = _id;
+END //
+DELIMITER ;
