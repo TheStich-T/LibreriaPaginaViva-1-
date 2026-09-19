@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="950.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lpv.controller.CajeroDashboardController">
+    <stylesheets>
+        <URL value="@/org/lpv/view/style/cajerodashboardview.css" />
+    </stylesheets>
+    <children>
+        <VBox layoutX="0.0" layoutY="0.0" prefHeight="600.0" prefWidth="180.0" spacing="10.0" styleClass="sidebar">
+            <children>
+                <Label styleClass="sidebar-section" text="Navegación" />
+                <Label styleClass="sidebar-heading" text="Menú Principal" />
+                <Label styleClass="sidebar-item" text="Ventas" />
+                <Label styleClass="sidebar-item" text="Stock" />
+            </children>
+        </VBox>
+        <Label fx:id="lblUsuarioActual" layoutX="20.0" layoutY="525.0" styleClass="sidebar-user" text="Cajero" />
+        <Button fx:id="btnCerrarSesion" layoutX="20.0" layoutY="555.0" mnemonicParsing="false" onAction="#eventoCerrarSesion" style="-fx-background-color: transparent;" styleClass="logout-button" text="Cerrar sesión" />
+        
+        <Label layoutX="700.0" layoutY="15.0" styleClass="brand-title" text="LibreriaPaginaViva">
+            <font>
+                <Font size="20.0" />
+            </font>
+        </Label>
+        <Label layoutX="200.0" layoutY="45.0" styleClass="page-title" text="Bienvenido Cajero!">
+            <font>
+                <Font size="22.0" />
+            </font>
+        </Label>
+        <Label layoutX="200.0" layoutY="78.0" styleClass="page-subtitle" text="Resumen de ventas del día" />
+        
+        <GridPane hgap="20.0" layoutX="200.0" layoutY="110.0" vgap="20.0">
+            <children>
+                <VBox prefHeight="85.0" prefWidth="190.0" styleClass="summary-card" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                    <children>
+                        <Label styleClass="summary-title" text="VENTAS DEL DÍA" />
+                        <Label fx:id="lblCantidadVentas" styleClass="summary-value" text="0" />
+                    </children>
+                </VBox>
+                <VBox prefHeight="85.0" prefWidth="190.0" styleClass="summary-card" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                    <children>
+                        <Label styleClass="summary-title" text="TOTAL VENDIDO" />
+                        <Label fx:id="lblTotalVendido" styleClass="summary-value" text="Q 0.00" />
+                    </children>
+                </VBox>
+                <VBox prefHeight="85.0" prefWidth="190.0" styleClass="summary-card" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                    <children>
+                        <Label styleClass="summary-title" text="DESCUENTOS" />
+                        <Label fx:id="lblTotalDescuentos" styleClass="summary-value" text="Q 0.00" />
+                    </children>
+                </VBox>
+                
+                <Button onAction="#eventoNuevaVenta" prefHeight="65.0" prefWidth="190.0" styleClass="dashboard-card, card-1" text="Nueva Venta" wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <Button onAction="#eventoDetalleVentas" prefHeight="65.0" prefWidth="190.0" styleClass="dashboard-card, card-2" text="Detalle de Ventas" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <Button onAction="#eventoListaVentas" prefHeight="65.0" prefWidth="190.0" styleClass="dashboard-card, card-3" text="Lista de Ventas" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                <Button onAction="#eventoConsultarStockActual" prefHeight="65.0" prefWidth="190.0" styleClass="dashboard-card, card-4" text="Consultar Stock Actual" wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                <Button onAction="#eventoConsultarStockBajo" prefHeight="65.0" prefWidth="190.0" styleClass="dashboard-card, card-5" text="Productos con Stock Bajo" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                <Button onAction="#eventoActualizarResumen" prefHeight="65.0" prefWidth="190.0" styleClass="dashboard-card, card-6" text="ACTUALIZAR RESUMEN" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+            </children>
+         <columnConstraints>
+            <ColumnConstraints />
+            <ColumnConstraints />
+            <ColumnConstraints />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+         </rowConstraints>
+        </GridPane>
+    </children>
+</AnchorPane>

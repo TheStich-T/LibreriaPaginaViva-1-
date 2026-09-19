@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" prefHeight="360.0" prefWidth="500.0" styleClass="mainFxmlClass"
+            xmlns="http://javafx.com/javafx/21.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.lpv.controller.ActualizarPrecioController">
+    <stylesheets>
+        <URL value="@/org/lpv/view/style/editorialview.css" />
+    </stylesheets>
+    <children>
+        <Label layoutX="130.0" layoutY="15.0" styleClass="page-title" text="Actualizar Precio de Libro">
+            <font><Font size="20.0" /></font>
+        </Label>
+
+        <Label layoutX="30.0" layoutY="70.0" styleClass="field-label" text="ISBN" />
+        <TextField fx:id="txtIsbn" layoutX="30.0" layoutY="92.0" prefWidth="280.0" styleClass="text-input" />
+        <Button fx:id="btnBuscar" layoutX="320.0" layoutY="90.0" onAction="#eventoBuscar" prefHeight="28.0" prefWidth="110.0" styleClass="secondary-button" text="BUSCAR" />
+
+        <Label layoutX="30.0" layoutY="140.0" styleClass="field-label" text="Título" />
+        <Label fx:id="lblTituloEncontrado" layoutX="130.0" layoutY="140.0" styleClass="field-label" text="" />
+
+        <Label layoutX="30.0" layoutY="165.0" styleClass="field-label" text="Precio actual" />
+        <Label fx:id="lblPrecioActual" layoutX="130.0" layoutY="165.0" styleClass="field-label" text="" />
+
+        <Label layoutX="30.0" layoutY="200.0" styleClass="field-label" text="Nuevo precio" />
+        <TextField fx:id="txtNuevoPrecio" layoutX="30.0" layoutY="222.0" prefWidth="280.0" styleClass="text-input" />
+
+        <Button fx:id="btnActualizarPrecio" layoutX="30.0" layoutY="270.0" onAction="#eventoActualizarPrecio" prefHeight="32.0" prefWidth="220.0" styleClass="primary-button" text="ACTUALIZAR PRECIO" />
+        <Button layoutX="360.0" layoutY="15.0" onAction="#eventoVolver" prefHeight="28.0" prefWidth="90.0" styleClass="secondary-button" text="VOLVER" />
+
+        <Label fx:id="lblMensaje" layoutX="30.0" layoutY="320.0" text="" textFill="#b5453f" />
+    </children>
+</AnchorPane>
